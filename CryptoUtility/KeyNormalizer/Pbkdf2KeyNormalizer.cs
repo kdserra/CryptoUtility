@@ -5,7 +5,7 @@ namespace CryptoUtility;
 /// <summary>
 /// Provides functionality to derive a normalized cryptographic key using the PBKDF2 algorithm with SHA-256 hashing.
 /// </summary>
-public class Pbkdf2KeyNormalizer : IKeyNormalizer
+public sealed class Pbkdf2KeyNormalizer : IKeyNormalizer
 {
     private HashAlgorithmName _hashAlgorithm;
     private readonly byte[] _salt;

@@ -2,7 +2,7 @@
 
 namespace CryptoUtility;
 
-public class Aes256GcmCryptoProvider : ISymmetricCryptor
+public sealed class Aes256GcmCryptoProvider : ISymmetricCryptor
 {
     public static Aes256GcmCryptoProvider Shared { get; } = new();
 

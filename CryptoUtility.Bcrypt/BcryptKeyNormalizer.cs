@@ -3,7 +3,7 @@ using System.Text;
 
 namespace CryptoUtility.Bcrypt;
 
-public class BcryptKeyNormalizer : IKeyNormalizer
+public sealed class BcryptKeyNormalizer : IKeyNormalizer
 {
     private readonly int _workFactor;
 

@@ -1,6 +1,6 @@
 ﻿namespace CryptoUtility;
 
-public class RsaCryptor : IAsymmetricCryptor
+public sealed class RsaCryptor : IAsymmetricCryptor
 {
     public RsaCryptor() { }
 }

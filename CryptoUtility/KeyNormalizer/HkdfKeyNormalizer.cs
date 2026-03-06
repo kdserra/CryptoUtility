@@ -2,7 +2,7 @@
 
 namespace CryptoUtility;
 
-public class HkdfKeyNormalizer : IKeyNormalizer
+public sealed class HkdfKeyNormalizer : IKeyNormalizer
 {
     private HashAlgorithmName _hashAlgorithm;
     private readonly byte[] _salt;

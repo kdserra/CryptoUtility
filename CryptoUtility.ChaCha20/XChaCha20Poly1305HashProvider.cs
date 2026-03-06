@@ -1,6 +1,6 @@
 ﻿namespace CryptoUtility.ChaCha20;
 
-public class XChaCha20Poly1305HashProvider : IHashProvider
+public sealed class XChaCha20Poly1305HashProvider : IHashProvider
 {
     public byte[] Hash(byte[] input)
     {

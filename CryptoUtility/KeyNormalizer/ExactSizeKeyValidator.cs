@@ -4,7 +4,7 @@
 /// A key normalizer that performs no transformation on the key.
 /// Validates that the key is exactly the expected size.
 /// </summary>
-public class ExactSizeKeyValidator : IKeyNormalizer
+public sealed class ExactSizeKeyValidator : IKeyNormalizer
 {
     /// <summary>
     /// Returns the original key if it matches the expected size.

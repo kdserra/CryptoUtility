@@ -2,7 +2,7 @@
 
 namespace CryptoUtility.Argon2;
 
-public class Argon2KeyNormalizer : IKeyNormalizer
+public sealed class Argon2KeyNormalizer : IKeyNormalizer
 {
     private readonly byte[] _salt;
     private readonly int _iterations;

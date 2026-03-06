@@ -2,7 +2,7 @@
 
 namespace CryptoUtility.Scrypt;
 
-public class ScryptKeyNormalizer : IKeyNormalizer
+public sealed class ScryptKeyNormalizer : IKeyNormalizer
 {
     private readonly byte[] _salt;
     private readonly long _opsLimit;
