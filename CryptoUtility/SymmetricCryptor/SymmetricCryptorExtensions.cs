@@ -25,6 +25,14 @@ public static class SymmetricCryptorExtensions
     }
 
     #region UTF8
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static string EncryptAsStringUtf8(
         this ISymmetricCryptor cryptor,
         string key,
@@ -39,6 +47,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static byte[] EncryptAsBytesUtf8(
         this ISymmetricCryptor cryptor,
         string key,
@@ -52,6 +68,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static string DecryptAsStringUtf8(
         this ISymmetricCryptor cryptor,
         string key,
@@ -66,6 +90,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static byte[] DecryptAsBytesUtf8(
         this ISymmetricCryptor cryptor,
         string key,
@@ -80,6 +112,14 @@ public static class SymmetricCryptorExtensions
     #endregion
 
     #region UTF32
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static string EncryptAsStringUtf32(
         this ISymmetricCryptor cryptor,
         string key,
@@ -94,6 +134,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static byte[] EncryptAsBytesUtf32(
         this ISymmetricCryptor cryptor,
         string key,
@@ -107,6 +155,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static string DecryptAsStringUtf32(
         this ISymmetricCryptor cryptor,
         string key,
@@ -121,6 +177,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static byte[] DecryptAsBytesUtf32(
         this ISymmetricCryptor cryptor,
         string key,
@@ -135,6 +199,14 @@ public static class SymmetricCryptorExtensions
     #endregion
 
     #region ASCII
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static string EncryptAsStringAscii(
         this ISymmetricCryptor cryptor,
         string key,
@@ -149,6 +221,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static byte[] EncryptAsBytesAscii(
         this ISymmetricCryptor cryptor,
         string key,
@@ -162,6 +242,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static string DecryptAsStringAscii(
         this ISymmetricCryptor cryptor,
         string key,
@@ -176,6 +264,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static byte[] DecryptAsBytesAscii(
         this ISymmetricCryptor cryptor,
         string key,
@@ -190,6 +286,14 @@ public static class SymmetricCryptorExtensions
     #endregion
 
     #region Unicode (UTF-16 LE)
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static string EncryptAsStringUnicode(
         this ISymmetricCryptor cryptor,
         string key,
@@ -204,6 +308,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static byte[] EncryptAsBytesUnicode(
         this ISymmetricCryptor cryptor,
         string key,
@@ -217,6 +329,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static string DecryptAsStringUnicode(
         this ISymmetricCryptor cryptor,
         string key,
@@ -231,6 +351,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static byte[] DecryptAsBytesUnicode(
         this ISymmetricCryptor cryptor,
         string key,
@@ -245,6 +373,14 @@ public static class SymmetricCryptorExtensions
     #endregion
 
     #region BigEndianUnicode (UTF-16 BE)
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static string EncryptAsStringBigEndianUnicode(
         this ISymmetricCryptor cryptor,
         string key,
@@ -259,6 +395,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static byte[] EncryptAsBytesBigEndianUnicode(
         this ISymmetricCryptor cryptor,
         string key,
@@ -272,6 +416,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static string DecryptAsStringBigEndianUnicode(
         this ISymmetricCryptor cryptor,
         string key,
@@ -286,6 +438,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static byte[] DecryptAsBytesBigEndianUnicode(
         this ISymmetricCryptor cryptor,
         string key,
@@ -300,6 +460,14 @@ public static class SymmetricCryptorExtensions
     #endregion
 
     #region Latin1 (ISO-8859-1)
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static string EncryptAsStringLatin1(
         this ISymmetricCryptor cryptor,
         string key,
@@ -314,6 +482,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static byte[] EncryptAsBytesLatin1(
         this ISymmetricCryptor cryptor,
         string key,
@@ -327,6 +503,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static string DecryptAsStringLatin1(
         this ISymmetricCryptor cryptor,
         string key,
@@ -341,6 +525,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static byte[] DecryptAsBytesLatin1(
         this ISymmetricCryptor cryptor,
         string key,
@@ -355,6 +547,14 @@ public static class SymmetricCryptorExtensions
     #endregion
 
     #region Base64
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static string EncryptAsStringBase64(
         this ISymmetricCryptor cryptor,
         string key,
@@ -369,6 +569,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Encrypts the specified value using the provided key and returns the encrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for encryption.</param>
+    /// <param name="value">The value to encrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The encrypted data.</returns>
     public static byte[] EncryptAsBytesBase64(
         this ISymmetricCryptor cryptor,
         string key,
@@ -382,6 +590,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static string DecryptAsStringBase64(
         this ISymmetricCryptor cryptor,
         string key,
@@ -396,6 +612,14 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Decrypts the specified encrypted value using the provided key and returns the decrypted data.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="key">The cryptographic key used for decryption.</param>
+    /// <param name="encryptedValue">The encrypted value to decrypt.</param>
+    /// <param name="keyNormalizer">Optional key normalizer. If not provided, a default will be used.</param>
+    /// <returns>The decrypted data.</returns>
     public static byte[] DecryptAsBytesBase64(
         this ISymmetricCryptor cryptor,
         string key,
@@ -408,14 +632,23 @@ public static class SymmetricCryptorExtensions
         return result;
     }
 
+    /// <summary>
+    /// Generates a new cryptographic key and returns it as a Base64 encoded string.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <returns>The generated key as a Base64 string.</returns>
     public static string GenerateKeyAsStringBase64(this ISymmetricCryptor cryptor)
     {
         byte[] key = cryptor.GenerateKey();
         string result = Convert.ToBase64String(key);
-
         return result;
     }
 
+    /// <summary>
+    /// Generates a new cryptographic key, encodes it as Base64, and returns the UTF-8 bytes of that string.
+    /// </summary>
+    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <returns>The generated key as UTF-8 encoded Base64 bytes.</returns>
     public static byte[] GenerateKeyAsBytesBase64Utf8(this ISymmetricCryptor cryptor)
     {
         byte[] key = cryptor.GenerateKey();
