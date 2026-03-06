@@ -1,12 +1,16 @@
-using System.Security.Cryptography;
 using System.Text;
+#if NET8_0_OR_GREATER
+using System.Security.Cryptography;
+#endif
 
 namespace CryptoUtility;
 
 public static class SymmetricCryptorExtensions
 {
-    private static readonly Pbkdf2KeyNormalizer2 s_DefaultKeyNormalizer = new Pbkdf2KeyNormalizer2(
+    private static readonly Pbkdf2KeyNormalizer s_DefaultKeyNormalizer = new Pbkdf2KeyNormalizer(
+#if NET8_0_OR_GREATER
         hashAlgorithm: HashAlgorithmName.SHA256,
+#endif
         salt: []
     );
 
