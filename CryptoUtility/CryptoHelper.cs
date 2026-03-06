@@ -39,4 +39,18 @@ public static class CryptoHelper
         Fill(buffer);
         return buffer;
     }
+
+    public static void Encrypt()
+    {
+#if NET10_0_OR_GREATER
+        ISymmetricCryptor symmetricCryptor = new Aes256GcmSymmetricCryptor();
+
+        byte[] encryptedValueBytes = symmetricCryptor.Encrypt([], []);
+
+        string encryptedValueString = symmetricCryptor.EncryptAsStringBase64(
+            "Password",
+            "Secret Data!"
+        );
+#endif
+    }
 }

@@ -10,7 +10,7 @@ public sealed class ChaCha20Poly1305SymmetricCryptor : ISymmetricCryptor
 
     public int KeySize => 32;
 
-    public byte[] Encrypt(byte[] key, byte[] value, IKeyNormalizer? keyNormalizer)
+    public byte[] Encrypt(byte[] key, byte[] value, IKeyNormalizer? keyNormalizer = null)
     {
         keyNormalizer ??= this.GetDefaultKeyNormalizer();
         var normalizedKey = keyNormalizer.Normalize(key, KeySize);
@@ -31,7 +31,7 @@ public sealed class ChaCha20Poly1305SymmetricCryptor : ISymmetricCryptor
         return result;
     }
 
-    public byte[] Decrypt(byte[] key, byte[] encryptedValue, IKeyNormalizer? keyNormalizer)
+    public byte[] Decrypt(byte[] key, byte[] encryptedValue, IKeyNormalizer? keyNormalizer = null)
     {
         keyNormalizer ??= this.GetDefaultKeyNormalizer();
         var normalizedKey = keyNormalizer.Normalize(key, KeySize);

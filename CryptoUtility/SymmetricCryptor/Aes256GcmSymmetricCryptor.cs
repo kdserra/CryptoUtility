@@ -3,16 +3,16 @@ using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
-public sealed class Aes256GcmCryptoProvider : ISymmetricCryptor
+public sealed class Aes256GcmSymmetricCryptor : ISymmetricCryptor
 {
-    public static Aes256GcmCryptoProvider Shared { get; } = new();
+    public static Aes256GcmSymmetricCryptor Shared { get; } = new();
 
     private const int NonceSize = 12;
     private const int TagSize = 16;
 
     public int KeySize { get; } = 32;
 
-    public byte[] Encrypt(byte[] key, byte[] value, IKeyNormalizer? keyNormalizer)
+    public byte[] Encrypt(byte[] key, byte[] value, IKeyNormalizer? keyNormalizer = null)
     {
         keyNormalizer ??= this.GetDefaultKeyNormalizer();
 
@@ -37,7 +37,7 @@ public sealed class Aes256GcmCryptoProvider : ISymmetricCryptor
         return result;
     }
 
-    public byte[] Decrypt(byte[] key, byte[] encryptedValue, IKeyNormalizer? keyNormalizer)
+    public byte[] Decrypt(byte[] key, byte[] encryptedValue, IKeyNormalizer? keyNormalizer = null)
     {
         keyNormalizer ??= this.GetDefaultKeyNormalizer();
 

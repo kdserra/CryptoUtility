@@ -7,7 +7,7 @@ public sealed class XChaCha20SymmetricCryptor : ISymmetricCryptor
     private const int NonceSize = 24;
     public int KeySize => 32;
 
-    public byte[] Encrypt(byte[] key, byte[] value, IKeyNormalizer? keyNormalizer)
+    public byte[] Encrypt(byte[] key, byte[] value, IKeyNormalizer? keyNormalizer = null)
     {
         keyNormalizer ??= this.GetDefaultKeyNormalizer();
         byte[] normalized = keyNormalizer.Normalize(key, KeySize);
@@ -26,7 +26,7 @@ public sealed class XChaCha20SymmetricCryptor : ISymmetricCryptor
         return result;
     }
 
-    public byte[] Decrypt(byte[] key, byte[] encryptedValue, IKeyNormalizer? keyNormalizer)
+    public byte[] Decrypt(byte[] key, byte[] encryptedValue, IKeyNormalizer? keyNormalizer = null)
     {
         keyNormalizer ??= this.GetDefaultKeyNormalizer();
         byte[] normalized = keyNormalizer.Normalize(key, KeySize);
