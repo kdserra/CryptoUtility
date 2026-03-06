@@ -15,7 +15,7 @@ Hash algos
 - BLAKE3
 
 SymmetricCryptor
-
+- XOR
 
 AsymmetricCryptor
 - RSA
