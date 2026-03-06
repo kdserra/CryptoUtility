@@ -1,7 +1,19 @@
 ﻿namespace CryptoUtility;
 
+/// <summary>
+/// A key normalizer that adjusts the input key to the required size by truncating or padding with zeros.
+/// </summary>
 public class TruncateAndPadKeyNormalizer : IKeyNormalizer
 {
+    /// <summary>
+    /// Normalizes the input key to the specified size.
+    /// If the key is longer than <paramref name="keySize"/>, it is truncated.
+    /// If the key is shorter, it is padded with zeros.
+    /// </summary>
+    /// <param name="key">The input key as a byte array.</param>
+    /// <param name="keySize">The desired key size in bytes.</param>
+    /// <returns>A byte array of length <paramref name="keySize"/> containing the normalized key.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="key"/> is null.</exception>
     public byte[] Normalize(byte[] key, int keySize)
     {
         if (key == null)
