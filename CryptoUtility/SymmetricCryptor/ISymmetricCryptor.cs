@@ -1,6 +1,4 @@
-﻿using System.Security.Cryptography;
-
-namespace CryptoUtility;
+﻿namespace CryptoUtility;
 
 /// <summary>
 /// Defines methods for performing symmetric encryption and decryption operations, as well as cryptographic key
