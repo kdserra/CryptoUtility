@@ -1,31 +1,27 @@
-﻿using System;
-using System.Security.Cryptography;
-using NaCl.Core;
+﻿using NaCl.Core;
 
 namespace CryptoUtility.ChaCha20;
 
 public sealed class XChaCha20SymmetricCryptor : ISymmetricCryptor
 {
-    private const int KEY_SIZE = 32;
-    private const int NONCE_SIZE = 24;
-
-    public int KeySize => KEY_SIZE;
+    private const int NonceSize = 24;
+    public int KeySize => 32;
 
     public byte[] Encrypt(byte[] key, byte[] value, IKeyNormalizer? keyNormalizer)
     {
         keyNormalizer ??= this.GetDefaultKeyNormalizer();
-        byte[] normalized = keyNormalizer.Normalize(key, KEY_SIZE);
+        byte[] normalized = keyNormalizer.Normalize(key, KeySize);
 
-        byte[] nonce = new byte[NONCE_SIZE];
+        byte[] nonce = new byte[NonceSize];
         CryptoHelper.Fill(nonce);
 
         byte[] ciphertext = new byte[value.Length];
         var cipher = new XChaCha20(normalized, 0); // initialCounter = 0
         cipher.Encrypt(value, nonce, ciphertext);
 
-        byte[] result = new byte[NONCE_SIZE + ciphertext.Length];
-        Buffer.BlockCopy(nonce, 0, result, 0, NONCE_SIZE);
-        Buffer.BlockCopy(ciphertext, 0, result, NONCE_SIZE, ciphertext.Length);
+        byte[] result = new byte[NonceSize + ciphertext.Length];
+        Buffer.BlockCopy(nonce, 0, result, 0, NonceSize);
+        Buffer.BlockCopy(ciphertext, 0, result, NonceSize, ciphertext.Length);
 
         return result;
     }
@@ -33,17 +29,17 @@ public sealed class XChaCha20SymmetricCryptor : ISymmetricCryptor
     public byte[] Decrypt(byte[] key, byte[] encryptedValue, IKeyNormalizer? keyNormalizer)
     {
         keyNormalizer ??= this.GetDefaultKeyNormalizer();
-        byte[] normalized = keyNormalizer.Normalize(key, KEY_SIZE);
+        byte[] normalized = keyNormalizer.Normalize(key, KeySize);
 
-        if (encryptedValue.Length < NONCE_SIZE)
+        if (encryptedValue.Length < NonceSize)
             throw new ArgumentException("Invalid ciphertext.", nameof(encryptedValue));
 
-        byte[] nonce = new byte[NONCE_SIZE];
-        Buffer.BlockCopy(encryptedValue, 0, nonce, 0, NONCE_SIZE);
+        byte[] nonce = new byte[NonceSize];
+        Buffer.BlockCopy(encryptedValue, 0, nonce, 0, NonceSize);
 
-        int cipherLength = encryptedValue.Length - NONCE_SIZE;
+        int cipherLength = encryptedValue.Length - NonceSize;
         byte[] ciphertext = new byte[cipherLength];
-        Buffer.BlockCopy(encryptedValue, NONCE_SIZE, ciphertext, 0, cipherLength);
+        Buffer.BlockCopy(encryptedValue, NonceSize, ciphertext, 0, cipherLength);
 
         byte[] plaintext = new byte[cipherLength];
         var cipher = new XChaCha20(normalized, 0); // initialCounter = 0
