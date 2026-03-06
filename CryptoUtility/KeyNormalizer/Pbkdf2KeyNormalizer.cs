@@ -1,10 +1,14 @@
-﻿using System.Security.Cryptography;
+﻿#if NET8_0_OR_GREATER
+using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
 /// <summary>
-/// Provides functionality to derive a normalized cryptographic key using the PBKDF2 algorithm with SHA-256 hashing.
+/// Provides functionality to derive a normalized cryptographic key using the PBKDF2 algorithm.
 /// </summary>
+/// <remarks>
+/// This implementation uses the official System.Security.Cryptography Pbkdf2 implementation which does not support .NET Standard 2.0.
+/// </remarks>
 public sealed class Pbkdf2KeyNormalizer : IKeyNormalizer
 {
     private HashAlgorithmName _hashAlgorithm;
@@ -30,3 +34,4 @@ public sealed class Pbkdf2KeyNormalizer : IKeyNormalizer
         return output;
     }
 }
+#endif

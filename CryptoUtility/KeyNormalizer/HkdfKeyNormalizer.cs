@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿#if NET8_0_OR_GREATER
+using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
@@ -23,3 +24,4 @@ public sealed class HkdfKeyNormalizer : IKeyNormalizer
         return output;
     }
 }
+#endif

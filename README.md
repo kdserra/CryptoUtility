@@ -21,4 +21,5 @@ AsymmetricCryptor
 - RSA
 
 KeyNormalizer
+- PKCS#1
 - PKCS#7

@@ -1,9 +1,9 @@
 <Solution>
   <Project Path="CryptoUtility.Argon2/CryptoUtility.Argon2.csproj" />
   <Project Path="CryptoUtility.Bcrypt/CryptoUtility.Bcrypt.csproj" />
+  <Project Path="CryptoUtility.BouncyCastle/CryptoUtility.BouncyCastle.csproj" Id="925c56f0-1f4c-4350-9452-5b9894f7a999" />
   <Project Path="CryptoUtility.ChaCha20/CryptoUtility.ChaCha20.csproj" />
   <Project Path="CryptoUtility.Scrypt/CryptoUtility.Scrypt.csproj" />
   <Project Path="CryptoUtility.Tests/CryptoUtility.Tests.csproj" />
-  <Project Path="CryptoUtility.XxHash/CryptoUtility.XxHash.csproj" Id="12c5dc69-8e5a-46c1-a6dc-3d4b9bb224fa" />
   <Project Path="CryptoUtility/CryptoUtility.csproj" />
 </Solution>
