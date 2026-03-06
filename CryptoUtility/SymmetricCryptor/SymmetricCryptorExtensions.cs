@@ -5,7 +5,7 @@ namespace CryptoUtility;
 
 public static class SymmetricCryptorExtensions
 {
-    private static readonly Pbkdf2KeyNormalizer s_DefaultKeyNormalizer = new Pbkdf2KeyNormalizer(
+    private static readonly Pbkdf2KeyNormalizer2 s_DefaultKeyNormalizer = new Pbkdf2KeyNormalizer2(
         hashAlgorithm: HashAlgorithmName.SHA256,
         salt: []
     );
@@ -16,7 +16,7 @@ public static class SymmetricCryptorExtensions
     /// <returns>A byte array containing the generated cryptographic key.</returns>
     public static byte[] GenerateKey(this ISymmetricCryptor cryptor)
     {
-        return RandomNumberGenerator.GetBytes(cryptor.KeySize);
+        return CryptoHelper.GetBytes(cryptor.KeySize);
     }
 
     public static IKeyNormalizer GetDefaultKeyNormalizer(this ISymmetricCryptor cryptor)
