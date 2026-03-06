@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿#if NET8_0_OR_GREATER
+using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
@@ -62,3 +63,4 @@ public sealed class Aes256GcmCryptoProvider : ISymmetricCryptor
         return plaintext;
     }
 }
+#endif

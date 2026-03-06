@@ -1,6 +1,8 @@
-﻿namespace CryptoUtility;
+﻿using System.IO.Hashing;
 
-public sealed class XxHashProvider : IHashProvider
+namespace CryptoUtility;
+
+public abstract class XxHashHashProvider : IHashProvider
 {
     public enum XxHashVariant
     {
@@ -11,7 +13,7 @@ public sealed class XxHashProvider : IHashProvider
 
     private readonly XxHashVariant _variant;
 
-    public XxHashProvider(XxHashVariant variant)
+    protected XxHashHashProvider(XxHashVariant variant)
     {
         _variant = variant;
     }
@@ -42,6 +44,7 @@ public sealed class XxHashProvider : IHashProvider
     public bool VerifySignature(byte[] input, byte[] signature, byte[] key)
     {
         var computed = Sign(input, key);
-        return CryptographicOperations.FixedTimeEquals(computed, signature);
+        var result = CryptoHelper.FixedTimeEquals(computed, signature);
+        return result;
     }
 }

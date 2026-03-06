@@ -6,8 +6,8 @@ namespace CryptoUtility;
 public static class SymmetricCryptorExtensions
 {
     private static readonly Pbkdf2KeyNormalizer s_DefaultKeyNormalizer = new Pbkdf2KeyNormalizer(
-        HashAlgorithmName.SHA256,
-        []
+        hashAlgorithm: HashAlgorithmName.SHA256,
+        salt: []
     );
 
     /// <summary>
@@ -459,6 +459,7 @@ public static class SymmetricCryptorExtensions
     }
     #endregion
 
+#if NET8_0_OR_GREATER
     #region Latin1 (ISO-8859-1)
     /// <summary>
     /// Encrypts the specified value using the provided key and returns the encrypted data.
@@ -545,6 +546,7 @@ public static class SymmetricCryptorExtensions
         return result;
     }
     #endregion
+#endif
 
     #region Base64
     /// <summary>
