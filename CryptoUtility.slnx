@@ -1,3 +1,7 @@
 <Solution>
+  <Project Path="CryptoUtility.Argon2/CryptoUtility.Argon2.csproj" />
+  <Project Path="CryptoUtility.Bcrypt/CryptoUtility.Bcrypt.csproj" />
+  <Project Path="CryptoUtility.ChaCha20/CryptoUtility.ChaCha20.csproj" />
+  <Project Path="CryptoUtility.Scrypt/CryptoUtility.Scrypt.csproj" />
   <Project Path="CryptoUtility/CryptoUtility.csproj" />
 </Solution>
