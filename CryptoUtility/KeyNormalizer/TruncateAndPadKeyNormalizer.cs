@@ -1,7 +1,7 @@
 ﻿namespace CryptoUtility;
 
 /// <summary>
-/// A key normalizer that adjusts the input key to the required size by truncating or padding with zeros.
+/// A simple key normalizer that adjusts the input key to the required size by truncating or padding with zeros.
 /// </summary>
 public sealed class TruncateAndPadKeyNormalizer : IKeyNormalizer
 {
