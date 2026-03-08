@@ -31,14 +31,14 @@ public sealed class Pbkdf2KeyNormalizer : IKeyNormalizer
         _iterations = iterations;
     }
 
-    public byte[] Normalize(byte[] key, int keySize)
+    public byte[] Normalize(byte[] key, int keySizeBytes)
     {
 #if NET8_0_OR_GREATER
-        byte[] output = new byte[keySize];
+        byte[] output = new byte[keySizeBytes];
         Rfc2898DeriveBytes.Pbkdf2(key, _salt, output, _iterations, _hashAlgorithm);
 #else
         using Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(key, _salt, _iterations);
-        byte[] output = pbkdf2.GetBytes(keySize);
+        byte[] output = pbkdf2.GetBytes(keySizeBytes);
 #endif
 
         return output;

@@ -16,9 +16,9 @@ public sealed class HkdfKeyNormalizer : IKeyNormalizer
         _info = info;
     }
 
-    public byte[] Normalize(byte[] key, int keySize)
+    public byte[] Normalize(byte[] key, int keySizeBytes)
     {
-        var output = new byte[keySize];
+        byte[] output = new byte[keySizeBytes];
         HKDF.DeriveKey(_hashAlgorithm, key, output, _salt, _info);
 
         return output;

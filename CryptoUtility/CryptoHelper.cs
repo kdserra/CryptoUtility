@@ -4,6 +4,13 @@ namespace CryptoUtility;
 
 public static class CryptoHelper
 {
+    public static readonly IKeyNormalizer DefaultKeyNormalizer = new Pbkdf2KeyNormalizer(
+#if NET8_0_OR_GREATER
+        hashAlgorithm: HashAlgorithmName.SHA256,
+#endif
+        salt: []
+    );
+
     public static bool FixedTimeEquals(byte[] left, byte[] right)
     {
 #if NET8_0_OR_GREATER
@@ -23,34 +30,22 @@ public static class CryptoHelper
 
     public static void Fill(byte[] buffer)
     {
-#if NET6_0_OR_GREATER
+#if NET8_0_OR_GREATER
         RandomNumberGenerator.Fill(buffer);
 #else
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            rng.GetBytes(buffer);
-        }
+        using RandomNumberGenerator rng = RandomNumberGenerator.Create();
+        rng.GetBytes(buffer);
 #endif
     }
 
     public static byte[] GetBytes(int length)
     {
-        var buffer = new byte[length];
+#if NET8_0_OR_GREATER
+        return RandomNumberGenerator.GetBytes(length);
+#else
+        byte[] buffer = new byte[length];
         Fill(buffer);
         return buffer;
-    }
-
-    public static void Encrypt()
-    {
-#if NET10_0_OR_GREATER
-        ISymmetricCryptor symmetricCryptor = new Aes256GcmSymmetricCryptor();
-
-        byte[] encryptedValueBytes = symmetricCryptor.Encrypt([], []);
-
-        string encryptedValueString = symmetricCryptor.EncryptAsStringBase64(
-            "Password",
-            "Secret Data!"
-        );
 #endif
     }
 }

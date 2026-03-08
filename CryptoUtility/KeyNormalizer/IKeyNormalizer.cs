@@ -1,4 +1,6 @@
-﻿namespace CryptoUtility;
+﻿using System.Text;
+
+namespace CryptoUtility;
 
 /// <summary>
 /// Defines a contract for normalizing cryptographic keys to a specified size.
@@ -8,5 +10,5 @@ public interface IKeyNormalizer
     /// <summary>
     /// Normalizes the specified key to ensure it meets the required size for cryptographic operations.
     /// </summary>
-    byte[] Normalize(byte[] key, int keySize);
+    public byte[] Normalize(byte[] key, int keySizeBytes);
 }

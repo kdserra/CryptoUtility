@@ -2,7 +2,7 @@
 
 namespace CryptoUtility;
 
-public abstract class ShaHashProvider : IHashProvider
+public abstract class ShaHashProvider : HashProvider
 {
     public enum ShaVariant
     {
@@ -24,23 +24,11 @@ public abstract class ShaHashProvider : IHashProvider
         _variant = variant;
     }
 
-    public byte[] Hash(byte[] input)
+    public override byte[] Hash(byte[] input)
     {
         using HashAlgorithm alg = CreateHashAlgorithm();
-        return alg.ComputeHash(input);
-    }
-
-    public byte[] Sign(byte[] input, byte[] key)
-    {
-        using HMAC hmac = CreateHmac(key);
-        return hmac.ComputeHash(input);
-    }
-
-    public bool VerifySignature(byte[] input, byte[] signature, byte[] key)
-    {
-        var computed = Sign(input, key);
-        var result = CryptoHelper.FixedTimeEquals(computed, signature);
-        return result;
+        byte[] hash = alg.ComputeHash(input);
+        return hash;
     }
 
     private HashAlgorithm CreateHashAlgorithm()
@@ -56,18 +44,6 @@ public abstract class ShaHashProvider : IHashProvider
             ShaVariant.Sha3_384 => SHA3_384.Create(),
             ShaVariant.Sha3_512 => SHA3_512.Create(),
 #endif
-            _ => throw new NotSupportedException(),
-        };
-    }
-
-    private HMAC CreateHmac(byte[] key)
-    {
-        return _variant switch
-        {
-            ShaVariant.Sha1 => new HMACSHA1(key),
-            ShaVariant.Sha256 => new HMACSHA256(key),
-            ShaVariant.Sha384 => new HMACSHA384(key),
-            ShaVariant.Sha512 => new HMACSHA512(key),
             _ => throw new NotSupportedException(),
         };
     }

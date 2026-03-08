@@ -6,4 +6,5 @@
   <Project Path="CryptoUtility.Scrypt/CryptoUtility.Scrypt.csproj" />
   <Project Path="CryptoUtility.Tests/CryptoUtility.Tests.csproj" />
   <Project Path="CryptoUtility/CryptoUtility.csproj" />
+  <Project Path="TestProject/TestProject.csproj" Id="8ff2ad6e-7803-4391-b35c-fc40c89e9e4b" />
 </Solution>
