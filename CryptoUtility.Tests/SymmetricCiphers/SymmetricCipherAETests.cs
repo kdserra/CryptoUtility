@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace CryptoUtility.Tests;
+﻿namespace CryptoUtility.Tests;
 
 public abstract class SymmetricCipherAETests : SymmetricCipherTests
 {
