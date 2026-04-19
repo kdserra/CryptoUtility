@@ -12,7 +12,7 @@ internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
 
     public override int KeySizeBytes => 32; // 256-bit
 
-    public override int NonceSizeBytes => 12; // 96-bit, recommended size for GCM
+    public override int NonceSizeBytes => 12; // 96-bit
 
     private const int AuthTagSize = 16; // 128-bit
 
