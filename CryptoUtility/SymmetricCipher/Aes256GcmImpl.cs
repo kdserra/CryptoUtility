@@ -41,7 +41,7 @@ internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
 
             var envelope = new SymmetricCipherEnvelope(
                 version: 1,
-                cipher: CipherID,
+                cipherID: CipherID,
                 nonce: nonce,
                 tag: tag,
                 aad: aad,

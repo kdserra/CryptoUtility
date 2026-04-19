@@ -44,4 +44,15 @@ internal abstract class SymmetricCipherAEAD : SymmetricCipher
         byte[] nonce,
         byte[] aad
     );
+
+    protected override bool Verify(SymmetricCipherEnvelope envelope)
+    {
+        return envelope.CipherID == CipherID
+            && !envelope.Ciphertext.IsNullOrEmpty()
+            && !envelope.Nonce.IsNullOrEmpty()
+            && envelope.Nonce.Length == NonceSizeBytes
+            && !envelope.Tag.IsNullOrEmpty();
+
+        // AAD not required, optional parameter.
+    }
 }

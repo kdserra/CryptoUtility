@@ -29,7 +29,7 @@ internal sealed class XorImpl : SymmetricCipher
 
         var envelope = new SymmetricCipherEnvelope(
             version: SymmetricCipherEnvelope.LatestVersion,
-            cipher: CipherID.Xor,
+            cipherID: CipherID.Xor,
             nonce: nonce,
             tag: [],
             aad: [],

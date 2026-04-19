@@ -10,18 +10,13 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 internal sealed class ChaCha20Poly1305Impl : SymmetricCipherAEAD
 {
-    /// <inheritdoc cref="SymmetricCipher.KeySizeBytes" />
-    public override int KeySizeBytes => 32; // 256-bit
+    public override CipherID CipherID => CipherID.ChaCha20Poly1305;
 
-    /// <inheritdoc cref="SymmetricCipher.NonceSizeBytes" />
-    public override int NonceSizeBytes => 12; // 96-bit, recommended size for ChaCha20-Poly1305
+    public override int KeySizeBytes => 32; // 256-bit
+    public override int NonceSizeBytes => 12; // 96-bit
 
     private const int AuthTagSizeBytes = 16; // 128-bit
 
-    /// <inheritdoc cref="SymmetricCipher.CipherID" />
-    public override CipherID CipherID => CipherID.ChaCha20Poly1305;
-
-    /// <inheritdoc cref="SymmetricCipher.Encrypt(byte[], byte[], byte[])" />
     public override (bool success, byte[] encrypted) Encrypt(
         byte[] key,
         byte[] plaintext,
@@ -29,13 +24,71 @@ internal sealed class ChaCha20Poly1305Impl : SymmetricCipherAEAD
         byte[] aad
     )
     {
-        throw new NotImplementedException();
+        byte[] ciphertext = new byte[plaintext.Length];
+        byte[] tag = new byte[AuthTagSizeBytes];
+
+        try
+        {
+            using var chacha = new ChaCha20Poly1305System(key);
+
+            chacha.Encrypt(
+                nonce: nonce,
+                plaintext: plaintext,
+                ciphertext: ciphertext,
+                tag: tag,
+                associatedData: aad
+            );
+
+            var envelope = new SymmetricCipherEnvelope(
+                version: 1,
+                cipherID: CipherID,
+                nonce: nonce,
+                tag: tag,
+                aad: aad,
+                ciphertext: ciphertext
+            );
+
+            return (true, envelope.ToBytes());
+        }
+        catch
+        {
+            return (false, []);
+        }
     }
 
-    /// <inheritdoc cref="SymmetricCipher.Decrypt(byte[], byte[])" />
     public override (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
     {
-        throw new NotImplementedException();
+        SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
+        if (envelope == null)
+        {
+            return (false, []);
+        }
+
+        if (!Verify(envelope))
+        {
+            return (false, []);
+        }
+
+        byte[] plaintext = new byte[envelope.Ciphertext.Length];
+
+        try
+        {
+            using var chacha = new ChaCha20Poly1305System(key);
+
+            chacha.Decrypt(
+                nonce: envelope.Nonce,
+                ciphertext: envelope.Ciphertext,
+                tag: envelope.Tag,
+                plaintext: plaintext,
+                associatedData: envelope.Aad
+            );
+
+            return (true, plaintext);
+        }
+        catch
+        {
+            return (false, []);
+        }
     }
 }
 #endif

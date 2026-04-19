@@ -23,7 +23,7 @@ public partial class SymmetricCipherEnvelope
     /// Identifier of the cipher algorithm used.
     /// </summary>
     [MemoryPackOrder(1)]
-    public readonly CipherID Cipher;
+    public readonly CipherID CipherID;
 
     /// <summary>
     /// Unique nonce required for the encryption operation.
@@ -72,7 +72,7 @@ public partial class SymmetricCipherEnvelope
     [MemoryPackConstructor]
     public SymmetricCipherEnvelope(
         int version,
-        CipherID cipher,
+        CipherID cipherID,
         byte[] nonce,
         byte[] tag,
         byte[] aad,
@@ -80,7 +80,7 @@ public partial class SymmetricCipherEnvelope
     )
     {
         Version = version;
-        Cipher = cipher;
+        CipherID = cipherID;
         Nonce = nonce;
         Tag = tag;
         Aad = aad;

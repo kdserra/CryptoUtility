@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using CryptoUtility;
 
 namespace CryptoUtility.Tests;
 
@@ -17,6 +16,32 @@ public abstract class SymmetricCipherTests
         string message = "Hello, world!";
         byte[] plaintext = Encoding.UTF8.GetBytes(message);
         return plaintext;
+    }
+
+    [Fact]
+    public void Encrypt_CheckEnvelopeValid()
+    {
+        var key = GenerateKey();
+        var plaintext = GeneratePlaintext();
+
+        var (okEnc, encrypted) = Cipher.Encrypt(key, plaintext);
+        Assert.True(okEnc);
+
+        var envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
+
+        Assert.NotNull(envelope);
+        Assert.Equal(SymmetricCipherEnvelope.LatestVersion, envelope.Version);
+        Assert.NotEqual(CipherID.None, envelope.CipherID);
+
+        Assert.NotNull(envelope.Ciphertext);
+        Assert.NotEmpty(envelope.Ciphertext);
+
+        Assert.NotNull(envelope.Nonce);
+        Assert.NotEmpty(envelope.Nonce);
+
+        // Not required (they are allowed to be empty byte[]), they just can't be null.
+        Assert.NotNull(envelope.Tag);
+        Assert.NotNull(envelope.Aad);
     }
 
     [Fact]

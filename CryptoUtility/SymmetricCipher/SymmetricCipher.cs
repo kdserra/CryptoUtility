@@ -181,7 +181,7 @@ internal abstract class SymmetricCipher
     /// <returns>True when the envelope passed verification, false when it fails; missing required paramters.</returns>
     protected virtual bool Verify(SymmetricCipherEnvelope envelope)
     {
-        return envelope.Cipher == CipherID
+        return envelope.CipherID == CipherID
             && !envelope.Ciphertext.IsNullOrEmpty()
             && !envelope.Nonce.IsNullOrEmpty()
             && envelope.Nonce.Length == NonceSizeBytes;

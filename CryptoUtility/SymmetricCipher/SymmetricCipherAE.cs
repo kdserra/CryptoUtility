@@ -8,7 +8,7 @@ internal abstract class SymmetricCipherAE : SymmetricCipher
 {
     protected override bool Verify(SymmetricCipherEnvelope envelope)
     {
-        return envelope.Cipher == CipherID
+        return envelope.CipherID == CipherID
             && !envelope.Ciphertext.IsNullOrEmpty()
             && !envelope.Nonce.IsNullOrEmpty()
             && envelope.Nonce.Length == NonceSizeBytes
