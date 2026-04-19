@@ -6,10 +6,22 @@
     <LangVersion>latest</LangVersion>
     <WarningsAsErrors>Nullable</WarningsAsErrors>
   </PropertyGroup>
+  <PropertyGroup>
+    <!-- Enable viewing of generated files. -->
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="CryptoUtility.Tests" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MemoryPack" Version="1.21.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference
+      Include="..\CryptoUtility.CodeGenerator\CryptoUtility.CodeGenerator.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false"
+    />
   </ItemGroup>
 </Project>

@@ -1,9 +1,13 @@
-﻿namespace CryptoUtility;
+﻿#if NET8_0_OR_GREATER
+using System.Security.Cryptography;
+using ChaCha20Poly1305System = System.Security.Cryptography.ChaCha20Poly1305;
+
+namespace CryptoUtility;
 
 /// <summary>
 /// Official .NET ChaCha20-Poly1305 Implementation.
 /// </summary>
-[GenerateStaticApi("ChaCha20Poly1305")]
+[GenerateStaticApi(nameof(ChaCha20Poly1305))]
 internal sealed class ChaCha20Poly1305Impl : SymmetricCipherAEAD
 {
     public override int KeySizeBytes => 32; // 256-bit
@@ -28,3 +32,4 @@ internal sealed class ChaCha20Poly1305Impl : SymmetricCipherAEAD
         throw new NotImplementedException();
     }
 }
+#endif
