@@ -8,31 +8,7 @@ namespace CryptoUtility;
 /// </summary>
 public abstract class HashProvider
 {
-    /// <summary>
-    /// Provides a new instance of the desired HMAC implementation.
-    /// </summary>
-    /// <remarks>
-    /// HMACs are not thread-safe, as such they should not share their implementation. By using a factory we ensure
-    /// each instance is created upon request, used, and disposed of immediately afterwards. This prevents issues
-    /// related to concurrent usage of the shared HMAC instances.
-    /// </remarks>
-    private readonly Func<HMAC> _hmacProvider = () =>
-    {
-        return new HMACSHA256();
-    };
-
-    /// <summary>
-    /// Responsible for setting up, and caching the initial state before usage.
-    /// </summary>
-    /// <param name="hmacProvider">Optional parameter. Responisble for providing an HMAC used for signing and verifying
-    /// messages. If unspecified, <see cref="HMACSHA256"/> is used.</param>
-    public HashProvider(Func<HMAC>? hmacProvider = null)
-    {
-        if (hmacProvider != null)
-        {
-            _hmacProvider = hmacProvider;
-        }
-    }
+    private static Func<HMAC> DefaultHmacProvider => () => new HMACSHA256();
 
     /// <summary>
     /// Computes the hash value for the specified input data using the algorithm implemented by the derived class.
@@ -53,9 +29,11 @@ public abstract class HashProvider
     /// <param name="key">The secret key used to generate the HMAC signature. This must be a non-null byte array and
     /// should be kept confidential to ensure signature integrity.</param>
     /// <returns>A byte array containing the computed HMAC signature for the input data.</returns>
-    public byte[] Sign(byte[] input, byte[] key)
+    public byte[] Sign(byte[] input, byte[] key, Func<HMAC>? hmacProvider = null)
     {
-        using HMAC hmac = _hmacProvider.Invoke();
+        hmacProvider ??= DefaultHmacProvider;
+        using HMAC hmac = hmacProvider.Invoke();
+        hmac.Key = key;
         byte[] result = hmac.ComputeHash(input);
         return result;
     }
@@ -69,10 +47,10 @@ public abstract class HashProvider
     /// <param name="signature">The signature to verify against the input data, as a byte array. Cannot be null.</param>
     /// <param name="key">The key used to verify the signature, as a byte array. Cannot be null.</param>
     /// <returns>true if the signature is valid for the input and key; otherwise, false.</returns>
-    public bool Verify(byte[] input, byte[] signature, byte[] key)
+    public bool Verify(byte[] input, byte[] signature, byte[] key, Func<HMAC>? hmacProvider = null)
     {
-        byte[] computed = Sign(input, key);
-        bool result = CryptoHelper.FixedTimeEquals(computed, signature);
+        byte[] computedSignature = Sign(input, key, hmacProvider);
+        bool result = CryptoHelper.FixedTimeEquals(computedSignature, signature);
         return result;
     }
 }

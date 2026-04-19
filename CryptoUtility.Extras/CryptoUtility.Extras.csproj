@@ -7,11 +7,13 @@
     <WarningsAsErrors>Nullable</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="SymmetricCipher\NewFolder\**" />
-    <EmbeddedResource Remove="SymmetricCipher\NewFolder\**" />
-    <None Remove="SymmetricCipher\NewFolder\**" />
+    <PackageReference Include="System.IO.Hashing" Version="10.0.3" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MemoryPack" Version="1.21.4" />
+    <Folder Include="AsymmetricCryptor\" />
+    <Folder Include="SymmetricCryptor\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CryptoUtility\CryptoUtility.csproj" />
   </ItemGroup>
 </Project>

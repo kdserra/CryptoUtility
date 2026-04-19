@@ -2,15 +2,14 @@
 
 namespace CryptoUtility;
 
-public static class CryptoHelper
+internal static class CryptoHelper
 {
-    public static readonly IKeyNormalizer DefaultKeyNormalizer = new Pbkdf2KeyNormalizer(
-#if NET8_0_OR_GREATER
-        hashAlgorithm: HashAlgorithmName.SHA256,
-#endif
-        salt: []
-    );
-
+    /// <summary>
+    /// Backwards compatible implementation for fixed time comparisons.
+    /// </summary>
+    /// <param name="left"></param>
+    /// <param name="right"></param>
+    /// <returns></returns>
     public static bool FixedTimeEquals(byte[] left, byte[] right)
     {
 #if NET8_0_OR_GREATER
@@ -47,5 +46,18 @@ public static class CryptoHelper
         Fill(buffer);
         return buffer;
 #endif
+    }
+
+    public static bool ValidateAllParamsAreNotNull(params object?[] objects)
+    {
+        foreach (object? obj in objects)
+        {
+            if (obj == null)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
