@@ -5,6 +5,7 @@ namespace CryptoUtility;
 /// <summary>
 /// Official .NET AES-256 GCM
 /// </summary>
+[GenerateStaticApi("Aes256Gcm")]
 internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
 {
     public override CipherID CipherID => CipherID.AES_256_GCM;

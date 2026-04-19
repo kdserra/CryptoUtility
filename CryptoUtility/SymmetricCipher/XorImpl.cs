@@ -2,6 +2,7 @@
 
 namespace CryptoUtility;
 
+[GenerateStaticApi("Xor")]
 internal class XorImpl : SymmetricCipher
 {
     public override CipherID CipherID => CipherID.Xor;

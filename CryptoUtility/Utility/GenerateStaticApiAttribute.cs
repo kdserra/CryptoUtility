@@ -3,5 +3,10 @@
 [AttributeUsage(AttributeTargets.Class)]
 public sealed class GenerateStaticApiAttribute : Attribute
 {
-    public string? Name { get; set; }
+    public readonly string Name;
+
+    public GenerateStaticApiAttribute(string name)
+    {
+        Name = name;
+    }
 }

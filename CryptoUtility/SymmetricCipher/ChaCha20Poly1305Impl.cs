@@ -3,6 +3,7 @@
 /// <summary>
 /// Official .NET ChaCha20-Poly1305 Implementation.
 /// </summary>
+[GenerateStaticApi("ChaCha20Poly1305")]
 internal sealed class ChaCha20Poly1305Impl : SymmetricCipherAEAD
 {
     public override int KeySizeBytes => 32; // 256-bit
