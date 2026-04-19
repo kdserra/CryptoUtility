@@ -24,7 +24,7 @@ internal sealed class XorImpl : SymmetricCipher
 
         byte[] ciphertext = Xor(input, key);
 
-        var envelope = new SymmetricCipherEnvelope(
+        SymmetricCipherEnvelope envelope = new(
             version: SymmetricCipherEnvelope.LatestVersion,
             nonce: nonce,
             tag: [],
