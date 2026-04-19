@@ -10,6 +10,9 @@
     <PackageReference Include="System.IO.Hashing" Version="10.0.3" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="CryptoUtility.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <Folder Include="AsymmetricCryptor\" />
     <Folder Include="SymmetricCryptor\" />
   </ItemGroup>

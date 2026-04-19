@@ -5,12 +5,12 @@
 /// </summary>
 internal sealed class ChaCha20Poly1305Impl : SymmetricCipherAEAD
 {
-    private const int NonceSizeBytes = 12;
-    private const int TagSizeBytes = 16;
+    public override int KeySizeBytes => 32; // 256-bit
+    public override int NonceSizeBytes => 12; // 96-bit, recommended size for ChaCha20-Poly1305
 
-    public override int KeySizeBytes => 32;
+    private const int AuthTagSizeBytes = 16; // 128-bit
 
-    public override CipherID Cipher => CipherID.ChaCha20Poly1305;
+    public override CipherID CipherID => CipherID.ChaCha20Poly1305;
 
     public override (bool success, byte[] encrypted) Encrypt(
         byte[] key,

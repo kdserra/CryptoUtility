@@ -3,10 +3,10 @@ namespace CryptoUtility;
 /// <inheritdoc cref="ChaCha20Poly1305Impl"/>
 public static class ChaCha20Poly1305
 {
-    private static readonly SymmetricCipher s_Cipher = new ChaCha20Poly1305Impl();
+    private static readonly SymmetricCipherAEAD s_Cipher = new ChaCha20Poly1305Impl();
 
-    /// <inheritdoc cref="SymmetricCipher.Cipher"/>
-    public static CipherID Cipher => s_Cipher.Cipher;
+    /// <inheritdoc cref="SymmetricCipher.CipherID"/>
+    public static CipherID Cipher => s_Cipher.CipherID;
 
     /// <inheritdoc cref="SymmetricCipher.KeySizeBytes"/>
     public static int KeySizeBytes => s_Cipher.KeySizeBytes;
@@ -18,6 +18,21 @@ public static class ChaCha20Poly1305
     /// <inheritdoc cref="SymmetricCipher.Decrypt(byte[], byte[])"/>
     public static (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted) =>
         s_Cipher.Decrypt(key, encrypted);
+
+    /// <inheritdoc cref="SymmetricCipherAE.Encrypt"/>
+    public static (bool success, byte[] encrypted) Encrypt(
+        byte[] key,
+        byte[] plaintext,
+        byte[] nonce
+    ) => s_Cipher.Encrypt(key, plaintext, nonce);
+
+    /// <inheritdoc cref="SymmetricCipherAEAD.Encrypt"/>
+    public static (bool success, byte[] encrypted) Encrypt(
+        byte[] key,
+        byte[] plaintext,
+        byte[] nonce,
+        byte[] aad
+    ) => s_Cipher.Encrypt(key, plaintext, nonce, aad);
 
     /// <inheritdoc cref="SymmetricCipher.EncryptBase64(string, string)"/>
     public static (bool success, string encrypted) Encrypt(string key, string plaintext) =>

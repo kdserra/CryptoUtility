@@ -12,6 +12,9 @@
     <None Remove="SymmetricCipher\NewFolder\**" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="CryptoUtility.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="MemoryPack" Version="1.21.4" />
   </ItemGroup>
 </Project>

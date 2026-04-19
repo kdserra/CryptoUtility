@@ -3,10 +3,10 @@
 /// <inheritdoc cref="Aes256GcmImpl"/>
 public static class Aes256Gcm
 {
-    private static readonly SymmetricCipher s_Cipher = new Aes256GcmImpl();
+    private static readonly SymmetricCipherAEAD s_Cipher = new Aes256GcmImpl();
 
-    /// <inheritdoc cref="SymmetricCipher.Cipher"/>
-    public static readonly CipherID Cipher = s_Cipher.Cipher;
+    /// <inheritdoc cref="SymmetricCipher.CipherID"/>
+    public static readonly CipherID Cipher = s_Cipher.CipherID;
 
     /// <inheritdoc cref="SymmetricCipher.KeySizeBytes"/>
     public static int KeySizeBytes = s_Cipher.KeySizeBytes;
@@ -19,12 +19,27 @@ public static class Aes256Gcm
     public static (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted) =>
         s_Cipher.Decrypt(key, encrypted);
 
+    /// <inheritdoc cref="SymmetricCipherAE.Encrypt"/>
+    public static (bool success, byte[] encrypted) Encrypt(
+        byte[] key,
+        byte[] plaintext,
+        byte[] nonce
+    ) => s_Cipher.Encrypt(key, plaintext, nonce);
+
+    /// <inheritdoc cref="SymmetricCipherAEAD.Encrypt"/>
+    public static (bool success, byte[] encrypted) Encrypt(
+        byte[] key,
+        byte[] plaintext,
+        byte[] nonce,
+        byte[] aad
+    ) => s_Cipher.Encrypt(key, plaintext, nonce, aad);
+
     /// <inheritdoc cref="SymmetricCipher.EncryptBase64(string, string)"/>
-    public static (bool success, string encrypted) Encrypt(string key, string plaintext) =>
+    public static (bool success, string encrypted) EncryptBase64(string key, string plaintext) =>
         s_Cipher.EncryptBase64(key, plaintext);
 
     /// <inheritdoc cref="SymmetricCipher.DecryptBase64(string, string)"/>
-    public static (bool success, string plaintext) Decrypt(string key, string encrypted) =>
+    public static (bool success, string plaintext) DecryptBase64(string key, string encrypted) =>
         s_Cipher.DecryptBase64(key, encrypted);
 
     /// <inheritdoc cref="SymmetricCipher.GenerateKey"/>

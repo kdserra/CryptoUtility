@@ -7,12 +7,17 @@ internal abstract class SymmetricCipher
     /// <summary>
     /// The cipher identifier used for tracking the cipher used for encrypting a given ciphertext.
     /// </summary>
-    public abstract CipherID Cipher { get; }
+    public abstract CipherID CipherID { get; }
 
     /// <summary>
     /// Gets the size, in bytes, of the cryptographic key used for encryption and decryption operations.
     /// </summary>
     public abstract int KeySizeBytes { get; }
+
+    /// <summary>
+    /// Gets the size, in bytes, of the cryptographic nonce used for encryption and decryption operations.
+    /// </summary>
+    public abstract int NonceSizeBytes { get; }
 
     /// <summary>
     /// Encrypts the specified plaintext using the provided cryptographic key.
@@ -104,7 +109,7 @@ internal abstract class SymmetricCipher
         byte[] encryptedBytes = Convert.FromBase64String(encrypted);
         (bool success, byte[] plaintext) decryptedResult = Decrypt(keyBytes, encryptedBytes);
 
-        if (decryptedResult.success)
+        if (!decryptedResult.success)
         {
             return (false, string.Empty);
         }
@@ -141,8 +146,9 @@ internal abstract class SymmetricCipher
     /// <returns>True when the envelope passed verification, false when it fails; missing required paramters.</returns>
     protected virtual bool Verify(SymmetricCipherEnvelope envelope)
     {
-        return envelope.Cipher == Cipher
+        return envelope.Cipher == CipherID
             && !envelope.Ciphertext.IsNullOrEmpty()
-            && !envelope.Nonce.IsNullOrEmpty();
+            && !envelope.Nonce.IsNullOrEmpty()
+            && envelope.Nonce.Length == NonceSizeBytes;
     }
 }

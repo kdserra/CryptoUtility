@@ -1,9 +1,11 @@
-﻿namespace CryptoUtility;
+﻿using System.Text;
+
+namespace CryptoUtility;
 
 internal abstract class SymmetricCipherAEAD : SymmetricCipherAE
 {
     public override (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext) =>
-        Encrypt(key, plaintext, nonce: CryptoHelper.GetBytes(KeySizeBytes), aad: []);
+        Encrypt(key, plaintext, nonce: CryptoHelper.GetBytes(NonceSizeBytes), aad: []);
 
     public override (bool success, byte[] encrypted) Encrypt(
         byte[] key,
