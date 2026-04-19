@@ -5,9 +5,6 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 internal sealed class XorImpl : SymmetricCipher
 {
-    /// <inheritdoc cref="SymmetricCipher.CipherID" />
-    public override CipherID CipherID => CipherID.Xor;
-
     /// <inheritdoc cref="SymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 32; // 256-bit
 
@@ -29,7 +26,6 @@ internal sealed class XorImpl : SymmetricCipher
 
         var envelope = new SymmetricCipherEnvelope(
             version: SymmetricCipherEnvelope.LatestVersion,
-            cipherID: CipherID.Xor,
             nonce: nonce,
             tag: [],
             aad: [],

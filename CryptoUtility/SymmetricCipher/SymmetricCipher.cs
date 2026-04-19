@@ -5,11 +5,6 @@ namespace CryptoUtility;
 internal abstract class SymmetricCipher
 {
     /// <summary>
-    /// The cipher identifier used for tracking the cipher used for encrypting a given ciphertext.
-    /// </summary>
-    public abstract CipherID CipherID { get; }
-
-    /// <summary>
     /// Gets the size, in bytes, of the cryptographic key used for encryption and decryption operations.
     /// </summary>
     public abstract int KeySizeBytes { get; }
@@ -181,8 +176,7 @@ internal abstract class SymmetricCipher
     /// <returns>True when the envelope passed verification, false when it fails; missing required paramters.</returns>
     protected virtual bool Verify(SymmetricCipherEnvelope envelope)
     {
-        return envelope.CipherID == CipherID
-            && !envelope.Ciphertext.IsNullOrEmpty()
+        return !envelope.Ciphertext.IsNullOrEmpty()
             && !envelope.Nonce.IsNullOrEmpty()
             && envelope.Nonce.Length == NonceSizeBytes;
     }

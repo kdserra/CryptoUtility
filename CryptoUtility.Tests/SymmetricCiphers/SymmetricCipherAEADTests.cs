@@ -19,7 +19,6 @@ public abstract class SymmetricCipherAEADTests : SymmetricCipherAETests
 
         Assert.NotNull(envelope);
         Assert.Equal(SymmetricCipherEnvelope.LatestVersion, envelope.Version);
-        Assert.NotEqual(CipherID.None, envelope.CipherID);
 
         Assert.NotNull(envelope.Ciphertext);
         Assert.NotEmpty(envelope.Ciphertext);

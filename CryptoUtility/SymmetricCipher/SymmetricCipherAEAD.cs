@@ -47,8 +47,7 @@ internal abstract class SymmetricCipherAEAD : SymmetricCipher
 
     protected override bool Verify(SymmetricCipherEnvelope envelope)
     {
-        return envelope.CipherID == CipherID
-            && !envelope.Ciphertext.IsNullOrEmpty()
+        return !envelope.Ciphertext.IsNullOrEmpty()
             && !envelope.Nonce.IsNullOrEmpty()
             && envelope.Nonce.Length == NonceSizeBytes
             && !envelope.Tag.IsNullOrEmpty();

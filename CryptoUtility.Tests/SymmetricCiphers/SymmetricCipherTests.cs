@@ -31,7 +31,6 @@ public abstract class SymmetricCipherTests
 
         Assert.NotNull(envelope);
         Assert.Equal(SymmetricCipherEnvelope.LatestVersion, envelope.Version);
-        Assert.NotEqual(CipherID.None, envelope.CipherID);
 
         Assert.NotNull(envelope.Ciphertext);
         Assert.NotEmpty(envelope.Ciphertext);
@@ -57,12 +56,6 @@ public abstract class SymmetricCipherTests
         Assert.True(okDec);
 
         Assert.Equal(plaintext, decrypted);
-    }
-
-    [Fact]
-    public void CipherId_IsValid()
-    {
-        Assert.NotEqual(CipherID.None, Cipher.CipherID);
     }
 
     [Fact]

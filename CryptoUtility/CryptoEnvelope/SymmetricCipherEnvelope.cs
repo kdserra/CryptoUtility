@@ -20,19 +20,13 @@ public partial class SymmetricCipherEnvelope
     public readonly int Version;
 
     /// <summary>
-    /// Identifier of the cipher algorithm used.
-    /// </summary>
-    [MemoryPackOrder(1)]
-    public readonly CipherID CipherID;
-
-    /// <summary>
     /// Unique nonce required for the encryption operation.
     /// Must be the same value used during encryption for successful decryption.
     /// </summary>
     /// <remarks>
     /// It may be an empty byte array if no nonce is used, but it will never be null.
     /// </remarks>
-    [MemoryPackOrder(2)]
+    [MemoryPackOrder(1)]
     public readonly byte[] Nonce;
 
     /// <summary>
@@ -43,7 +37,7 @@ public partial class SymmetricCipherEnvelope
     /// This field is only used in AE and AEAD ciphers, for other ciphers it will return an empty byte array, but it
     /// will never be null.
     /// </remarks>
-    [MemoryPackOrder(3)]
+    [MemoryPackOrder(2)]
     public readonly byte[] Tag;
 
     /// <summary>
@@ -56,7 +50,7 @@ public partial class SymmetricCipherEnvelope
     /// This field is only used in AEAD ciphers, for other ciphers it will return an empty byte array, but it will never
     /// be null.
     /// </remarks>
-    [MemoryPackOrder(4)]
+    [MemoryPackOrder(3)]
     public readonly byte[] Aad;
 
     /// <summary>
@@ -66,13 +60,12 @@ public partial class SymmetricCipherEnvelope
     /// This field is used in all symmetric ciphers.
     /// It may be an empty byte array if the payload is invalid, but it will never be null.
     /// </remarks>
-    [MemoryPackOrder(5)]
+    [MemoryPackOrder(4)]
     public readonly byte[] Ciphertext;
 
     [MemoryPackConstructor]
     public SymmetricCipherEnvelope(
         int version,
-        CipherID cipherID,
         byte[] nonce,
         byte[] tag,
         byte[] aad,
@@ -80,7 +73,6 @@ public partial class SymmetricCipherEnvelope
     )
     {
         Version = version;
-        CipherID = cipherID;
         Nonce = nonce;
         Tag = tag;
         Aad = aad;

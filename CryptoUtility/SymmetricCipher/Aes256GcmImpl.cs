@@ -8,9 +8,6 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
 {
-    /// <inheritdoc cref="SymmetricCipher.CipherID" />
-    public override CipherID CipherID => CipherID.AES_256_GCM;
-
     /// <inheritdoc cref="SymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 32; // 256-bit
 
@@ -41,7 +38,6 @@ internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
 
             var envelope = new SymmetricCipherEnvelope(
                 version: 1,
-                cipherID: CipherID,
                 nonce: nonce,
                 tag: tag,
                 aad: aad,
