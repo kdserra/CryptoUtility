@@ -2,7 +2,7 @@
 
 public class XorTests : SymmetricCipherTests
 {
-    internal override SymmetricCipher Cipher => new XorImpl();
+    internal override SymmetricCipher Cipher => new XorCipherImpl();
 
     void t()
     {

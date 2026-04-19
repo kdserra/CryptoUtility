@@ -5,7 +5,7 @@
 /// during encryption that is verified upon decryption, ensuring both confidentiality and integrity of the ciphertext
 ///and any associated (non-encrypted) data.
 /// </summary>
-internal abstract class SymmetricCipherAEAD : SymmetricCipher
+internal abstract class SymmetricCipherAEAD : SymmetricCipherAE
 {
     /// <inheritdoc cref="SymmetricCipher.Encrypt" />
     public override (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext) =>
@@ -45,13 +45,14 @@ internal abstract class SymmetricCipherAEAD : SymmetricCipher
         byte[] aad
     );
 
-    protected override bool Verify(SymmetricCipherEnvelope envelope)
+    /// <inheritdoc cref="SymmetricCipher.VerifyDecryptionParameters(byte[], SymmetricCipherEnvelope)"/>
+    protected override bool VerifyDecryptionParameters(byte[] key, SymmetricCipherEnvelope envelope)
     {
-        return !envelope.Ciphertext.IsNullOrEmpty()
-            && !envelope.Nonce.IsNullOrEmpty()
+        return key.Length == KeySizeBytes
+            && envelope.Ciphertext.Length > 0
             && envelope.Nonce.Length == NonceSizeBytes
-            && !envelope.Tag.IsNullOrEmpty();
+            && envelope.Tag.Length == AuthTagSizeBytes;
 
-        // AAD not required, optional parameter.
+        // AAD not required.
     }
 }

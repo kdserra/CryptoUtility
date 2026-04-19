@@ -6,11 +6,18 @@
 /// </summary>
 internal abstract class SymmetricCipherAE : SymmetricCipher
 {
-    protected override bool Verify(SymmetricCipherEnvelope envelope)
+    /// <summary>
+    /// Gets the size, in bytes, of the authentication tag. This tag is used to verify that the encrypted data (and any
+    /// additional data) has not been changed or tampered with.
+    /// </summary>
+    public abstract int AuthTagSizeBytes { get; }
+
+    /// <inheritdoc cref="SymmetricCipher.VerifyDecryptionParameters(byte[], SymmetricCipherEnvelope)"/>
+    protected override bool VerifyDecryptionParameters(byte[] key, SymmetricCipherEnvelope envelope)
     {
-        return !envelope.Ciphertext.IsNullOrEmpty()
-            && !envelope.Nonce.IsNullOrEmpty()
+        return key.Length == KeySizeBytes
+            && envelope.Ciphertext.Length > 0
             && envelope.Nonce.Length == NonceSizeBytes
-            && !envelope.Tag.IsNullOrEmpty();
+            && envelope.Tag.Length == AuthTagSizeBytes;
     }
 }

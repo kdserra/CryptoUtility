@@ -1,6 +1,6 @@
 ﻿namespace CryptoUtility.Extras;
 
-public sealed class XxHash64 : XxHash
+public sealed class XxHash64 : XxHashBase
 {
     public static readonly XxHash64 Shared = new();
 

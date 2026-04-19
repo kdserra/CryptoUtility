@@ -1,22 +1,20 @@
-﻿using System.Security.Cryptography;
+﻿#if NET8_0_OR_GREATER
+using System.Security.Cryptography;
+using ChaCha20Poly1305System = System.Security.Cryptography.ChaCha20Poly1305;
 
 namespace CryptoUtility;
 
 /// <summary>
-/// Official .NET AES-256 GCM
+/// Official .NET ChaCha20-Poly1305 Implementation.
 /// </summary>
 [GenerateStaticApi]
-internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
+internal sealed class ChaCha20Poly1305Impl : SymmetricCipherAEAD
 {
-    /// <inheritdoc cref="SymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 32; // 256-bit
-
-    /// <inheritdoc cref="SymmetricCipher.NonceSizeBytes" />
     public override int NonceSizeBytes => 12; // 96-bit
 
-    private const int AuthTagSize = 16; // 128-bit
+    public override int AuthTagSizeBytes => 16; // 128-bit
 
-    /// <inheritdoc cref="SymmetricCipher.Encrypt" />
     public override (bool success, byte[] encrypted) Encrypt(
         byte[] key,
         byte[] plaintext,
@@ -24,17 +22,25 @@ internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
         byte[] aad
     )
     {
+        if (!VerifyEncryptionParameters(key, plaintext, nonce))
+        {
+            return (false, []);
+        }
+
         byte[] ciphertext = new byte[plaintext.Length];
-        byte[] tag = new byte[AuthTagSize];
+        byte[] tag = new byte[AuthTagSizeBytes];
 
         try
         {
-#if NET8_0_OR_GREATER
-            using var aes = new AesGcm(key, AuthTagSize);
-#else
-            using var aes = new AesGcm(key);
-#endif
-            aes.Encrypt(nonce, plaintext, ciphertext, tag, aad);
+            using var chacha = new ChaCha20Poly1305System(key);
+
+            chacha.Encrypt(
+                nonce: nonce,
+                plaintext: plaintext,
+                ciphertext: ciphertext,
+                tag: tag,
+                associatedData: aad
+            );
 
             var envelope = new SymmetricCipherEnvelope(
                 version: 1,
@@ -52,7 +58,6 @@ internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
         }
     }
 
-    /// <inheritdoc cref="SymmetricCipher.Decrypt" />
     public override (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
     {
         SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
@@ -61,8 +66,7 @@ internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
             return (false, []);
         }
 
-        bool success = Verify(envelope);
-        if (!success)
+        if (!VerifyDecryptionParameters(key, envelope))
         {
             return (false, []);
         }
@@ -71,12 +75,15 @@ internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
 
         try
         {
-#if NET8_0_OR_GREATER
-            using var aes = new AesGcm(key, AuthTagSize);
-#else
-            using var aes = new AesGcm(key);
-#endif
-            aes.Decrypt(envelope.Nonce, envelope.Ciphertext, envelope.Tag, plaintext, envelope.Aad);
+            using var chacha = new ChaCha20Poly1305System(key);
+
+            chacha.Decrypt(
+                nonce: envelope.Nonce,
+                ciphertext: envelope.Ciphertext,
+                tag: envelope.Tag,
+                plaintext: plaintext,
+                associatedData: envelope.Aad
+            );
 
             return (true, plaintext);
         }
@@ -86,3 +93,4 @@ internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
         }
     }
 }
+#endif

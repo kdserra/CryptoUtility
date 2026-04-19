@@ -1,7 +1,7 @@
 ﻿#if NET8_0_OR_GREATER
 namespace CryptoUtility;
 
-internal sealed class Rsa2048Impl : RsaAsymmetricCipher
+internal sealed class Rsa2048Impl : RsaBase
 {
     // SHA-256
     public override int SaltSizeBytes => 32; // 256 bits

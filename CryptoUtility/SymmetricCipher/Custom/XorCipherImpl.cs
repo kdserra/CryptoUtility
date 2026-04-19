@@ -3,7 +3,7 @@
 namespace CryptoUtility;
 
 [GenerateStaticApi]
-internal sealed class XorImpl : SymmetricCipher
+internal sealed class XorCipherImpl : SymmetricCipher
 {
     /// <inheritdoc cref="SymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 32; // 256-bit
@@ -18,6 +18,11 @@ internal sealed class XorImpl : SymmetricCipher
         byte[] nonce
     )
     {
+        if (!VerifyEncryptionParameters(key, plaintext, nonce))
+        {
+            return (false, []);
+        }
+
         byte[] input = new byte[nonce.Length + plaintext.Length];
         Buffer.BlockCopy(nonce, 0, input, 0, nonce.Length);
         Buffer.BlockCopy(plaintext, 0, input, nonce.Length, plaintext.Length);
@@ -46,8 +51,7 @@ internal sealed class XorImpl : SymmetricCipher
             return (false, []);
         }
 
-        bool success = Verify(envelope);
-        if (!success)
+        if (!VerifyDecryptionParameters(key, envelope))
         {
             return (false, []);
         }

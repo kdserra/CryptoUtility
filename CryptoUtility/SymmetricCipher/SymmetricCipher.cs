@@ -10,7 +10,9 @@ internal abstract class SymmetricCipher
     public abstract int KeySizeBytes { get; }
 
     /// <summary>
-    /// Gets the size, in bytes, of the cryptographic nonce used for encryption and decryption operations.
+    /// Gets the size, in bytes, of the nonce. A nonce is a unique value used for each encryption so that encrypting the
+    /// same data more than once produces different ciphertext. This helps prevent attackers from detecting patterns or
+    /// learning information about the original data.
     /// </summary>
     public abstract int NonceSizeBytes { get; }
 
@@ -109,7 +111,8 @@ internal abstract class SymmetricCipher
     }
 
     /// <summary>
-    /// Decrypts the specified Base64-encoded encrypted string using the provided Base64 key and returns the decrypted plaintext as a Base64 string.
+    /// Decrypts the specified Base64-encoded encrypted string using the provided Base64 key and returns the decrypted
+    /// plaintext as a Base64 string.
     /// </summary>
     /// <param name="key">The cryptographic key in Base64 format.</param>
     /// <param name="encrypted">The encrypted data to decrypt in Base64 format.</param>
@@ -138,6 +141,53 @@ internal abstract class SymmetricCipher
         string plaintext = Encoding.UTF8.GetString(decryptedResult.plaintext);
 
         return (true, plaintext);
+    }
+
+    /// <summary>
+    /// Encrypts the specified plaintext using the provided Base64 key and returns the encrypted base64 data.
+    /// </summary>
+    /// <param name="key">The string representation of the cryptographic key in Base64.</param>
+    /// <param name="plaintext">The data to be encrypted.</param>
+    /// <returns>
+    /// A tuple containing:
+    /// <list type="bullet">
+    /// <item>
+    /// <description><c>success</c>: Indicates whether the encryption operation was successful.</description>
+    /// </item>
+    /// <item>
+    /// <description><c>encrypted</c>: The encrypted bytes if successful; otherwise, an empty byte array.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    public (bool success, byte[] encrypted) EncryptBase64(string key, byte[] plaintext)
+    {
+        byte[] keyBytes = Convert.FromBase64String(key);
+        (bool success, byte[] encrypted) encryptedResult = Encrypt(keyBytes, plaintext);
+        return encryptedResult;
+    }
+
+    /// <summary>
+    /// Decrypts the specified encrypted data using the provided Base64 cryptographic key and returns the decrypted
+    /// plaintext.
+    /// </summary>
+    /// <param name="key">The cryptographic key used to perform the decryption.</param>
+    /// <param name="encrypted">The encrypted data to decrypt.</param>
+    /// <returns>
+    /// A tuple containing:
+    /// <list type="bullet">
+    /// <item>
+    /// <description><c>success</c>: Indicates whether the decryption operation was successful.</description>
+    /// </item>
+    /// <item>
+    /// <description><c>plaintext</c>: The resulting decrypted byte array if successful; otherwise, an empty byte array.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    public (bool success, byte[] plaintext) DecryptBase64(string key, byte[] encrypted)
+    {
+        byte[] keyBytes = Convert.FromBase64String(key);
+        (bool success, byte[] plaintext) decryptedResult = Decrypt(keyBytes, encrypted);
+        return decryptedResult;
     }
 
     /// <summary>
@@ -170,14 +220,30 @@ internal abstract class SymmetricCipher
     }
 
     /// <summary>
+    /// Verifies the Cipher has all the required parameters for encryption.
+    /// </summary>
+    /// <param name="key">The key to verify.</param>
+    /// <param name="plaintext">The plaintext to verify.</param>
+    /// <param name="nonce">The nonce to verify.</param>
+    /// <returns>True when the parameters passed verification, false when it fails; missing required parameters.</returns>
+    protected virtual bool VerifyEncryptionParameters(byte[] key, byte[] plaintext, byte[] nonce)
+    {
+        return CryptoHelper.ValidateAllParamsAreNotNull(key, plaintext, nonce)
+            && key.Length == KeySizeBytes
+            && plaintext.Length > 0
+            && nonce.Length == NonceSizeBytes;
+    }
+
+    /// <summary>
     /// Verifies the Cipher has all the required parameters for decryption.
     /// </summary>
     /// <param name="envelope">The cipher envelope to verify.</param>
-    /// <returns>True when the envelope passed verification, false when it fails; missing required paramters.</returns>
-    protected virtual bool Verify(SymmetricCipherEnvelope envelope)
+    /// <returns>True when the parameters passed verification, false when it fails; missing required parameters.</returns>
+    protected virtual bool VerifyDecryptionParameters(byte[] key, SymmetricCipherEnvelope envelope)
     {
-        return !envelope.Ciphertext.IsNullOrEmpty()
-            && !envelope.Nonce.IsNullOrEmpty()
+        return CryptoHelper.ValidateAllParamsAreNotNull(key, envelope)
+            && key.Length == KeySizeBytes
+            && envelope.Ciphertext.Length > 0
             && envelope.Nonce.Length == NonceSizeBytes;
     }
 }

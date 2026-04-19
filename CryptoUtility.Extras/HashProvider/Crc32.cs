@@ -1,6 +1,6 @@
 ﻿namespace CryptoUtility.Extras;
 
-public sealed class Crc32 : Crc
+public sealed class Crc32 : CrcBase
 {
     public static readonly Crc32 Shared = new();
 

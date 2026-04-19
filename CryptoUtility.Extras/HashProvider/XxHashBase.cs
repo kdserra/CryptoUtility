@@ -4,7 +4,7 @@ using XxHash64System = System.IO.Hashing.XxHash64;
 
 namespace CryptoUtility.Extras;
 
-public abstract class XxHash : HashProvider
+public abstract class XxHashBase : HashProvider
 {
     public enum XxHashVariant
     {
@@ -15,7 +15,7 @@ public abstract class XxHash : HashProvider
 
     private readonly XxHashVariant _variant;
 
-    protected XxHash(XxHashVariant variant)
+    protected XxHashBase(XxHashVariant variant)
     {
         _variant = variant;
     }

@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
-internal abstract class RsaAsymmetricCipher : AsymmetricCipher
+internal abstract class RsaBase : AsymmetricCipher
 {
     public enum RsaKeySizeBits
     {
@@ -15,7 +15,7 @@ internal abstract class RsaAsymmetricCipher : AsymmetricCipher
 
     public override int KeySizeBytes { get; }
 
-    protected RsaAsymmetricCipher(RsaKeySizeBits keySize = RsaKeySizeBits.KeySize_2048)
+    protected RsaBase(RsaKeySizeBits keySize = RsaKeySizeBits.KeySize_2048)
     {
         KeySizeBytes = ConvertRsaKeySizeValueBytes(keySize);
     }

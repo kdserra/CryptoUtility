@@ -4,7 +4,7 @@ using Crc64System = System.IO.Hashing.Crc64;
 
 namespace CryptoUtility.Extras;
 
-public abstract class Crc : HashProvider
+public abstract class CrcBase : HashProvider
 {
     public enum CrcVariant
     {
@@ -14,7 +14,7 @@ public abstract class Crc : HashProvider
 
     private readonly CrcVariant _variant;
 
-    protected Crc(CrcVariant variant)
+    protected CrcBase(CrcVariant variant)
     {
         _variant = variant;
     }
