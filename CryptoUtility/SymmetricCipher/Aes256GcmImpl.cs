@@ -5,17 +5,21 @@ namespace CryptoUtility;
 /// <summary>
 /// Official .NET AES-256 GCM
 /// </summary>
-[GenerateStaticApi(nameof(Aes256Gcm))]
+[GenerateStaticApi]
 internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
 {
+    /// <inheritdoc cref="SymmetricCipher.CipherID" />
     public override CipherID CipherID => CipherID.AES_256_GCM;
 
+    /// <inheritdoc cref="SymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 32; // 256-bit
 
+    /// <inheritdoc cref="SymmetricCipher.NonceSizeBytes" />
     public override int NonceSizeBytes => 12; // 96-bit
 
     private const int AuthTagSize = 16; // 128-bit
 
+    /// <inheritdoc cref="SymmetricCipher.Encrypt" />
     public override (bool success, byte[] encrypted) Encrypt(
         byte[] key,
         byte[] plaintext,
@@ -52,6 +56,7 @@ internal sealed class Aes256GcmImpl : SymmetricCipherAEAD
         }
     }
 
+    /// <inheritdoc cref="SymmetricCipher.Decrypt" />
     public override (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
     {
         SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);

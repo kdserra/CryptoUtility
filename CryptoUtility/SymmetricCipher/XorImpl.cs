@@ -2,15 +2,19 @@
 
 namespace CryptoUtility;
 
-[GenerateStaticApi(nameof(Xor))]
+[GenerateStaticApi]
 internal sealed class XorImpl : SymmetricCipher
 {
+    /// <inheritdoc cref="SymmetricCipher.CipherID" />
     public override CipherID CipherID => CipherID.Xor;
 
+    /// <inheritdoc cref="SymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 32; // 256-bit
 
+    /// <inheritdoc cref="SymmetricCipher.NonceSizeBytes" />
     public override int NonceSizeBytes => 32; // 256-bit
 
+    /// <inheritdoc cref="SymmetricCipher.Encrypt(byte[], byte[], byte[])" />
     public override (bool success, byte[] encrypted) Encrypt(
         byte[] key,
         byte[] plaintext,
@@ -37,6 +41,7 @@ internal sealed class XorImpl : SymmetricCipher
         return (true, envelope.ToBytes());
     }
 
+    /// <inheritdoc cref="SymmetricCipher.Decrypt(byte[], byte[])" />
     public override (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
     {
         SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
