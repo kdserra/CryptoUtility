@@ -35,7 +35,8 @@ internal abstract class SymmetricCipher
     /// </item>
     /// </list>
     /// </returns>
-    public abstract (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext);
+    public virtual (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext) =>
+        Encrypt(key, plaintext, nonce: GenerateNonce());
 
     /// <summary>
     /// Decrypts the specified encrypted data using the provided cryptographic key.
@@ -54,6 +55,31 @@ internal abstract class SymmetricCipher
     /// </list>
     /// </returns>
     public abstract (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted);
+
+    /// <summary>
+    /// Encrypts the specified plaintext using the provided cryptographic key.
+    /// </summary>
+    /// <param name="key">The cryptographic key used to perform the encryption.</param>
+    /// <param name="plaintext">The data to be encrypted.</param>
+    /// <param name="nonce">A unique value used for this encryption operation that prevents reuse of ciphertext for the
+    /// same key, ensuring identical plaintexts encrypt differently each time.</param>
+    ///
+    /// <returns>
+    /// A tuple containing:
+    /// <list type="bullet">
+    /// <item>
+    /// <description><c>success</c>: Indicates whether the encryption operation was successful.</description>
+    /// </item>
+    /// <item>
+    /// <description><c>encrypted</c>: The resulting encrypted byte array if successful; otherwise, an empty byte array.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    public abstract (bool success, byte[] encrypted) Encrypt(
+        byte[] key,
+        byte[] plaintext,
+        byte[] nonce
+    );
 
     /// <summary>
     /// Encrypts the specified plaintext UTF8 string using the provided Base64 key and returns a Base64-encoded result.
@@ -126,6 +152,15 @@ internal abstract class SymmetricCipher
     public virtual byte[] GenerateKey()
     {
         return CryptoHelper.GetBytes(KeySizeBytes);
+    }
+
+    /// <summary>
+    /// Generates a new cryptographic nonce for use in encryption or decryption operations.
+    /// </summary>
+    /// <returns>A byte array containing the generated cryptographic nonce.</returns>
+    public virtual byte[] GenerateNonce()
+    {
+        return CryptoHelper.GetBytes(NonceSizeBytes);
     }
 
     /// <summary>

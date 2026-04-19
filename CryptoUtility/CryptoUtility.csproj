@@ -7,11 +7,6 @@
     <WarningsAsErrors>Nullable</WarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="SymmetricCipher\NewFolder\**" />
-    <EmbeddedResource Remove="SymmetricCipher\NewFolder\**" />
-    <None Remove="SymmetricCipher\NewFolder\**" />
-  </ItemGroup>
-  <ItemGroup>
     <InternalsVisibleTo Include="CryptoUtility.Tests" />
   </ItemGroup>
   <ItemGroup>

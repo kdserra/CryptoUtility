@@ -49,6 +49,14 @@ public abstract class SymmetricCipherTests
     }
 
     [Fact]
+    public void GenerateNonce_HasCorrectLength()
+    {
+        var nonce = Cipher.GenerateNonce();
+        Assert.NotNull(nonce);
+        Assert.Equal(Cipher.NonceSizeBytes, nonce.Length);
+    }
+
+    [Fact]
     public void EncryptDecrypt_RawBytes_Succeeds()
     {
         var key = Cipher.GenerateKey();
@@ -76,5 +84,20 @@ public abstract class SymmetricCipherTests
         var (decSuccess, decrypted) = Cipher.DecryptBase64(key, encrypted);
         Assert.True(decSuccess);
         Assert.Equal(plaintext, decrypted);
+    }
+
+    [Fact]
+    public void Encrypt_WithNonce_Succeeds()
+    {
+        var key = Cipher.GenerateKey();
+        var plaintext = Encoding.UTF8.GetBytes("nonce test");
+        var nonce = new byte[12];
+        new Random().NextBytes(nonce);
+
+        var (success, encrypted) = Cipher.Encrypt(key, plaintext, nonce);
+
+        Assert.True(success);
+        Assert.NotNull(encrypted);
+        Assert.NotEmpty(encrypted);
     }
 }

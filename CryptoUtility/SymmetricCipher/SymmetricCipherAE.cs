@@ -1,16 +1,11 @@
 ﻿namespace CryptoUtility;
 
+/// <summary>
+/// Symmetric Authenticated Encryption Ciphers additionally compute a tag upon encryption, that is verified upon
+/// decryption.
+/// </summary>
 internal abstract class SymmetricCipherAE : SymmetricCipher
 {
-    public override (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext) =>
-        Encrypt(key, plaintext, nonce: CryptoHelper.GetBytes(NonceSizeBytes));
-
-    public abstract (bool success, byte[] encrypted) Encrypt(
-        byte[] key,
-        byte[] plaintext,
-        byte[] nonce
-    );
-
     protected override bool Verify(SymmetricCipherEnvelope envelope)
     {
         return envelope.Cipher == CipherID

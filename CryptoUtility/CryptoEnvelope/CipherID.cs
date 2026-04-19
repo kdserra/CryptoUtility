@@ -24,4 +24,7 @@ public enum CipherID
     ChaCha20Poly1305 = 15,
     XChaCha20 = 16,
     XChaCha20Poly1305 = 17,
+
+    // Stateless Ciphers
+    Xor = 100,
 }
