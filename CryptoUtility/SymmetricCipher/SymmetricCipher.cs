@@ -5,6 +5,11 @@ namespace CryptoUtility;
 internal abstract class SymmetricCipher
 {
     /// <summary>
+    /// Gets the identifier for the symmetric cipher algorithm associated with this instance.
+    /// </summary>
+    public abstract SymmetricCipherID CipherID { get; }
+
+    /// <summary>
     /// Gets the size, in bytes, of the cryptographic key used for encryption and decryption operations.
     /// </summary>
     public abstract int KeySizeBytes { get; }
@@ -196,7 +201,7 @@ internal abstract class SymmetricCipher
     /// <returns>A byte array containing the generated cryptographic key.</returns>
     public virtual byte[] GenerateKey()
     {
-        return CryptoHelper.GetBytes(KeySizeBytes);
+        return Helper.GetBytes(KeySizeBytes);
     }
 
     /// <summary>
@@ -205,7 +210,7 @@ internal abstract class SymmetricCipher
     /// <returns>A byte array containing the generated cryptographic nonce.</returns>
     public virtual byte[] GenerateNonce()
     {
-        return CryptoHelper.GetBytes(NonceSizeBytes);
+        return Helper.GetBytes(NonceSizeBytes);
     }
 
     /// <summary>
@@ -228,7 +233,7 @@ internal abstract class SymmetricCipher
     /// <returns>True when the parameters passed verification, false when it fails; missing required parameters.</returns>
     protected virtual bool VerifyEncryptionParameters(byte[] key, byte[] plaintext, byte[] nonce)
     {
-        return CryptoHelper.NotNull(key, plaintext, nonce)
+        return Helper.NotNull(key, plaintext, nonce)
             && key.Length == KeySizeBytes
             && plaintext.Length > 0
             && nonce.Length == NonceSizeBytes;
@@ -241,7 +246,7 @@ internal abstract class SymmetricCipher
     /// <returns>True when the parameters passed verification, false when it fails; missing required parameters.</returns>
     protected virtual bool VerifyDecryptionParameters(byte[] key, SymmetricCipherEnvelope envelope)
     {
-        return CryptoHelper.NotNull(key, envelope)
+        return Helper.NotNull(key, envelope)
             && key.Length == KeySizeBytes
             && envelope.Ciphertext.Length > 0
             && envelope.Nonce.Length == NonceSizeBytes;

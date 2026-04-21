@@ -8,7 +8,7 @@ internal abstract class RsaBase : AsymmetricCipher
     /// <inheritdoc cref="AsymmetricCipher.Encrypt(byte[], byte[])"/>
     public override (bool success, byte[] encrypted) Encrypt(byte[] publicKey, byte[] plaintext)
     {
-        if (!CryptoHelper.NotNullOrEmpty(publicKey, plaintext))
+        if (!Helper.NotNullOrEmpty(publicKey, plaintext))
         {
             return (false, Array.Empty<byte>());
         }
@@ -30,7 +30,7 @@ internal abstract class RsaBase : AsymmetricCipher
     /// <inheritdoc cref="AsymmetricCipher.Decrypt(byte[], byte[])"/>
     public override (bool success, byte[] plaintext) Decrypt(byte[] secretKey, byte[] encrypted)
     {
-        if (!CryptoHelper.NotNullOrEmpty(secretKey, encrypted))
+        if (!Helper.NotNullOrEmpty(secretKey, encrypted))
         {
             return (false, Array.Empty<byte>());
         }
@@ -52,7 +52,7 @@ internal abstract class RsaBase : AsymmetricCipher
     /// <inheritdoc cref="AsymmetricCipher.Sign(byte[], byte[])"/>
     public override (bool success, byte[] signature) Sign(byte[] input, byte[] secretKey)
     {
-        if (!CryptoHelper.NotNullOrEmpty(input, secretKey))
+        if (!Helper.NotNullOrEmpty(input, secretKey))
         {
             return (false, Array.Empty<byte>());
         }
@@ -78,7 +78,7 @@ internal abstract class RsaBase : AsymmetricCipher
     /// <inheritdoc cref="AsymmetricCipher.Verify(byte[], byte[], byte[])"/>
     public override bool Verify(byte[] input, byte[] signature, byte[] publicKey)
     {
-        if (!CryptoHelper.NotNullOrEmpty(input, signature, publicKey))
+        if (!Helper.NotNullOrEmpty(input, signature, publicKey))
         {
             return false;
         }

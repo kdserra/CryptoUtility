@@ -9,6 +9,11 @@ namespace CryptoUtility;
 internal abstract class AsymmetricCipher
 {
     /// <summary>
+    /// Gets the identifier for the asymmetric cipher algorithm associated with this instance.
+    /// </summary>
+    public abstract AsymmetricCipherID CipherID { get; }
+
+    /// <summary>
     /// Gets the size, in bytes, of the cryptographic key used for encryption and decryption operations.
     /// </summary>
     public abstract int KeySizeBytes { get; }
@@ -94,7 +99,7 @@ internal abstract class AsymmetricCipher
 
     public (bool success, string signature) SignBase64(string message, string secretKey)
     {
-        if (!CryptoHelper.NotNull(message, secretKey))
+        if (!Helper.NotNull(message, secretKey))
         {
             return (false, string.Empty);
         }
@@ -110,7 +115,7 @@ internal abstract class AsymmetricCipher
 
     public bool VerifyBase64(string message, string signature, string publicKey)
     {
-        if (!CryptoHelper.NotNull(message, signature, publicKey))
+        if (!Helper.NotNull(message, signature, publicKey))
         {
             return false;
         }
@@ -140,5 +145,159 @@ internal abstract class AsymmetricCipher
         string publicKeyBase64 = Convert.ToBase64String(keyPair.PublicKeyBytes);
         string secretKeyBase64 = Convert.ToBase64String(keyPair.SecretKeyBytes);
         return (publicKeyBase64, secretKeyBase64);
+    }
+
+    internal (bool success, byte[] encrypted) HybridEncrypt(
+        SymmetricCipher cipher,
+        byte[] publicKey,
+        byte[] plaintext
+    )
+    {
+        if (!Helper.NotNullOrEmpty(cipher, publicKey, plaintext))
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        byte[] asymmetricPlaintextDataEncryptionKey = cipher.GenerateKey();
+        (bool success1, byte[] asymmetricEncrypted) = Encrypt(
+            publicKey,
+            asymmetricPlaintextDataEncryptionKey
+        );
+
+        if (!success1)
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        (bool success2, byte[] symmetricEncrypted) = cipher.Encrypt(
+            asymmetricPlaintextDataEncryptionKey,
+            plaintext
+        );
+        if (!success2)
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        HybridCipherEnvelope envelope = new(
+            HybridCipherEnvelope.LatestVersion,
+            asymmetricCipherID: CipherID,
+            symmetricCipherID: cipher.CipherID,
+            asymmetricEncrypted,
+            symmetricEncrypted
+        );
+
+        return (true, envelope.ToBytes());
+    }
+
+    internal (bool success, byte[] plaintext) HybridDecrypt(
+        SymmetricCipher cipher,
+        byte[] secretKey,
+        byte[] encrypted
+    )
+    {
+        if (!Helper.NotNullOrEmpty(cipher, secretKey, encrypted))
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        HybridCipherEnvelope? envelope = HybridCipherEnvelope.FromBytes(encrypted);
+        if (envelope == null)
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        if (
+            envelope.AsymmetricCipherID != CipherID
+            || envelope.SymmetricCipherID != cipher.CipherID
+        )
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        (bool success1, byte[] asymmetricPlaintextDataEncryptionKey) = Decrypt(
+            secretKey,
+            envelope.AsymmetricEncrypted
+        );
+
+        if (!success1 || asymmetricPlaintextDataEncryptionKey.IsNullOrEmpty())
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        (bool success2, byte[] symmetricPlaintext) = cipher.Decrypt(
+            asymmetricPlaintextDataEncryptionKey,
+            envelope.SymmetricEncrypted
+        );
+
+        if (!success2 || symmetricPlaintext.IsNullOrEmpty())
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        return (true, symmetricPlaintext);
+    }
+
+    public (bool success, byte[] encrypted) HybridEncrypt(
+        byte[] publicKey,
+        byte[] plaintext,
+        SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
+    )
+    {
+        SymmetricCipher? cipher = Helper.GetSymmetricCipherFromID(cipherID);
+        if (cipher == null)
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        (bool success, byte[] encrypted) result = HybridEncrypt(cipher, publicKey, plaintext);
+        return result;
+    }
+
+    public (bool success, byte[] plaintext) HybridDecrypt(
+        byte[] secretKey,
+        byte[] encrypted,
+        SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
+    )
+    {
+        SymmetricCipher? cipher = Helper.GetSymmetricCipherFromID(cipherID);
+        if (cipher == null)
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        (bool success, byte[] plaintext) result = HybridDecrypt(cipher, secretKey, encrypted);
+        return result;
+    }
+
+    public (bool success, string encrypted) HybridEncryptBase64(
+        string publicKey,
+        string plaintext,
+        SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
+    )
+    {
+        byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
+        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
+        (bool success, byte[] encrypted) = HybridEncrypt(publicKeyBytes, plaintextBytes, cipherID);
+        string encryptedBase64 = Convert.ToBase64String(encrypted);
+        return (success, encryptedBase64);
+    }
+
+    public (bool success, string plaintext) HybridDecryptBase64(
+        string secretKey,
+        string encrypted,
+        SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
+    )
+    {
+        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
+        byte[] encryptedBytes = Convert.FromBase64String(encrypted);
+
+        (bool success, byte[] plaintext) result = HybridDecrypt(
+            secretKeyBytes,
+            encryptedBytes,
+            cipherID
+        );
+
+        string plaintext = Encoding.UTF8.GetString(result.plaintext);
+        return (result.success, plaintext);
     }
 }

@@ -6,6 +6,9 @@
 [GenerateStaticApi]
 internal sealed class Aes192GcmImpl : AesGcmBase
 {
+    /// <inheritdoc cref="SymmetricCipher.CipherID" />
+    public override SymmetricCipherID CipherID => SymmetricCipherID.Aes192GcmSystem;
+
     /// <inheritdoc cref="SymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 24; // 192-bit
 

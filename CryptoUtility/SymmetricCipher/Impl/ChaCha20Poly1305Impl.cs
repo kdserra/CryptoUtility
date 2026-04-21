@@ -10,9 +10,16 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 internal sealed class ChaCha20Poly1305Impl : SymmetricCipherAEAD
 {
+    /// <inheritdoc cref="SymmetricCipher.CipherID" />
+    public override SymmetricCipherID CipherID => SymmetricCipherID.ChaCha20Poly1305System;
+
+    /// <inheritdoc cref="SymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 32; // 256-bit
+
+    /// <inheritdoc cref="SymmetricCipher.NonceSizeBytes" />
     public override int NonceSizeBytes => 12; // 96-bit
 
+    /// <inheritdoc cref="SymmetricCipherAE.AuthTagSizeBytes" />
     public override int AuthTagSizeBytes => 16; // 128-bit
 
     public override (bool success, byte[] encrypted) Encrypt(

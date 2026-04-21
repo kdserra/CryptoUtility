@@ -12,7 +12,7 @@ internal abstract class KeyAgreement
         string peerPublicKey
     )
     {
-        if (!CryptoHelper.NotNullOrEmpty(secretKey, peerPublicKey))
+        if (!Helper.NotNullOrEmpty(secretKey, peerPublicKey))
         {
             return (false, string.Empty);
         }
