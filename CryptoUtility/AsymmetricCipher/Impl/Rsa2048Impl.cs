@@ -4,6 +4,9 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 internal sealed class Rsa2048Impl : RsaBase
 {
+    /// <inheritdoc cref="AsymmetricCipher.CipherID"/>
+    public override AsymmetricCipherID CipherID => AsymmetricCipherID.Rsa2048System;
+
     /// <inheritdoc cref="AsymmetricCipher.KeySizeBytes"/>
     public override int KeySizeBytes => 256; // 2048 bits
 

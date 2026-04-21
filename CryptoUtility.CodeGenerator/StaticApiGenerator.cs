@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -131,23 +128,43 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
 
         if (p.HasExplicitDefaultValue)
         {
-            return $"{type} {name} = {RenderDefaultValue(p.ExplicitDefaultValue)}";
+            return $"{type} {name} = {RenderDefaultValue(p)}";
         }
 
         return $"{type} {name}";
     }
 
-    private static string RenderDefaultValue(object? value)
+    private static string RenderDefaultValue(IParameterSymbol p)
     {
+        var value = p.ExplicitDefaultValue;
+
         if (value is null)
             return "null";
+
+        var type = p.Type;
+
+        // Handle enums explicitly
+        if (type.TypeKind == TypeKind.Enum)
+        {
+            var enumType = (INamedTypeSymbol)type;
+
+            foreach (var member in enumType.GetMembers().OfType<IFieldSymbol>())
+            {
+                if (member.HasConstantValue && Equals(member.ConstantValue, value))
+                {
+                    return $"{enumType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}.{member.Name}";
+                }
+            }
+
+            // fallback (if no named constant matches exactly)
+            return $"({enumType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}){value}";
+        }
 
         return value switch
         {
             string s => $"\"{s}\"",
             char c => $"'{c}'",
             bool b => b ? "true" : "false",
-            Enum e => $"{e.GetType().FullName}.{e}",
             _ => value.ToString() ?? "null",
         };
     }

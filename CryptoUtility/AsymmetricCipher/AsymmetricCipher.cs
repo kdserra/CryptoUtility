@@ -340,6 +340,7 @@ internal abstract class AsymmetricCipher
         byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
         (bool success, byte[] encrypted) = HybridEncrypt(publicKeyBytes, plaintextBytes, cipherID);
         string encryptedBase64 = Convert.ToBase64String(encrypted);
+
         return (success, encryptedBase64);
     }
 
