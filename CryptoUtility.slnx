@@ -1,6 +1,5 @@
 <Solution>
   <Project Path="CryptoUtility.CodeGenerator/CryptoUtility.CodeGenerator.csproj" Id="5be36a18-f5e9-4656-aa09-286878cfbe86" />
-  <Project Path="CryptoUtility.Extras/CryptoUtility.Extras.csproj" Id="1ef6a6d8-d3a8-4425-990b-5675120ed56e" />
   <Project Path="CryptoUtility.Tests/CryptoUtility.Tests.csproj" />
   <Project Path="CryptoUtility/CryptoUtility.csproj" />
 </Solution>

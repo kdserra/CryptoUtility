@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CryptoUtility.Extras\CryptoUtility.Extras.csproj" />
     <ProjectReference Include="..\CryptoUtility\CryptoUtility.csproj" />
   </ItemGroup>
 

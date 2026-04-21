@@ -2,9 +2,6 @@
 
 namespace CryptoUtility;
 
-/// <summary>
-/// Official .NET AES-256 GCM
-/// </summary>
 internal abstract class AesGcmBase : SymmetricCipherAEAD
 {
     /// <inheritdoc cref="SymmetricCipher.Encrypt" />
@@ -34,6 +31,7 @@ internal abstract class AesGcmBase : SymmetricCipherAEAD
 
             var envelope = new SymmetricCipherEnvelope(
                 version: 1,
+                CipherID,
                 nonce: nonce,
                 tag: tag,
                 aad: aad,

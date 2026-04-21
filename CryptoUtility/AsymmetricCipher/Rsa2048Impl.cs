@@ -1,13 +1,14 @@
 ﻿#if NET8_0_OR_GREATER
 namespace CryptoUtility;
 
+[GenerateStaticApi]
 internal sealed class Rsa2048Impl : RsaBase
 {
-    // SHA-256
-    public override int SaltSizeBytes => 32; // 256 bits
+    /// <inheritdoc cref="AsymmetricCipher.KeySizeBytes"/>
+    public override int KeySizeBytes => 256; // 2048 bits
 
-    public Rsa2048Impl()
-        : base(RsaKeySizeBits.KeySize_2048) { }
+    /// <inheritdoc cref="AsymmetricCipher.SaltSizeBytes"/>
+    public override int SaltSizeBytes => 32; // 256 bits
 }
 
 #endif

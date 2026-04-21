@@ -5,6 +5,11 @@ namespace CryptoUtility;
 internal abstract class SymmetricCipher
 {
     /// <summary>
+    /// Gets the unique identifier for the symmetric cipher implemented by this instance.
+    /// </summary>
+    public abstract SymmetricCipherID CipherID { get; }
+
+    /// <summary>
     /// Gets the size, in bytes, of the cryptographic key used for encryption and decryption operations.
     /// </summary>
     public abstract int KeySizeBytes { get; }

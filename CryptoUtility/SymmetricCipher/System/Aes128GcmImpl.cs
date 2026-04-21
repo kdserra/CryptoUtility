@@ -6,6 +6,9 @@
 [GenerateStaticApi]
 internal sealed class Aes128GcmImpl : AesGcmBase
 {
+    /// <inheritdoc cref="SymmetricCipher.CipherID" />
+    public override SymmetricCipherID CipherID => SymmetricCipherID.SystemAesGcm128;
+
     /// <inheritdoc cref="SymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 16; // 128-bit
 

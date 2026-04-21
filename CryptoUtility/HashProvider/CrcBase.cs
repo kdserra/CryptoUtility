@@ -6,7 +6,7 @@ namespace CryptoUtility.Extras;
 
 public abstract class CrcBase : HashProvider
 {
-    public enum CrcVariant
+    protected enum CrcVariant
     {
         Crc32,
         Crc64,

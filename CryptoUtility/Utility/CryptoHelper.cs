@@ -60,4 +60,24 @@ internal static class CryptoHelper
 
         return true;
     }
+
+    public static bool ValidateAllParamsAreNotNullOrEmpty(params object?[] objects)
+    {
+        foreach (var obj in objects)
+        {
+            if (obj == null)
+                return false;
+
+            if (obj is string str && string.IsNullOrEmpty(str))
+                return false;
+
+            if (
+                obj is System.Collections.IEnumerable enumerable
+                && !enumerable.Cast<object>().Any()
+            )
+                return false;
+        }
+
+        return true;
+    }
 }

@@ -51,6 +51,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
 
         var sb = new StringBuilder();
 
+        sb.AppendLine($"#nullable enable");
         sb.AppendLine($"namespace {ns};");
         sb.AppendLine();
 

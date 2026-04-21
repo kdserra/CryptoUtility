@@ -4,8 +4,7 @@ namespace CryptoUtility;
 
 /// <summary>
 /// Defines a version-tolerant envelope format for storing data encrypted with a symmetric cipher.
-/// Encapsulates all required parameters for decryption, including algorithm identifier, nonce,
-/// ciphertext, authentication tag, and optional associated data.
+/// Encapsulates all required parameters for decryption.
 /// </summary>
 [MemoryPackable(GenerateType.VersionTolerant)]
 public partial class SymmetricCipherEnvelope
@@ -20,13 +19,19 @@ public partial class SymmetricCipherEnvelope
     public readonly int Version;
 
     /// <summary>
+    /// Identifier for the symmetric cipher algorithm used for encryption.
+    /// </summary>
+    [MemoryPackOrder(1)]
+    public readonly SymmetricCipherID CipherID;
+
+    /// <summary>
     /// Unique nonce required for the encryption operation.
     /// Must be the same value used during encryption for successful decryption.
     /// </summary>
     /// <remarks>
     /// It may be an empty byte array if no nonce is used, but it will never be null.
     /// </remarks>
-    [MemoryPackOrder(1)]
+    [MemoryPackOrder(2)]
     public readonly byte[] Nonce;
 
     /// <summary>
@@ -37,7 +42,7 @@ public partial class SymmetricCipherEnvelope
     /// This field is only used in AE and AEAD ciphers, for other ciphers it will return an empty byte array, but it
     /// will never be null.
     /// </remarks>
-    [MemoryPackOrder(2)]
+    [MemoryPackOrder(3)]
     public readonly byte[] Tag;
 
     /// <summary>
@@ -50,7 +55,7 @@ public partial class SymmetricCipherEnvelope
     /// This field is only used in AEAD ciphers, for other ciphers it will return an empty byte array, but it will never
     /// be null.
     /// </remarks>
-    [MemoryPackOrder(3)]
+    [MemoryPackOrder(4)]
     public readonly byte[] Aad;
 
     /// <summary>
@@ -60,12 +65,13 @@ public partial class SymmetricCipherEnvelope
     /// This field is used in all symmetric ciphers.
     /// It may be an empty byte array if the payload is invalid, but it will never be null.
     /// </remarks>
-    [MemoryPackOrder(4)]
+    [MemoryPackOrder(5)]
     public readonly byte[] Ciphertext;
 
     [MemoryPackConstructor]
     public SymmetricCipherEnvelope(
         int version,
+        SymmetricCipherID cipherID,
         byte[] nonce,
         byte[] tag,
         byte[] aad,

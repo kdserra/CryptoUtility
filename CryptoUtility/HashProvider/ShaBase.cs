@@ -2,7 +2,7 @@
 
 namespace CryptoUtility;
 
-public abstract class ShaHashProvider : HashProvider
+public abstract class ShaBase : HashProvider
 {
     public enum ShaVariant
     {
@@ -19,7 +19,7 @@ public abstract class ShaHashProvider : HashProvider
 
     private readonly ShaVariant _variant;
 
-    protected ShaHashProvider(ShaVariant variant)
+    protected ShaBase(ShaVariant variant)
     {
         _variant = variant;
     }

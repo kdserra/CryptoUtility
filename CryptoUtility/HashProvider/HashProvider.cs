@@ -28,6 +28,8 @@ public abstract class HashProvider
     /// to authenticate.</param>
     /// <param name="key">The secret key used to generate the HMAC signature. This must be a non-null byte array and
     /// should be kept confidential to ensure signature integrity.</param>
+    /// <param name="hmacProvider">Optional parameter that is responsible for providing a new instance of an HMAC that
+    /// will be used to compute the signature, if unspecified it uses <see cref="HMACSHA256"/>.</param>
     /// <returns>A byte array containing the computed HMAC signature for the input data.</returns>
     public byte[] Sign(byte[] input, byte[] key, Func<HMAC>? hmacProvider = null)
     {
@@ -46,6 +48,8 @@ public abstract class HashProvider
     /// <param name="input">The input data to verify, as a byte array. Cannot be null.</param>
     /// <param name="signature">The signature to verify against the input data, as a byte array. Cannot be null.</param>
     /// <param name="key">The key used to verify the signature, as a byte array. Cannot be null.</param>
+    /// <param name="hmacProvider">Optional parameter that is responsible for providing a new instance of an HMAC that
+    /// will be used to compute the signature, if unspecified it uses <see cref="HMACSHA256"/>.</param>
     /// <returns>true if the signature is valid for the input and key; otherwise, false.</returns>
     public bool Verify(byte[] input, byte[] signature, byte[] key, Func<HMAC>? hmacProvider = null)
     {
