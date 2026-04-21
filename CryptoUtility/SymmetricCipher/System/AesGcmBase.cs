@@ -31,7 +31,6 @@ internal abstract class AesGcmBase : SymmetricCipherAEAD
 
             var envelope = new SymmetricCipherEnvelope(
                 version: 1,
-                CipherID,
                 nonce: nonce,
                 tag: tag,
                 aad: aad,
