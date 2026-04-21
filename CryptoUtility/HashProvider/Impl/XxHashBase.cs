@@ -20,13 +20,13 @@ public abstract class XxHashBase : HashProvider
         _variant = variant;
     }
 
-    public override byte[] Hash(byte[] input)
+    public override byte[] Hash(byte[] message)
     {
         return _variant switch
         {
-            XxHashVariant.XxHash32 => XxHash32System.Hash(input),
-            XxHashVariant.XxHash64 => XxHash64System.Hash(input),
-            XxHashVariant.XxHash128 => XxHash128System.Hash(input),
+            XxHashVariant.XxHash32 => XxHash32System.Hash(message),
+            XxHashVariant.XxHash64 => XxHash64System.Hash(message),
+            XxHashVariant.XxHash128 => XxHash128System.Hash(message),
             _ => throw new NotSupportedException(),
         };
     }

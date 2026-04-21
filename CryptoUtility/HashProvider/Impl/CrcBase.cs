@@ -19,12 +19,12 @@ public abstract class CrcBase : HashProvider
         _variant = variant;
     }
 
-    public override byte[] Hash(byte[] input)
+    public override byte[] Hash(byte[] message)
     {
         return _variant switch
         {
-            CrcVariant.Crc32 => Crc32System.Hash(input),
-            CrcVariant.Crc64 => Crc64System.Hash(input),
+            CrcVariant.Crc32 => Crc32System.Hash(message),
+            CrcVariant.Crc64 => Crc64System.Hash(message),
             _ => throw new NotSupportedException(),
         };
     }

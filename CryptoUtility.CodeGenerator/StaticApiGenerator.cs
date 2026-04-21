@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -51,7 +52,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
 
         var sb = new StringBuilder();
 
-        sb.AppendLine($"#nullable enable");
+        sb.AppendLine("#nullable enable");
         sb.AppendLine($"namespace {ns};");
         sb.AppendLine();
 
@@ -66,7 +67,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         {
             if (member is IMethodSymbol method && method.MethodKind == MethodKind.Ordinary)
             {
-                if (method.ContainingType.SpecialType == SpecialType.System_Object)
+                if (ShouldSkipMethod(method))
                     continue;
 
                 EmitMethod(sb, method);
@@ -81,16 +82,34 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         return sb.ToString();
     }
 
+    private static bool ShouldSkipMethod(IMethodSymbol method)
+    {
+        if (method.ContainingType.SpecialType == SpecialType.System_Object)
+            return true;
+
+        if (method.IsStatic)
+            return true;
+
+        if (
+            method.Name
+            is nameof(object.GetType)
+                or nameof(object.Equals)
+                or nameof(object.GetHashCode)
+                or nameof(object.ToString)
+        )
+            return true;
+
+        return false;
+    }
+
     private static void EmitMethod(StringBuilder sb, IMethodSymbol method)
     {
-        var returnType = method.ReturnType.ToDisplayString();
+        var returnType = method.ReturnType.ToDisplayString(
+            SymbolDisplayFormat.FullyQualifiedFormat
+        );
         var name = method.Name;
 
-        var parameters = string.Join(
-            ", ",
-            method.Parameters.Select(p => $"{p.Type.ToDisplayString()} {p.Name}")
-        );
-
+        var parameters = string.Join(", ", method.Parameters.Select(RenderParameter));
         var args = string.Join(", ", method.Parameters.Select(p => p.Name));
 
         sb.AppendLine(
@@ -101,9 +120,45 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         sb.AppendLine();
     }
 
+    private static string RenderParameter(IParameterSymbol p)
+    {
+        var type = p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+
+        if (p.NullableAnnotation == NullableAnnotation.Annotated)
+            type += "?";
+
+        var name = p.Name;
+
+        if (p.HasExplicitDefaultValue)
+        {
+            return $"{type} {name} = {RenderDefaultValue(p.ExplicitDefaultValue)}";
+        }
+
+        return $"{type} {name}";
+    }
+
+    private static string RenderDefaultValue(object? value)
+    {
+        if (value is null)
+            return "null";
+
+        return value switch
+        {
+            string s => $"\"{s}\"",
+            char c => $"'{c}'",
+            bool b => b ? "true" : "false",
+            Enum e => $"{e.GetType().FullName}.{e}",
+            _ => value.ToString() ?? "null",
+        };
+    }
+
     private static void EmitProperty(StringBuilder sb, IPropertySymbol prop)
     {
-        var type = prop.Type.ToDisplayString();
+        var type = prop.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+
+        if (prop.NullableAnnotation == NullableAnnotation.Annotated)
+            type += "?";
+
         var name = prop.Name;
 
         sb.AppendLine($"    /// <inheritdoc cref=\"{prop.ContainingType.Name}.{prop.Name}\" />");
@@ -139,9 +194,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
                 {
                     IMethodSymbol m =>
                         $"{m.Name}({string.Join(",", m.Parameters.Select(p => p.Type.ToDisplayString()))})",
-
                     IPropertySymbol p => p.Name,
-
                     _ => member.Name,
                 };
 

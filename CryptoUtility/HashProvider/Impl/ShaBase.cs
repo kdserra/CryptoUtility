@@ -24,10 +24,10 @@ public abstract class ShaBase : HashProvider
         _variant = variant;
     }
 
-    public override byte[] Hash(byte[] input)
+    public override byte[] Hash(byte[] message)
     {
         using HashAlgorithm alg = CreateHashAlgorithm();
-        byte[] hash = alg.ComputeHash(input);
+        byte[] hash = alg.ComputeHash(message);
         return hash;
     }
 

@@ -6,6 +6,8 @@ Console.Clear();
 OutputBase64Results();
 OutputByteResults();
 
+var signature = Sha256.Sign([], []);
+
 void OutputBase64Results()
 {
     Console.WriteLine($"------------ BASE 64 ------------");
