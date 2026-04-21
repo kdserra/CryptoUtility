@@ -7,7 +7,7 @@ internal abstract class RsaBase : AsymmetricCipher
 {
     public override (bool success, byte[] encrypted) Encrypt(byte[] publicKey, byte[] plaintext)
     {
-        if (!CryptoHelper.ValidateAllParamsAreNotNullOrEmpty(publicKey, plaintext))
+        if (!CryptoHelper.NotNullOrEmpty(publicKey, plaintext))
         {
             return (false, Array.Empty<byte>());
         }
@@ -28,7 +28,7 @@ internal abstract class RsaBase : AsymmetricCipher
 
     public override (bool success, byte[] plaintext) Decrypt(byte[] secretKey, byte[] encrypted)
     {
-        if (!CryptoHelper.ValidateAllParamsAreNotNullOrEmpty(secretKey, encrypted))
+        if (!CryptoHelper.NotNullOrEmpty(secretKey, encrypted))
         {
             return (false, Array.Empty<byte>());
         }
@@ -49,7 +49,7 @@ internal abstract class RsaBase : AsymmetricCipher
 
     public override (bool success, byte[] signature) Sign(byte[] input, byte[] secretKey)
     {
-        if (!CryptoHelper.ValidateAllParamsAreNotNullOrEmpty(input, secretKey))
+        if (!CryptoHelper.NotNullOrEmpty(input, secretKey))
         {
             return (false, Array.Empty<byte>());
         }
@@ -74,7 +74,7 @@ internal abstract class RsaBase : AsymmetricCipher
 
     public override bool Verify(byte[] input, byte[] signature, byte[] publicKey)
     {
-        if (!CryptoHelper.ValidateAllParamsAreNotNullOrEmpty(input, signature, publicKey))
+        if (!CryptoHelper.NotNullOrEmpty(input, signature, publicKey))
         {
             return false;
         }
