@@ -57,7 +57,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         sb.AppendLine($"public static partial class {apiName}");
         sb.AppendLine("{");
 
-        sb.AppendLine($"    private static readonly {implName} s_Cipher = new {implName}();");
+        sb.AppendLine($"    private static readonly {implName} s_Cipher = {implName}.Shared;");
         sb.AppendLine();
 
         foreach (var member in GetAllPublicMembers(symbol))

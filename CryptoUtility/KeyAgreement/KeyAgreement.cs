@@ -12,7 +12,7 @@ internal abstract class KeyAgreement
         string peerPublicKey
     )
     {
-        if (!Helper.NotNullOrEmpty(secretKey, peerPublicKey))
+        if (!LibraryHelper.NotNullOrEmpty(secretKey, peerPublicKey))
         {
             return (false, string.Empty);
         }

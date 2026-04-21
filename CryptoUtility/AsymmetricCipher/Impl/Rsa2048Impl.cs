@@ -4,6 +4,8 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 internal sealed class Rsa2048Impl : RsaBase
 {
+    internal static readonly Rsa2048Impl Shared = new();
+
     /// <inheritdoc cref="AsymmetricCipher.CipherID"/>
     public override AsymmetricCipherID CipherID => AsymmetricCipherID.Rsa2048System;
 

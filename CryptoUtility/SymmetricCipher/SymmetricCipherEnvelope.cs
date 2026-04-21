@@ -76,7 +76,7 @@ public partial class SymmetricCipherEnvelope
         Tag = tag;
         Aad = aad;
         Ciphertext = ciphertext;
-        Helper.ThrowIfAnyNull(nonce, tag, aad, ciphertext);
+        LibraryHelper.ThrowIfAnyNull(nonce, tag, aad, ciphertext);
     }
 
     /// <summary>
@@ -142,10 +142,16 @@ public partial class SymmetricCipherEnvelope
     /// <returns>A HybridCipherEnvelope instance if deserialization is successful; otherwise, null.</returns>
     public static SymmetricCipherEnvelope? FromBytes(byte[] envelopeBytes)
     {
-        SymmetricCipherEnvelope? result = MemoryPackSerializer.Deserialize<SymmetricCipherEnvelope>(
-            envelopeBytes
-        );
+        try
+        {
+            SymmetricCipherEnvelope? result =
+                MemoryPackSerializer.Deserialize<SymmetricCipherEnvelope>(envelopeBytes);
 
-        return result;
+            return result;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

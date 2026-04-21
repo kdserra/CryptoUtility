@@ -64,7 +64,7 @@ public partial class HybridCipherEnvelope
         AsymmetricEncrypted = asymmetricEncrypted;
         SymmetricEncrypted = symmetricEncrypted;
 
-        Helper.ThrowIfAnyNull(
+        LibraryHelper.ThrowIfAnyNull(
             version,
             asymmetricCipherID,
             symmetricCipherID,
@@ -136,10 +136,17 @@ public partial class HybridCipherEnvelope
     /// <returns>A HybridCipherEnvelope instance if deserialization is successful; otherwise, null.</returns>
     public static HybridCipherEnvelope? FromBytes(byte[] envelopeBytes)
     {
-        HybridCipherEnvelope? result = MemoryPackSerializer.Deserialize<HybridCipherEnvelope>(
-            envelopeBytes
-        );
+        try
+        {
+            HybridCipherEnvelope? result = MemoryPackSerializer.Deserialize<HybridCipherEnvelope>(
+                envelopeBytes
+            );
 
-        return result;
+            return result;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

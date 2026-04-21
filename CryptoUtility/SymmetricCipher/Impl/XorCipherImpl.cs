@@ -5,6 +5,8 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 internal sealed class XorCipherImpl : SymmetricCipher
 {
+    internal static readonly XorCipherImpl Shared = new();
+
     /// <inheritdoc cref="SymmetricCipher.CipherID" />
     public override SymmetricCipherID CipherID => SymmetricCipherID.XorCipherStandard;
 

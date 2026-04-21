@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using CryptoUtility.Extras;
 
 namespace CryptoUtility;
 
@@ -47,6 +48,8 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 internal sealed class EcdhImpl : KeyAgreement
 {
+    internal static readonly EcdhImpl Shared = new();
+
     private readonly ECDiffieHellman _ecdh = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP256);
 
     /// <inheritdoc cref="KeyAgreement.DeriveSharedSecret(byte[], byte[])"/>

@@ -10,6 +10,8 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 internal sealed class ChaCha20Poly1305Impl : SymmetricCipherAEAD
 {
+    internal static readonly ChaCha20Poly1305Impl Shared = new();
+
     /// <inheritdoc cref="SymmetricCipher.CipherID" />
     public override SymmetricCipherID CipherID => SymmetricCipherID.ChaCha20Poly1305System;
 

@@ -40,7 +40,7 @@ public partial class AsymmetricCipherEnvelope
         Version = version;
         cipherID = CipherID;
         Ciphertext = ciphertext;
-        Helper.ThrowIfAnyNull(version, cipherID, ciphertext);
+        LibraryHelper.ThrowIfAnyNull(version, cipherID, ciphertext);
     }
 
     /// <summary>
@@ -106,9 +106,16 @@ public partial class AsymmetricCipherEnvelope
     /// <returns>A HybridCipherEnvelope instance if deserialization is successful; otherwise, null.</returns>
     public static AsymmetricCipherEnvelope? FromBytes(byte[] envelopeBytes)
     {
-        AsymmetricCipherEnvelope? result =
-            MemoryPackSerializer.Deserialize<AsymmetricCipherEnvelope>(envelopeBytes);
+        try
+        {
+            AsymmetricCipherEnvelope? result =
+                MemoryPackSerializer.Deserialize<AsymmetricCipherEnvelope>(envelopeBytes);
 
-        return result;
+            return result;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

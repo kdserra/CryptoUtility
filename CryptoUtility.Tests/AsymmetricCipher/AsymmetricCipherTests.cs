@@ -537,4 +537,51 @@ public abstract class AsymmetricCipherTests
         Assert.True(okDec);
         Assert.Equal(message, decrypted);
     }
+
+    [Fact]
+    public void GetThisCipher_ReturnsNotNull()
+    {
+        AsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(Cipher.CipherID);
+        Assert.NotNull(cipher);
+    }
+
+    [Fact]
+    public void GetAllCiphers_ReturnsNotNull()
+    {
+        foreach (AsymmetricCipherID cipherID in Enum.GetValues(typeof(AsymmetricCipherID)))
+        {
+            if (cipherID == AsymmetricCipherID.None)
+            {
+                continue;
+            }
+
+            AsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(cipherID);
+            Assert.NotNull(cipher);
+        }
+    }
+
+    [Fact]
+    public void GetAllCiphers_NotNullAndMatchesExpected()
+    {
+        foreach (AsymmetricCipherID cipherID in Enum.GetValues(typeof(AsymmetricCipherID)))
+        {
+            if (cipherID == AsymmetricCipherID.None)
+            {
+                continue;
+            }
+
+            AsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(cipherID);
+            Assert.NotNull(cipher);
+
+            string cipherTypeName = cipher?.GetType().Name ?? "null";
+            string cipherIDName = cipherID.ToString();
+
+            foreach (string suffix in Helper.ImplementationSuffixes)
+            {
+                cipherIDName = cipherIDName.Replace(suffix, "");
+            }
+
+            Assert.Equal(cipherTypeName, cipherIDName + "Impl");
+        }
+    }
 }

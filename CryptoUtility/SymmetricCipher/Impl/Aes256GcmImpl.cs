@@ -6,6 +6,8 @@
 [GenerateStaticApi]
 internal sealed class Aes256GcmImpl : AesGcmBase
 {
+    internal static readonly Aes256GcmImpl Shared = new();
+
     /// <inheritdoc cref="SymmetricCipher.CipherID" />
     public override SymmetricCipherID CipherID => SymmetricCipherID.Aes256GcmSystem;
 

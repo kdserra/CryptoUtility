@@ -97,7 +97,7 @@ public abstract class HashProvider
     )
     {
         byte[] computedSignature = Sign(message, key, hmacProvider);
-        bool result = Helper.FixedTimeEquals(computedSignature, signature);
+        bool result = CryptoHelper.FixedTimeEquals(computedSignature, signature);
         return result;
     }
 

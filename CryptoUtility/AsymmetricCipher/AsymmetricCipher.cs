@@ -23,12 +23,42 @@ internal abstract class AsymmetricCipher
     /// </summary>
     public abstract int SaltSizeBytes { get; }
 
+    /// <summary>
+    /// Encrypts the specified plaintext using the provided public key.
+    /// </summary>
+    /// <param name="publicKey">A byte array containing the public key to use for encryption. Must be a valid, non-null public key compatible
+    /// with the encryption algorithm.</param>
+    /// <param name="plaintext">A byte array containing the plaintext data to encrypt. Must not be null.</param>
+    /// <returns>A tuple containing a Boolean value that indicates whether the encryption was successful, and a byte array with
+    /// the encrypted data. The byte array is empty if the encryption fails.</returns>
     public abstract (bool success, byte[] encrypted) Encrypt(byte[] publicKey, byte[] plaintext);
 
+    /// <summary>
+    /// Decrypts the specified encrypted data using the provided secret key.
+    /// </summary>
+    /// <param name="secretKey">The secret key to use for decryption. This key must be valid for the encryption algorithm and cannot be null.</param>
+    /// <param name="encrypted">The encrypted data to decrypt. This parameter must be a non-null byte array containing the ciphertext.</param>
+    /// <returns>A tuple containing a value indicating whether decryption was successful and a byte array with the decrypted
+    /// plaintext. If decryption fails, the plaintext array is empty and the success value is <see langword="false"/>.</returns>
     public abstract (bool success, byte[] plaintext) Decrypt(byte[] secretKey, byte[] encrypted);
 
+    /// <summary>
+    /// Signs the specified message using the provided secret key and returns a value indicating whether the operation
+    /// was successful along with the generated signature.
+    /// </summary>
+    /// <param name="message">The message to sign, represented as a byte array. This parameter must not be null or empty.</param>
+    /// <param name="secretKey">The secret key used to sign the message, represented as a byte array. This parameter must not be null or empty.</param>
+    /// <returns>A tuple containing a boolean that indicates whether the signing operation succeeded, and a byte array containing
+    /// the generated signature. If the operation fails, the signature array will be empty.</returns>
     public abstract (bool success, byte[] signature) Sign(byte[] message, byte[] secretKey);
 
+    /// <summary>
+    /// Verifies the authenticity of a message using the specified digital signature and public key.
+    /// </summary>
+    /// <param name="message">The byte array containing the message whose signature is to be verified.</param>
+    /// <param name="signature">The byte array that holds the digital signature to validate against the message.</param>
+    /// <param name="publicKey">The byte array representing the public key to use for signature verification.</param>
+    /// <returns>true if the signature is valid for the given message and public key; otherwise, false.</returns>
     public abstract bool Verify(byte[] message, byte[] signature, byte[] publicKey);
 
     /// <summary>
@@ -99,7 +129,7 @@ internal abstract class AsymmetricCipher
 
     public (bool success, string signature) SignBase64(string message, string secretKey)
     {
-        if (!Helper.NotNull(message, secretKey))
+        if (!LibraryHelper.NotNull(message, secretKey))
         {
             return (false, string.Empty);
         }
@@ -115,7 +145,7 @@ internal abstract class AsymmetricCipher
 
     public bool VerifyBase64(string message, string signature, string publicKey)
     {
-        if (!Helper.NotNull(message, signature, publicKey))
+        if (!LibraryHelper.NotNull(message, signature, publicKey))
         {
             return false;
         }
@@ -166,7 +196,7 @@ internal abstract class AsymmetricCipher
         byte[] plaintext
     )
     {
-        if (!Helper.NotNullOrEmpty(cipher, publicKey, plaintext))
+        if (!LibraryHelper.NotNullOrEmpty(cipher, publicKey, plaintext))
         {
             return (false, Array.Empty<byte>());
         }
@@ -221,7 +251,7 @@ internal abstract class AsymmetricCipher
         byte[] encrypted
     )
     {
-        if (!Helper.NotNullOrEmpty(cipher, secretKey, encrypted))
+        if (!LibraryHelper.NotNullOrEmpty(cipher, secretKey, encrypted))
         {
             return (false, Array.Empty<byte>());
         }
@@ -281,7 +311,12 @@ internal abstract class AsymmetricCipher
         SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
     )
     {
-        SymmetricCipher? cipher = Helper.GetSymmetricCipherFromID(cipherID);
+        if (!LibraryHelper.NotNullOrEmpty(publicKey, plaintext, cipherID))
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        SymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
         if (cipher == null)
         {
             return (false, Array.Empty<byte>());
@@ -310,7 +345,12 @@ internal abstract class AsymmetricCipher
         SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
     )
     {
-        SymmetricCipher? cipher = Helper.GetSymmetricCipherFromID(cipherID);
+        if (!LibraryHelper.NotNullOrEmpty(secretKey, encrypted, cipherID))
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        SymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
         if (cipher == null)
         {
             return (false, Array.Empty<byte>());
@@ -336,6 +376,11 @@ internal abstract class AsymmetricCipher
         SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
     )
     {
+        if (!LibraryHelper.NotNullOrEmpty(publicKey, plaintext, cipherID))
+        {
+            return (false, string.Empty);
+        }
+
         byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
         byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
         (bool success, byte[] encrypted) = HybridEncrypt(publicKeyBytes, plaintextBytes, cipherID);
@@ -360,6 +405,11 @@ internal abstract class AsymmetricCipher
         SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
     )
     {
+        if (!LibraryHelper.NotNullOrEmpty(secretKey, encrypted, cipherID))
+        {
+            return (false, string.Empty);
+        }
+
         byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
         byte[] encryptedBytes = Convert.FromBase64String(encrypted);
 
