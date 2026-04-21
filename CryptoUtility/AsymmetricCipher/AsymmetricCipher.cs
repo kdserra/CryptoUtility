@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace CryptoUtility;
 
@@ -93,6 +94,11 @@ internal abstract class AsymmetricCipher
 
     public (bool success, string signature) SignBase64(string message, string secretKey)
     {
+        if (!CryptoHelper.ValidateAllParamsAreNotNull(message, secretKey))
+        {
+            return (false, string.Empty);
+        }
+
         byte[] messageBytes = Encoding.UTF8.GetBytes(message);
         byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
 
@@ -104,6 +110,11 @@ internal abstract class AsymmetricCipher
 
     public bool VerifyBase64(string message, string signature, string publicKey)
     {
+        if (!CryptoHelper.ValidateAllParamsAreNotNull(message, signature, publicKey))
+        {
+            return false;
+        }
+
         byte[] messageBytes = Encoding.UTF8.GetBytes(message);
         byte[] signatureBytes = Convert.FromBase64String(signature);
         byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
