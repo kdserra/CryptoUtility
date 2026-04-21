@@ -224,4 +224,83 @@ public abstract class AsymmetricCipherTests
         var result = Cipher.Verify(null!, null!, null!);
         Assert.False(result);
     }
+
+    [Fact]
+    public void SignVerify_Base64_Roundtrip()
+    {
+        var (pub, sec) = Cipher.GenerateKeyBase64();
+        string message = "hello world";
+
+        var (okSign, signature) = Cipher.SignBase64(message, sec);
+        Assert.True(okSign);
+        Assert.False(string.IsNullOrEmpty(signature));
+
+        var verified = Cipher.VerifyBase64(message, signature, pub);
+        Assert.True(verified);
+    }
+
+    [Fact]
+    public void VerifyBase64_ModifiedMessage_Fails()
+    {
+        var (pub, sec) = Cipher.GenerateKeyBase64();
+        string message = "hello world";
+
+        var (okSign, signature) = Cipher.SignBase64(message, sec);
+        Assert.True(okSign);
+
+        var verified = Cipher.VerifyBase64("tampered", signature, pub);
+        Assert.False(verified);
+    }
+
+    [Fact]
+    public void VerifyBase64_ModifiedSignature_Fails()
+    {
+        var (pub, sec) = Cipher.GenerateKeyBase64();
+        string message = "hello world";
+
+        var (okSign, signature) = Cipher.SignBase64(message, sec);
+        Assert.True(okSign);
+
+        // corrupt signature
+        var bytes = Convert.FromBase64String(signature);
+        bytes[0] ^= 0xFF;
+        string tamperedSignature = Convert.ToBase64String(bytes);
+
+        var verified = Cipher.VerifyBase64(message, tamperedSignature, pub);
+        Assert.False(verified);
+    }
+
+    [Fact]
+    public void SignBase64_WithEmptyMessage_Fails()
+    {
+        var (_, sec) = Cipher.GenerateKeyBase64();
+
+        var (success, signature) = Cipher.SignBase64("", sec);
+
+        Assert.False(success);
+        Assert.True(string.IsNullOrEmpty(signature));
+    }
+
+    [Fact]
+    public void SignBase64_WithInvalidKey_Fails()
+    {
+        var (success, signature) = Cipher.SignBase64("hello", "");
+
+        Assert.False(success);
+        Assert.True(string.IsNullOrEmpty(signature));
+    }
+
+    [Fact]
+    public void VerifyBase64_WithInvalidInputs_Fails()
+    {
+        var result = Cipher.VerifyBase64("", "", "");
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void VerifyBase64_WithNullInputs_Fails()
+    {
+        var result = Cipher.VerifyBase64(null!, null!, null!);
+        Assert.False(result);
+    }
 }

@@ -21,7 +21,7 @@ internal abstract class AsymmetricCipher
 
     public abstract (bool success, byte[] plaintext) Decrypt(byte[] secretKey, byte[] encrypted);
 
-    public abstract (bool success, byte[] signature) Sign(byte[] input, byte[] secretKey);
+    public abstract (bool success, byte[] signature) Sign(byte[] message, byte[] secretKey);
 
     public abstract bool Verify(byte[] message, byte[] signature, byte[] publicKey);
 
@@ -89,6 +89,27 @@ internal abstract class AsymmetricCipher
         string plaintext = Encoding.UTF8.GetString(decryptedResult.plaintext);
 
         return (true, plaintext);
+    }
+
+    public (bool success, string signature) SignBase64(string message, string secretKey)
+    {
+        byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
+
+        (bool success, byte[] signatureBytes) = Sign(messageBytes, secretKeyBytes);
+        string signature = Convert.ToBase64String(signatureBytes);
+
+        return (success, signature);
+    }
+
+    public bool VerifyBase64(string message, string signature, string publicKey)
+    {
+        byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+        byte[] signatureBytes = Convert.FromBase64String(signature);
+        byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
+        bool isValid = Verify(messageBytes, signatureBytes, publicKeyBytes);
+
+        return isValid;
     }
 
     /// <summary>
