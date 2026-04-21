@@ -3,14 +3,14 @@ using CryptoUtility;
 
 Console.Clear();
 
-OutputBase64Results();
-OutputByteResults();
+OutputCipherBase64Results();
+OutputCipherByteResults();
+OutputHashBase64Results();
+OutputHashByteResults();
 
-var signature = Sha256.Sign([], []);
-
-void OutputBase64Results()
+void OutputCipherBase64Results()
 {
-    Console.WriteLine($"------------ BASE 64 ------------");
+    Console.WriteLine($"------------ CIPHER BASE 64 ------------");
     Console.WriteLine();
 
     var key = Aes256Gcm.GenerateKeyBase64();
@@ -56,9 +56,9 @@ void OutputBase64Results()
     Console.WriteLine();
 }
 
-void OutputByteResults()
+void OutputCipherByteResults()
 {
-    Console.WriteLine($"------------ RAW BYTES ------------");
+    Console.WriteLine($"------------ CIPHER RAW BYTES ------------");
     Console.WriteLine();
 
     var key = Aes256Gcm.GenerateKey();
@@ -101,6 +101,51 @@ void OutputByteResults()
     Console.WriteLine($"------------ Sign & Verify ------------");
     Console.WriteLine($"Signature: {signature.Format()}");
     Console.WriteLine($"IsValid: {isValid}");
+    Console.WriteLine();
+}
+
+void OutputHashBase64Results()
+{
+    Console.WriteLine($"------------ HASH BASE64 ------------");
+    Console.WriteLine();
+
+    var secretKey = "my secret key";
+    var message = "Hello, world!";
+
+    Console.WriteLine($"Key: {secretKey}");
+    Console.WriteLine($"Hash: {message}");
+
+    var hash = Sha256.HashBase64(message);
+    Console.WriteLine($"Hash: {hash}");
+
+    var signature = Sha256.SignBase64(message, secretKey);
+    Console.WriteLine($"Signature: {signature}");
+
+    var isValidSignature = Sha256.VerifyBase64(message, signature, secretKey);
+    Console.WriteLine($"Valid Signature: {isValidSignature}");
+
+    Console.WriteLine();
+}
+void OutputHashByteResults()
+{
+    Console.WriteLine($"------------ HASH RAW BYTES ------------");
+    Console.WriteLine();
+
+    byte[] secretKey = "my secret key"u8.ToArray();
+    byte[] message = "Hello, world!"u8.ToArray();
+
+    Console.WriteLine($"Key: {secretKey.Format()}");
+    Console.WriteLine($"Hash: {message.Format()}");
+
+    var hash = Sha256.Hash(message);
+    Console.WriteLine($"Hash: {hash.Format()}");
+
+    var signature = Sha256.Sign(message, secretKey);
+    Console.WriteLine($"Signature: {signature.Format()}");
+
+    var isValidSignature = Sha256.Verify(message, signature, secretKey);
+    Console.WriteLine($"Valid Signature: {isValidSignature}");
+
     Console.WriteLine();
 }
 
