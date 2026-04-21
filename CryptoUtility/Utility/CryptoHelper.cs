@@ -48,7 +48,7 @@ internal static class CryptoHelper
 #endif
     }
 
-    public static bool ValidateAllParamsAreNotNull(params object?[] objects)
+    public static bool NotNull(params object?[] objects)
     {
         foreach (object? obj in objects)
         {

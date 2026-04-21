@@ -228,7 +228,7 @@ internal abstract class SymmetricCipher
     /// <returns>True when the parameters passed verification, false when it fails; missing required parameters.</returns>
     protected virtual bool VerifyEncryptionParameters(byte[] key, byte[] plaintext, byte[] nonce)
     {
-        return CryptoHelper.ValidateAllParamsAreNotNull(key, plaintext, nonce)
+        return CryptoHelper.NotNull(key, plaintext, nonce)
             && key.Length == KeySizeBytes
             && plaintext.Length > 0
             && nonce.Length == NonceSizeBytes;
@@ -241,7 +241,7 @@ internal abstract class SymmetricCipher
     /// <returns>True when the parameters passed verification, false when it fails; missing required parameters.</returns>
     protected virtual bool VerifyDecryptionParameters(byte[] key, SymmetricCipherEnvelope envelope)
     {
-        return CryptoHelper.ValidateAllParamsAreNotNull(key, envelope)
+        return CryptoHelper.NotNull(key, envelope)
             && key.Length == KeySizeBytes
             && envelope.Ciphertext.Length > 0
             && envelope.Nonce.Length == NonceSizeBytes;

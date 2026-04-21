@@ -8,7 +8,7 @@ public abstract class AsymmetricCipherTests
 
     protected (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
     {
-        return Cipher.GenerateKey();
+        return Cipher.GenerateKeyPair();
     }
 
     protected byte[] GeneratePlaintext()
@@ -48,7 +48,7 @@ public abstract class AsymmetricCipherTests
     [Fact]
     public void EncryptDecrypt_Base64_Roundtrip()
     {
-        var (pub, sec) = Cipher.GenerateKeyBase64();
+        var (pub, sec) = Cipher.GenerateKeyPairBase64();
         string message = "hello world";
 
         var (okEnc, encrypted) = Cipher.EncryptBase64(pub, message);
@@ -228,7 +228,7 @@ public abstract class AsymmetricCipherTests
     [Fact]
     public void SignVerify_Base64_Roundtrip()
     {
-        var (pub, sec) = Cipher.GenerateKeyBase64();
+        var (pub, sec) = Cipher.GenerateKeyPairBase64();
         string message = "hello world";
 
         var (okSign, signature) = Cipher.SignBase64(message, sec);
@@ -242,7 +242,7 @@ public abstract class AsymmetricCipherTests
     [Fact]
     public void VerifyBase64_ModifiedMessage_Fails()
     {
-        var (pub, sec) = Cipher.GenerateKeyBase64();
+        var (pub, sec) = Cipher.GenerateKeyPairBase64();
         string message = "hello world";
 
         var (okSign, signature) = Cipher.SignBase64(message, sec);
@@ -255,7 +255,7 @@ public abstract class AsymmetricCipherTests
     [Fact]
     public void VerifyBase64_ModifiedSignature_Fails()
     {
-        var (pub, sec) = Cipher.GenerateKeyBase64();
+        var (pub, sec) = Cipher.GenerateKeyPairBase64();
         string message = "hello world";
 
         var (okSign, signature) = Cipher.SignBase64(message, sec);
@@ -273,7 +273,7 @@ public abstract class AsymmetricCipherTests
     [Fact]
     public void SignBase64_WithEmptyMessage_Fails()
     {
-        var (_, sec) = Cipher.GenerateKeyBase64();
+        var (_, sec) = Cipher.GenerateKeyPairBase64();
 
         var (success, signature) = Cipher.SignBase64("", sec);
 

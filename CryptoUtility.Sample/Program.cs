@@ -26,7 +26,7 @@ void OutputBase64Results()
     // Asymmetric
     // -----------
 
-    (string publicKey, string secretKey) = Rsa2048.GenerateKeyBase64();
+    (string publicKey, string secretKey) = Rsa2048.GenerateKeyPairBase64();
     (_, string encrypted2) = Rsa2048.EncryptBase64(publicKey, plaintext1);
     (_, string plaintext3) = Rsa2048.DecryptBase64(secretKey, encrypted2);
 
@@ -74,7 +74,7 @@ void OutputByteResults()
     // Asymmetric
     // -----------
 
-    (byte[] publicKey, byte[] secretKey) = Rsa2048.GenerateKey();
+    (byte[] publicKey, byte[] secretKey) = Rsa2048.GenerateKeyPair();
     (_, byte[] encrypted2) = Rsa2048.Encrypt(publicKey, plaintext1);
     (_, byte[] plaintext3) = Rsa2048.Decrypt(secretKey, encrypted2);
 

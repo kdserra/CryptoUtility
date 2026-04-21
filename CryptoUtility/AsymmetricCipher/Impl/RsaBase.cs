@@ -5,6 +5,7 @@ namespace CryptoUtility;
 
 internal abstract class RsaBase : AsymmetricCipher
 {
+    /// <inheritdoc cref="AsymmetricCipher.Encrypt(byte[], byte[])"/>
     public override (bool success, byte[] encrypted) Encrypt(byte[] publicKey, byte[] plaintext)
     {
         if (!CryptoHelper.NotNullOrEmpty(publicKey, plaintext))
@@ -26,6 +27,7 @@ internal abstract class RsaBase : AsymmetricCipher
         }
     }
 
+    /// <inheritdoc cref="AsymmetricCipher.Decrypt(byte[], byte[])"/>
     public override (bool success, byte[] plaintext) Decrypt(byte[] secretKey, byte[] encrypted)
     {
         if (!CryptoHelper.NotNullOrEmpty(secretKey, encrypted))
@@ -47,6 +49,7 @@ internal abstract class RsaBase : AsymmetricCipher
         }
     }
 
+    /// <inheritdoc cref="AsymmetricCipher.Sign(byte[], byte[])"/>
     public override (bool success, byte[] signature) Sign(byte[] input, byte[] secretKey)
     {
         if (!CryptoHelper.NotNullOrEmpty(input, secretKey))
@@ -72,6 +75,7 @@ internal abstract class RsaBase : AsymmetricCipher
         }
     }
 
+    /// <inheritdoc cref="AsymmetricCipher.Verify(byte[], byte[], byte[])"/>
     public override bool Verify(byte[] input, byte[] signature, byte[] publicKey)
     {
         if (!CryptoHelper.NotNullOrEmpty(input, signature, publicKey))
@@ -97,7 +101,8 @@ internal abstract class RsaBase : AsymmetricCipher
         }
     }
 
-    public override (byte[] PublicKey, byte[] SecretKey) GenerateKey()
+    /// <inheritdoc cref="AsymmetricCipher.GenerateKeyPair()"/>
+    public override (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
     {
         using RSA rsa = RSA.Create(KeySizeBytes * 8);
         byte[] publicKeyBytes = rsa.ExportSubjectPublicKeyInfo();

@@ -30,7 +30,7 @@ internal abstract class AsymmetricCipher
     /// Encrypts the specified plaintext UTF8 string using the provided Base64 public key and returns whether it
     /// succeeded, and the encrypted result in Base64.
     /// </summary>
-    /// <param name="publicKey">Base64 key, use <see cref="AsymmetricCipher.GenerateKeyBase64"/> to easily generate.</param>
+    /// <param name="publicKey">Base64 key, use <see cref="AsymmetricCipher.GenerateKeyPairBase64"/> to easily generate.</param>
     /// <param name="plaintext">Plaintext UTF8 string to encrypt.</param>
     /// <returns>
     /// A tuple containing:
@@ -94,7 +94,7 @@ internal abstract class AsymmetricCipher
 
     public (bool success, string signature) SignBase64(string message, string secretKey)
     {
-        if (!CryptoHelper.ValidateAllParamsAreNotNull(message, secretKey))
+        if (!CryptoHelper.NotNull(message, secretKey))
         {
             return (false, string.Empty);
         }
@@ -110,7 +110,7 @@ internal abstract class AsymmetricCipher
 
     public bool VerifyBase64(string message, string signature, string publicKey)
     {
-        if (!CryptoHelper.ValidateAllParamsAreNotNull(message, signature, publicKey))
+        if (!CryptoHelper.NotNull(message, signature, publicKey))
         {
             return false;
         }
@@ -127,16 +127,16 @@ internal abstract class AsymmetricCipher
     /// Generates a new cryptographic key for use in encryption or decryption operations.
     /// </summary>
     /// <returns>A byte array containing the generated cryptographic key.</returns>
-    public abstract (byte[] PublicKey, byte[] SecretKey) GenerateKey();
+    public abstract (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair();
 
     /// <summary>
     /// Generates a new cryptographic key and returns it as a Base64 encoded string.
     /// </summary>
     /// <param name="cryptor">The symmetric cryptor instance.</param>
     /// <returns>The generated key as a Base64 string.</returns>
-    public (string PublicKey, string SecretKey) GenerateKeyBase64()
+    public (string PublicKey, string SecretKey) GenerateKeyPairBase64()
     {
-        (byte[] PublicKeyBytes, byte[] SecretKeyBytes) keyPair = GenerateKey();
+        (byte[] PublicKeyBytes, byte[] SecretKeyBytes) keyPair = GenerateKeyPair();
         string publicKeyBase64 = Convert.ToBase64String(keyPair.PublicKeyBytes);
         string secretKeyBase64 = Convert.ToBase64String(keyPair.SecretKeyBytes);
         return (publicKeyBase64, secretKeyBase64);
