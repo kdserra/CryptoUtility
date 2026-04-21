@@ -18,8 +18,8 @@ internal abstract class RsaBase : AsymmetricCipher
             using RSA rsa = RSA.Create();
             rsa.ImportSubjectPublicKeyInfo(publicKey, out _);
 
-            byte[] encrypted = rsa.Encrypt(plaintext, RSAEncryptionPadding.OaepSHA256);
-            return (true, encrypted);
+            byte[] ciphertext = rsa.Encrypt(plaintext, RSAEncryptionPadding.OaepSHA256);
+            return (true, ciphertext);
         }
         catch
         {
@@ -40,8 +40,8 @@ internal abstract class RsaBase : AsymmetricCipher
             using RSA rsa = RSA.Create();
             rsa.ImportPkcs8PrivateKey(secretKey, out _);
 
-            byte[] decrypted = rsa.Decrypt(encrypted, RSAEncryptionPadding.OaepSHA256);
-            return (true, decrypted);
+            byte[] plaintext = rsa.Decrypt(encrypted, RSAEncryptionPadding.OaepSHA256);
+            return (true, plaintext);
         }
         catch
         {
