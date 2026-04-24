@@ -151,21 +151,21 @@ internal abstract class AsymmetricCipher
         }
 
         byte[] asymmetricPlaintextDataEncryptionKey = cipher.GenerateKey();
-        (bool success1, byte[] asymmetricEncrypted) = Encrypt(
+        (bool asymmetricSuccess, byte[] asymmetricEncrypted) = Encrypt(
             publicKey,
             asymmetricPlaintextDataEncryptionKey
         );
 
-        if (!success1)
+        if (!asymmetricSuccess)
         {
             return (false, Array.Empty<byte>());
         }
 
-        (bool success2, byte[] symmetricEncrypted) = cipher.Encrypt(
+        (bool symmetricSuccess, byte[] symmetricEncrypted) = cipher.Encrypt(
             asymmetricPlaintextDataEncryptionKey,
             plaintext
         );
-        if (!success2)
+        if (!symmetricSuccess)
         {
             return (false, Array.Empty<byte>());
         }
@@ -219,22 +219,22 @@ internal abstract class AsymmetricCipher
             return (false, Array.Empty<byte>());
         }
 
-        (bool success1, byte[] asymmetricPlaintextDataEncryptionKey) = Decrypt(
+        (bool asymmetricSuccess, byte[] asymmetricPlaintextDataEncryptionKey) = Decrypt(
             secretKey,
             envelope.AsymmetricEncrypted
         );
 
-        if (!success1 || asymmetricPlaintextDataEncryptionKey.IsNullOrEmpty())
+        if (!asymmetricSuccess || asymmetricPlaintextDataEncryptionKey.IsNullOrEmpty())
         {
             return (false, Array.Empty<byte>());
         }
 
-        (bool success2, byte[] symmetricPlaintext) = cipher.Decrypt(
+        (bool symmetricSuccess, byte[] symmetricPlaintext) = cipher.Decrypt(
             asymmetricPlaintextDataEncryptionKey,
             envelope.SymmetricEncrypted
         );
 
-        if (!success2 || symmetricPlaintext.IsNullOrEmpty())
+        if (!symmetricSuccess || symmetricPlaintext.IsNullOrEmpty())
         {
             return (false, Array.Empty<byte>());
         }

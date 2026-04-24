@@ -32,7 +32,6 @@ internal abstract class DigitalSignature
 
         byte[] messageBytes = Encoding.UTF8.GetBytes(message);
         byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
-
         (bool success, byte[] signatureBytes) = Sign(messageBytes, secretKeyBytes);
         string signature = Convert.ToBase64String(signatureBytes);
 
