@@ -49,8 +49,7 @@ namespace CryptoUtility;
 internal sealed class EcdhImpl : KeyAgreement
 {
     internal static readonly EcdhImpl Shared = new();
-
-    private readonly ECDiffieHellman _ecdh = ECDiffieHellman.Create(ECCurve.NamedCurves.nistP256);
+    private static readonly ECCurve _defaultECCurve = ECCurve.NamedCurves.nistP256;
 
     /// <inheritdoc cref="KeyAgreement.DeriveSharedSecret(byte[], byte[])"/>
     public override (bool success, byte[] sharedSecret) DeriveSharedSecret(
@@ -60,10 +59,10 @@ internal sealed class EcdhImpl : KeyAgreement
     {
         try
         {
-            using var local = ECDiffieHellman.Create();
+            using var local = ECDiffieHellman.Create(_defaultECCurve);
             local.ImportPkcs8PrivateKey(secretKey, out _);
 
-            using var peer = ECDiffieHellman.Create();
+            using var peer = ECDiffieHellman.Create(_defaultECCurve);
             peer.ImportSubjectPublicKeyInfo(peerPublicKey, out _);
 
             byte[] secret = local.DeriveKeyMaterial(peer.PublicKey);
@@ -78,8 +77,9 @@ internal sealed class EcdhImpl : KeyAgreement
     /// <inheritdoc cref="KeyAgreement.GenerateKeyPair()"/>
     public override (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
     {
-        byte[] publicKey = _ecdh.ExportSubjectPublicKeyInfo();
-        byte[] secretKey = _ecdh.ExportPkcs8PrivateKey();
+        using var ecdh = ECDiffieHellman.Create(_defaultECCurve);
+        byte[] publicKey = ecdh.ExportSubjectPublicKeyInfo();
+        byte[] secretKey = ecdh.ExportPkcs8PrivateKey();
         return (publicKey, secretKey);
     }
 }
