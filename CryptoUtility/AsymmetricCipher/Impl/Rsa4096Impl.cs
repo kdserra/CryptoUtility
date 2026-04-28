@@ -2,17 +2,17 @@
 namespace CryptoUtility;
 
 [GenerateStaticApi]
-internal sealed class Rsa4096Impl : RsaBase
+public sealed class Rsa4096Impl : RsaBase
 {
-    internal static readonly Rsa4096Impl Shared = new();
+    public static readonly Rsa4096Impl Shared = new();
 
-    /// <inheritdoc cref="AsymmetricCipher.CipherID"/>
+    /// <inheritdoc cref="IAsymmetricCipher.CipherID"/>
     public override AsymmetricCipherID CipherID => AsymmetricCipherID.Rsa4096System;
 
-    /// <inheritdoc cref="AsymmetricCipher.KeySizeBytes"/>
+    /// <inheritdoc cref="IAsymmetricCipher.KeySizeBytes"/>
     public override int KeySizeBytes => 512; // 4096 bits
 
-    /// <inheritdoc cref="AsymmetricCipher.SaltSizeBytes"/>
+    /// <inheritdoc cref="IAsymmetricCipher.SaltSizeBytes"/>
     public override int SaltSizeBytes => 64; // 512 bits
 }
 

@@ -2,9 +2,9 @@
 
 public abstract class KeyAgreementTests
 {
-    internal abstract KeyAgreement KeyAgreement { get; }
+    internal abstract IKeyAgreement KeyAgreement { get; }
 
-    internal abstract KeyAgreement CreateNew();
+    internal abstract IKeyAgreement CreateNew();
 
     protected (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
     {

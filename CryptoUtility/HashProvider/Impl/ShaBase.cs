@@ -2,7 +2,7 @@
 
 namespace CryptoUtility;
 
-public abstract class ShaBase : HashProvider
+public abstract class ShaBase : IHashProvider
 {
     public enum ShaVariant
     {

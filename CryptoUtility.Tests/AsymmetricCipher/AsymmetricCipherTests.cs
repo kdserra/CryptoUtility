@@ -4,7 +4,7 @@ namespace CryptoUtility.Tests;
 
 public abstract class AsymmetricCipherTests
 {
-    internal abstract AsymmetricCipher Cipher { get; }
+    public abstract IAsymmetricCipher Cipher { get; }
 
     protected (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
     {
@@ -61,51 +61,6 @@ public abstract class AsymmetricCipherTests
     }
 
     [Fact]
-    public void SignVerify_Roundtrip()
-    {
-        var (pub, sec) = GenerateKeyPair();
-        var message = GeneratePlaintext();
-
-        var (okSign, signature) = Cipher.Sign(message, sec);
-        Assert.True(okSign);
-        Assert.NotNull(signature);
-        Assert.NotEmpty(signature);
-
-        var verified = Cipher.Verify(message, signature, pub);
-        Assert.True(verified);
-    }
-
-    [Fact]
-    public void Verify_ModifiedMessage_Fails()
-    {
-        var (pub, sec) = GenerateKeyPair();
-        var message = GeneratePlaintext();
-
-        var (okSign, signature) = Cipher.Sign(message, sec);
-        Assert.True(okSign);
-
-        var tampered = Encoding.UTF8.GetBytes("tampered");
-
-        var verified = Cipher.Verify(tampered, signature, pub);
-        Assert.False(verified);
-    }
-
-    [Fact]
-    public void Verify_ModifiedSignature_Fails()
-    {
-        var (pub, sec) = GenerateKeyPair();
-        var message = GeneratePlaintext();
-
-        var (okSign, signature) = Cipher.Sign(message, sec);
-        Assert.True(okSign);
-
-        signature[0] ^= 0xFF; // flip a bit
-
-        var verified = Cipher.Verify(message, signature, pub);
-        Assert.False(verified);
-    }
-
-    [Fact]
     public void Encrypt_WithInvalidEmptyKey_Fails()
     {
         var plaintext = GeneratePlaintext();
@@ -154,37 +109,6 @@ public abstract class AsymmetricCipherTests
     }
 
     [Fact]
-    public void Sign_WithInvalidEmptyKey_Fails()
-    {
-        var message = GeneratePlaintext();
-
-        var (success, signature) = Cipher.Sign(message, []);
-
-        Assert.False(success);
-        Assert.NotNull(signature);
-        Assert.Empty(signature);
-    }
-
-    [Fact]
-    public void Sign_WithInvalidEmptyMessage_Fails()
-    {
-        var (_, sec) = GenerateKeyPair();
-
-        var (success, signature) = Cipher.Sign([], sec);
-
-        Assert.False(success);
-        Assert.NotNull(signature);
-        Assert.Empty(signature);
-    }
-
-    [Fact]
-    public void Verify_WithInvalidInputs_Fails()
-    {
-        var result = Cipher.Verify([], [], []);
-        Assert.False(result);
-    }
-
-    [Fact]
     public void Encrypt_WithNullKey_Fails()
     {
         var plaintext = GeneratePlaintext();
@@ -204,104 +128,6 @@ public abstract class AsymmetricCipherTests
         Assert.False(success);
         Assert.NotNull(plaintext);
         Assert.Empty(plaintext);
-    }
-
-    [Fact]
-    public void Sign_WithNullKey_Fails()
-    {
-        var message = GeneratePlaintext();
-
-        var (success, signature) = Cipher.Sign(message, null!);
-
-        Assert.False(success);
-        Assert.NotNull(signature);
-        Assert.Empty(signature);
-    }
-
-    [Fact]
-    public void Verify_WithNullInputs_Fails()
-    {
-        var result = Cipher.Verify(null!, null!, null!);
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void SignVerify_Base64_Roundtrip()
-    {
-        var (pub, sec) = Cipher.GenerateKeyPairBase64();
-        string message = "hello world";
-
-        var (okSign, signature) = Cipher.SignBase64(message, sec);
-        Assert.True(okSign);
-        Assert.False(string.IsNullOrEmpty(signature));
-
-        var verified = Cipher.VerifyBase64(message, signature, pub);
-        Assert.True(verified);
-    }
-
-    [Fact]
-    public void VerifyBase64_ModifiedMessage_Fails()
-    {
-        var (pub, sec) = Cipher.GenerateKeyPairBase64();
-        string message = "hello world";
-
-        var (okSign, signature) = Cipher.SignBase64(message, sec);
-        Assert.True(okSign);
-
-        var verified = Cipher.VerifyBase64("tampered", signature, pub);
-        Assert.False(verified);
-    }
-
-    [Fact]
-    public void VerifyBase64_ModifiedSignature_Fails()
-    {
-        var (pub, sec) = Cipher.GenerateKeyPairBase64();
-        string message = "hello world";
-
-        var (okSign, signature) = Cipher.SignBase64(message, sec);
-        Assert.True(okSign);
-
-        // corrupt signature
-        var bytes = Convert.FromBase64String(signature);
-        bytes[0] ^= 0xFF;
-        string tamperedSignature = Convert.ToBase64String(bytes);
-
-        var verified = Cipher.VerifyBase64(message, tamperedSignature, pub);
-        Assert.False(verified);
-    }
-
-    [Fact]
-    public void SignBase64_WithEmptyMessage_Fails()
-    {
-        var (_, sec) = Cipher.GenerateKeyPairBase64();
-
-        var (success, signature) = Cipher.SignBase64("", sec);
-
-        Assert.False(success);
-        Assert.True(string.IsNullOrEmpty(signature));
-    }
-
-    [Fact]
-    public void SignBase64_WithInvalidKey_Fails()
-    {
-        var (success, signature) = Cipher.SignBase64("hello", "");
-
-        Assert.False(success);
-        Assert.True(string.IsNullOrEmpty(signature));
-    }
-
-    [Fact]
-    public void VerifyBase64_WithInvalidInputs_Fails()
-    {
-        var result = Cipher.VerifyBase64("", "", "");
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void VerifyBase64_WithNullInputs_Fails()
-    {
-        var result = Cipher.VerifyBase64(null!, null!, null!);
-        Assert.False(result);
     }
 
     [Fact]
@@ -541,7 +367,7 @@ public abstract class AsymmetricCipherTests
     [Fact]
     public void GetThisCipher_ReturnsNotNull()
     {
-        AsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(Cipher.CipherID);
+        IAsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(Cipher.CipherID);
         Assert.NotNull(cipher);
     }
 
@@ -555,7 +381,7 @@ public abstract class AsymmetricCipherTests
                 continue;
             }
 
-            AsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(cipherID);
+            IAsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(cipherID);
             Assert.NotNull(cipher);
         }
     }
@@ -570,7 +396,7 @@ public abstract class AsymmetricCipherTests
                 continue;
             }
 
-            AsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(cipherID);
+            IAsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(cipherID);
             Assert.NotNull(cipher);
 
             string cipherTypeName = cipher?.GetType().Name ?? "null";

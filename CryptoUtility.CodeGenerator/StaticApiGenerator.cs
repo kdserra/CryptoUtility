@@ -1,5 +1,8 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CryptoUtility.CodeGenerator;
@@ -16,12 +19,20 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
             )
             .Where(static x => x is not null);
 
+        var compilationAndTypes = context.CompilationProvider.Combine(impls.Collect());
+
         context.RegisterSourceOutput(
-            impls,
-            static (spc, symbol) =>
+            compilationAndTypes,
+            static (spc, pair) =>
             {
-                var source = Generate(symbol!);
-                spc.AddSource($"{symbol!.Name}.g.cs", source);
+                var (compilation, types) = pair;
+
+                foreach (var symbol in types)
+                {
+                    var methods = GetNormalizedExtensionMethods(compilation, symbol!);
+                    var source = Generate(symbol!, methods);
+                    spc.AddSource($"{symbol!.Name}.g.cs", source);
+                }
             }
         );
     }
@@ -41,7 +52,39 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         return attr is null ? null : symbol;
     }
 
-    private static string Generate(INamedTypeSymbol symbol)
+    private static List<NormalizedMethod> GetNormalizedExtensionMethods(
+        Compilation compilation,
+        INamedTypeSymbol targetType
+    )
+    {
+        return GetAllTypes(compilation.Assembly.GlobalNamespace)
+            .SelectMany(t => t.GetMembers())
+            .OfType<IMethodSymbol>()
+            .Where(m =>
+                m.IsExtensionMethod
+                && m.MethodKind == MethodKind.Ordinary
+                && m.Parameters.Length > 0
+                && compilation.ClassifyConversion(targetType, m.Parameters[0].Type).IsImplicit
+            )
+            .Select(m =>
+            {
+                var nonReceiverParams = m.Parameters.Skip(1).ToArray();
+                var isInjected = nonReceiverParams
+                    .Select(p => compilation.ClassifyConversion(targetType, p.Type).IsImplicit)
+                    .ToArray();
+
+                return new NormalizedMethod(m, nonReceiverParams, isInjected);
+            })
+            .ToList();
+    }
+
+    private readonly record struct NormalizedMethod(
+        IMethodSymbol Symbol,
+        IParameterSymbol[] ParametersWithoutReceiver,
+        bool[] IsInjected
+    );
+
+    private static string Generate(INamedTypeSymbol symbol, List<NormalizedMethod> extensionMethods)
     {
         var ns = symbol.ContainingNamespace.ToDisplayString();
         var apiName = symbol.Name.Replace("Impl", "");
@@ -57,7 +100,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         sb.AppendLine($"public static partial class {apiName}");
         sb.AppendLine("{");
 
-        sb.AppendLine($"    private static readonly {implName} s_Cipher = {implName}.Shared;");
+        sb.AppendLine($"    public static readonly {implName} Cipher = {implName}.Shared;");
         sb.AppendLine();
 
         foreach (var member in GetAllPublicMembers(symbol))
@@ -75,6 +118,14 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
             }
         }
 
+        foreach (var ext in extensionMethods)
+        {
+            if (ShouldSkipMethod(ext.Symbol))
+                continue;
+
+            EmitExtensionWrapper(sb, ext);
+        }
+
         sb.AppendLine("}");
         return sb.ToString();
     }
@@ -84,7 +135,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         if (method.ContainingType.SpecialType == SpecialType.System_Object)
             return true;
 
-        if (method.IsStatic)
+        if (method.IsStatic && !method.IsExtensionMethod)
             return true;
 
         if (
@@ -109,11 +160,39 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         var parameters = string.Join(", ", method.Parameters.Select(RenderParameter));
         var args = string.Join(", ", method.Parameters.Select(p => p.Name));
 
-        sb.AppendLine(
-            $"    /// <inheritdoc cref=\"{method.ContainingType.Name}.{method.Name}\" />"
-        );
         sb.AppendLine($"    public static {returnType} {name}({parameters})");
-        sb.AppendLine($"        => s_Cipher.{name}({args});");
+        sb.AppendLine($"        => Cipher.{name}({args});");
+        sb.AppendLine();
+    }
+
+    private static void EmitExtensionWrapper(StringBuilder sb, NormalizedMethod method)
+    {
+        var symbol = method.Symbol;
+        var parameters = method.ParametersWithoutReceiver;
+        var isInjected = method.IsInjected;
+
+        var returnType = symbol.ReturnType.ToDisplayString(
+            SymbolDisplayFormat.FullyQualifiedFormat
+        );
+        var name = symbol.Name;
+
+        // Only expose params that Cipher cannot satisfy
+        var renderedParams = string.Join(
+            ", ",
+            parameters.Where((_, i) => !isInjected[i]).Select(RenderParameter)
+        );
+
+        // Substitute Cipher for injected positions, forward the rest by name
+        var args = string.Join(
+            ", ",
+            parameters.Select((p, i) => isInjected[i] ? "Cipher" : p.Name)
+        );
+
+        sb.AppendLine(
+            $"    /// <inheritdoc cref=\"{symbol.ContainingType.Name}.{symbol.Name}\" />"
+        );
+        sb.AppendLine($"    public static {returnType} {name}({renderedParams})");
+        sb.AppendLine($"        => Cipher.{name}({args});");
         sb.AppendLine();
     }
 
@@ -124,14 +203,10 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         if (p.NullableAnnotation == NullableAnnotation.Annotated)
             type += "?";
 
-        var name = p.Name;
-
         if (p.HasExplicitDefaultValue)
-        {
-            return $"{type} {name} = {RenderDefaultValue(p)}";
-        }
+            return $"{type} {p.Name} = {RenderDefaultValue(p)}";
 
-        return $"{type} {name}";
+        return $"{type} {p.Name}";
     }
 
     private static string RenderDefaultValue(IParameterSymbol p)
@@ -141,12 +216,9 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         if (value is null)
             return "null";
 
-        var type = p.Type;
-
-        // Handle enums explicitly
-        if (type.TypeKind == TypeKind.Enum)
+        if (p.Type.TypeKind == TypeKind.Enum)
         {
-            var enumType = (INamedTypeSymbol)type;
+            var enumType = (INamedTypeSymbol)p.Type;
 
             foreach (var member in enumType.GetMembers().OfType<IFieldSymbol>())
             {
@@ -156,7 +228,6 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
                 }
             }
 
-            // fallback (if no named constant matches exactly)
             return $"({enumType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)}){value}";
         }
 
@@ -165,7 +236,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
             string s => $"\"{s}\"",
             char c => $"'{c}'",
             bool b => b ? "true" : "false",
-            _ => value.ToString() ?? "null",
+            _ => value?.ToString() ?? "null",
         };
     }
 
@@ -176,20 +247,18 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         if (prop.NullableAnnotation == NullableAnnotation.Annotated)
             type += "?";
 
-        var name = prop.Name;
-
         sb.AppendLine($"    /// <inheritdoc cref=\"{prop.ContainingType.Name}.{prop.Name}\" />");
 
         if (prop.IsReadOnly)
         {
-            sb.AppendLine($"    public static {type} {name} => s_Cipher.{name};");
+            sb.AppendLine($"    public static {type} {prop.Name} => Cipher.{prop.Name};");
         }
         else
         {
-            sb.AppendLine($"    public static {type} {name}");
+            sb.AppendLine($"    public static {type} {prop.Name}");
             sb.AppendLine("    {");
-            sb.AppendLine($"        get => s_Cipher.{name};");
-            sb.AppendLine($"        set => s_Cipher.{name} = value;");
+            sb.AppendLine($"        get => Cipher.{prop.Name};");
+            sb.AppendLine($"        set => Cipher.{prop.Name} = value;");
             sb.AppendLine("    }");
         }
 
@@ -220,6 +289,34 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
 
                 yield return member;
             }
+        }
+    }
+
+    private static IEnumerable<INamedTypeSymbol> GetAllTypes(INamespaceSymbol ns)
+    {
+        foreach (var type in ns.GetTypeMembers())
+        {
+            yield return type;
+
+            foreach (var nested in GetNestedTypes(type))
+                yield return nested;
+        }
+
+        foreach (var childNs in ns.GetNamespaceMembers())
+        {
+            foreach (var t in GetAllTypes(childNs))
+                yield return t;
+        }
+    }
+
+    private static IEnumerable<INamedTypeSymbol> GetNestedTypes(INamedTypeSymbol type)
+    {
+        foreach (var nested in type.GetTypeMembers())
+        {
+            yield return nested;
+
+            foreach (var inner in GetNestedTypes(nested))
+                yield return inner;
         }
     }
 }

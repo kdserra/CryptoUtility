@@ -2,30 +2,19 @@
 
 namespace CryptoUtility;
 
-/// <summary>
-/// Provides an abstract base class for hashing related operations, allowing derived classes to implement specific
-/// hashing algorithms.
-/// </summary>
-public abstract class HashProvider
+public static class HashProviderExtensions
 {
     private static Func<HMAC> DefaultHmacProvider => () => new HMACSHA256();
 
     /// <summary>
     /// Computes the hash value for the specified input data using the algorithm implemented by the derived class.
     /// </summary>
-    /// <param name="message">The byte array containing the data to hash. This parameter must not be null or empty.</param>
-    /// <returns>A byte array that contains the computed hash value.</returns>
-    public abstract byte[] Hash(byte[] message);
-
-    /// <summary>
-    /// Computes the hash value for the specified input data using the algorithm implemented by the derived class.
-    /// </summary>
     /// <param name="message">The UTF8 string containing the data to hash.  This parameter must not be null or empty.</param>
     /// <returns>A base64 string that contains the computed hash value.</returns>
-    public string HashBase64(string message)
+    public static string HashBase64(this IHashProvider hashProvider, string message)
     {
         byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);
-        byte[] hashBytes = Hash(messageBytes);
+        byte[] hashBytes = hashProvider.Hash(messageBytes);
         string hashBase64 = Convert.ToBase64String(hashBytes);
 
         return hashBase64;
@@ -45,12 +34,18 @@ public abstract class HashProvider
     /// <param name="hmacProvider">Optional parameter that is responsible for providing a new instance of an HMAC that
     /// will be used to compute the signature, if unspecified it uses <see cref="HMACSHA256"/>.</param>
     /// <returns>A byte array containing the computed HMAC signature for the input data.</returns>
-    public byte[] Sign(byte[] message, byte[] key, Func<HMAC>? hmacProvider = null)
+    public static byte[] Sign(
+        this IHashProvider hashProvider,
+        byte[] message,
+        byte[] key,
+        Func<HMAC>? hmacProvider = null
+    )
     {
         hmacProvider ??= DefaultHmacProvider;
         using HMAC hmac = hmacProvider.Invoke();
         hmac.Key = key;
         byte[] result = hmac.ComputeHash(message);
+
         return result;
     }
 
@@ -69,11 +64,16 @@ public abstract class HashProvider
     /// Optional parameter that provides a new instance of an HMAC algorithm. If not specified, <see cref="HMACSHA256"/> is used.
     /// </param>
     /// <returns>A Base64-encoded string representing the computed HMAC signature.</returns>
-    public string SignBase64(string message, string key, Func<HMAC>? hmacProvider = null)
+    public static string SignBase64(
+        this IHashProvider hashProvider,
+        string message,
+        string key,
+        Func<HMAC>? hmacProvider = null
+    )
     {
         byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
-        byte[] signatureBytes = Sign(messageBytes, keyBytes, hmacProvider);
+        byte[] signatureBytes = hashProvider.Sign(messageBytes, keyBytes, hmacProvider);
         string signatureBase64 = Convert.ToBase64String(signatureBytes);
         return signatureBase64;
     }
@@ -89,14 +89,15 @@ public abstract class HashProvider
     /// <param name="hmacProvider">Optional parameter that is responsible for providing a new instance of an HMAC that
     /// will be used to compute the signature, if unspecified it uses <see cref="HMACSHA256"/>.</param>
     /// <returns>true if the signature is valid for the input and key; otherwise, false.</returns>
-    public bool Verify(
+    public static bool Verify(
+        this IHashProvider hashProvider,
         byte[] message,
         byte[] signature,
         byte[] key,
         Func<HMAC>? hmacProvider = null
     )
     {
-        byte[] computedSignature = Sign(message, key, hmacProvider);
+        byte[] computedSignature = hashProvider.Sign(message, key, hmacProvider);
         bool result = CryptoHelper.FixedTimeEquals(computedSignature, signature);
         return result;
     }
@@ -116,7 +117,8 @@ public abstract class HashProvider
     /// Optional parameter that provides a new instance of an HMAC algorithm. If not specified, <see cref="HMACSHA256"/> is used.
     /// </param>
     /// <returns><c>true</c> if the signature is valid for the given message and key; otherwise, <c>false</c>.</returns>
-    public bool VerifyBase64(
+    public static bool VerifyBase64(
+        this IHashProvider hashProvider,
         string message,
         string signature,
         string key,
@@ -126,7 +128,7 @@ public abstract class HashProvider
         byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
         byte[] signatureBytes = Convert.FromBase64String(signature);
-        bool isValid = Verify(messageBytes, signatureBytes, keyBytes, hmacProvider);
+        bool isValid = hashProvider.Verify(messageBytes, signatureBytes, keyBytes, hmacProvider);
 
         return isValid;
     }

@@ -46,12 +46,12 @@ namespace CryptoUtility;
 /// </list>
 /// </remarks>
 [GenerateStaticApi]
-internal sealed class EcdhImpl : KeyAgreement
+internal sealed class EcdhImpl : IKeyAgreement
 {
     internal static readonly EcdhImpl Shared = new();
     private static readonly ECCurve _defaultECCurve = ECCurve.NamedCurves.nistP256;
 
-    /// <inheritdoc cref="KeyAgreement.DeriveSharedSecret(byte[], byte[])"/>
+    /// <inheritdoc cref="IKeyAgreement.DeriveSharedSecret(byte[], byte[])"/>
     public override (bool success, byte[] sharedSecret) DeriveSharedSecret(
         byte[] secretKey,
         byte[] peerPublicKey
@@ -74,7 +74,7 @@ internal sealed class EcdhImpl : KeyAgreement
         }
     }
 
-    /// <inheritdoc cref="KeyAgreement.GenerateKeyPair()"/>
+    /// <inheritdoc cref="IKeyAgreement.GenerateKeyPair()"/>
     public override (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
     {
         using var ecdh = ECDiffieHellman.Create(_defaultECCurve);

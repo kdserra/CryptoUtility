@@ -3,18 +3,27 @@ using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
-internal abstract class RsaBase : AsymmetricCipher
+public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
 {
-    /// <inheritdoc cref="AsymmetricCipher.Encrypt(byte[], byte[])"/>
-    public override (bool success, byte[] encrypted) Encrypt(byte[] publicKey, byte[] plaintext)
-    {
-        if (!LibraryHelper.NotNullOrEmpty(publicKey, plaintext))
-        {
-            return (false, Array.Empty<byte>());
-        }
+    /// <inheritdoc cref="IAsymmetricCipher.CipherID"/>
+    public abstract AsymmetricCipherID CipherID { get; }
 
+    /// <inheritdoc cref="IAsymmetricCipher.KeySizeBytes"/>
+    public abstract int KeySizeBytes { get; }
+
+    /// <inheritdoc cref="IAsymmetricCipher.SaltSizeBytes"/>
+    public abstract int SaltSizeBytes { get; }
+
+    /// <inheritdoc cref="IAsymmetricCipher.Encrypt(byte[], byte[])"/>
+    public (bool success, byte[] encrypted) Encrypt(byte[] publicKey, byte[] plaintext)
+    {
         try
         {
+            if (!LibraryHelper.NotNullOrEmpty(publicKey, plaintext))
+            {
+                return (false, Array.Empty<byte>());
+            }
+
             using RSA rsa = RSA.Create();
             rsa.ImportSubjectPublicKeyInfo(publicKey, out _);
 
@@ -27,16 +36,16 @@ internal abstract class RsaBase : AsymmetricCipher
         }
     }
 
-    /// <inheritdoc cref="AsymmetricCipher.Decrypt(byte[], byte[])"/>
-    public override (bool success, byte[] plaintext) Decrypt(byte[] secretKey, byte[] encrypted)
+    /// <inheritdoc cref="IAsymmetricCipher.Decrypt(byte[], byte[])"/>
+    public (bool success, byte[] plaintext) Decrypt(byte[] secretKey, byte[] encrypted)
     {
-        if (!LibraryHelper.NotNullOrEmpty(secretKey, encrypted))
-        {
-            return (false, Array.Empty<byte>());
-        }
-
         try
         {
+            if (!LibraryHelper.NotNullOrEmpty(secretKey, encrypted))
+            {
+                return (false, Array.Empty<byte>());
+            }
+
             using RSA rsa = RSA.Create();
             rsa.ImportPkcs8PrivateKey(secretKey, out _);
 
@@ -49,16 +58,16 @@ internal abstract class RsaBase : AsymmetricCipher
         }
     }
 
-    /// <inheritdoc cref="AsymmetricCipher.Sign(byte[], byte[])"/>
-    public override (bool success, byte[] signature) Sign(byte[] input, byte[] secretKey)
+    /// <inheritdoc cref="IAsymmetricCipher.Sign(byte[], byte[])"/>
+    public (bool success, byte[] signature) Sign(byte[] input, byte[] secretKey)
     {
-        if (!LibraryHelper.NotNullOrEmpty(input, secretKey))
-        {
-            return (false, Array.Empty<byte>());
-        }
-
         try
         {
+            if (!LibraryHelper.NotNullOrEmpty(input, secretKey))
+            {
+                return (false, Array.Empty<byte>());
+            }
+
             using RSA rsa = RSA.Create();
             rsa.ImportPkcs8PrivateKey(secretKey, out _);
 
@@ -67,6 +76,7 @@ internal abstract class RsaBase : AsymmetricCipher
                 HashAlgorithmName.SHA256,
                 RSASignaturePadding.Pkcs1
             );
+
             return (true, signature);
         }
         catch
@@ -75,16 +85,16 @@ internal abstract class RsaBase : AsymmetricCipher
         }
     }
 
-    /// <inheritdoc cref="AsymmetricCipher.Verify(byte[], byte[], byte[])"/>
-    public override bool Verify(byte[] input, byte[] signature, byte[] publicKey)
+    /// <inheritdoc cref="IAsymmetricCipher.Verify(byte[], byte[], byte[])"/>
+    public bool Verify(byte[] input, byte[] signature, byte[] publicKey)
     {
-        if (!LibraryHelper.NotNullOrEmpty(input, signature, publicKey))
-        {
-            return false;
-        }
-
         try
         {
+            if (!LibraryHelper.NotNullOrEmpty(input, signature, publicKey))
+            {
+                return false;
+            }
+
             using RSA rsa = RSA.Create();
             rsa.ImportSubjectPublicKeyInfo(publicKey, out _);
 
@@ -101,8 +111,8 @@ internal abstract class RsaBase : AsymmetricCipher
         }
     }
 
-    /// <inheritdoc cref="AsymmetricCipher.GenerateKeyPair()"/>
-    public override (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
+    /// <inheritdoc cref="IAsymmetricCipher.GenerateKeyPair()"/>
+    public (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
     {
         using RSA rsa = RSA.Create(KeySizeBytes * 8);
         byte[] publicKeyBytes = rsa.ExportSubjectPublicKeyInfo();

@@ -2,5 +2,5 @@
 
 public sealed class Sha256Tests : HashProviderTests
 {
-    internal override HashProvider HashProvider => new Sha256Impl();
+    internal override IHashProvider HashProvider => new Sha256Impl();
 }

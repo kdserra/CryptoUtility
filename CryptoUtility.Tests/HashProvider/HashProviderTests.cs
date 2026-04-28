@@ -5,7 +5,7 @@ namespace CryptoUtility.Tests;
 
 public abstract class HashProviderTests
 {
-    internal abstract HashProvider HashProvider { get; }
+    internal abstract IHashProvider HashProvider { get; }
 
     private static readonly byte[] MessageBytes = "test-data"u8.ToArray();
     private static readonly byte[] KeyBytes = "secret-key"u8.ToArray();

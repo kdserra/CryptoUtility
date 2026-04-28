@@ -2,24 +2,26 @@
 
 namespace CryptoUtility;
 
-internal abstract class SymmetricCipher
+public interface SymmetricCipher
 {
     /// <summary>
     /// Gets the identifier for the symmetric cipher algorithm associated with this instance.
     /// </summary>
-    public abstract SymmetricCipherID CipherID { get; }
+    public SymmetricCipherID CipherID { get; }
 
     /// <summary>
     /// Gets the size, in bytes, of the cryptographic key used for encryption and decryption operations.
     /// </summary>
-    public abstract int KeySizeBytes { get; }
+    public int KeySizeBytes { get; }
 
     /// <summary>
-    /// Gets the size, in bytes, of the nonce. A nonce is a unique value used for each encryption so that encrypting the
+    /// Gets the size, in bytes, of the nonce.
+    ///
+    /// A nonce is a unique value used for each encryption so that encrypting the
     /// same data more than once produces different ciphertext. This helps prevent attackers from detecting patterns or
     /// learning information about the original data.
     /// </summary>
-    public abstract int NonceSizeBytes { get; }
+    public int NonceSizeBytes { get; }
 
     /// <summary>
     /// Encrypts the specified plaintext using the provided cryptographic key.
@@ -38,7 +40,7 @@ internal abstract class SymmetricCipher
     /// </list>
     /// </returns>
     public virtual (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext) =>
-        Encrypt(key, plaintext, nonce: GenerateNonce());
+        Encrypt(key, plaintext, nonce: this.GenerateNonce());
 
     /// <summary>
     /// Decrypts the specified encrypted data using the provided cryptographic key.
@@ -56,7 +58,7 @@ internal abstract class SymmetricCipher
     /// </item>
     /// </list>
     /// </returns>
-    public abstract (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted);
+    public (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted);
 
     /// <summary>
     /// Encrypts the specified plaintext using the provided cryptographic key.
@@ -77,12 +79,11 @@ internal abstract class SymmetricCipher
     /// </item>
     /// </list>
     /// </returns>
-    public abstract (bool success, byte[] encrypted) Encrypt(
-        byte[] key,
-        byte[] plaintext,
-        byte[] nonce
-    );
+    public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce);
+}
 
+public static class SymmetricCipherExtensions
+{
     /// <summary>
     /// Encrypts the specified plaintext UTF8 string using the provided Base64 key and returns a Base64-encoded result.
     /// </summary>
@@ -99,20 +100,39 @@ internal abstract class SymmetricCipher
     /// </item>
     /// </list>
     /// </returns>
-    public (bool success, string encrypted) EncryptBase64(string key, string plaintext)
+    public static (bool success, string encrypted) EncryptBase64(
+        this SymmetricCipher cipher,
+        string key,
+        string plaintext
+    )
     {
-        byte[] keyBytes = Convert.FromBase64String(key);
-        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
-        (bool success, byte[] encrypted) encryptedResult = Encrypt(keyBytes, plaintextBytes);
+        try
+        {
+            if (!LibraryHelper.NotNullOrEmpty(key, plaintext))
+            {
+                return (false, string.Empty);
+            }
 
-        if (!encryptedResult.success)
+            byte[] keyBytes = Convert.FromBase64String(key);
+            byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
+            (bool success, byte[] encrypted) encryptedResult = cipher.Encrypt(
+                keyBytes,
+                plaintextBytes
+            );
+
+            if (!encryptedResult.success)
+            {
+                return (false, string.Empty);
+            }
+
+            string encrypted = Convert.ToBase64String(encryptedResult.encrypted);
+
+            return (true, encrypted);
+        }
+        catch
         {
             return (false, string.Empty);
         }
-
-        string encrypted = Convert.ToBase64String(encryptedResult.encrypted);
-
-        return (true, encrypted);
     }
 
     /// <summary>
@@ -132,20 +152,34 @@ internal abstract class SymmetricCipher
     /// </item>
     /// </list>
     /// </returns>
-    public (bool success, string plaintext) DecryptBase64(string key, string encrypted)
+    public static (bool success, string plaintext) DecryptBase64(
+        this SymmetricCipher cipher,
+        string key,
+        string encrypted
+    )
     {
-        byte[] keyBytes = Convert.FromBase64String(key);
-        byte[] encryptedBytes = Convert.FromBase64String(encrypted);
-        (bool success, byte[] plaintext) decryptedResult = Decrypt(keyBytes, encryptedBytes);
+        try
+        {
+            byte[] keyBytes = Convert.FromBase64String(key);
+            byte[] encryptedBytes = Convert.FromBase64String(encrypted);
+            (bool success, byte[] plaintext) decryptedResult = cipher.Decrypt(
+                keyBytes,
+                encryptedBytes
+            );
 
-        if (!decryptedResult.success)
+            if (!decryptedResult.success)
+            {
+                return (false, string.Empty);
+            }
+
+            string plaintext = Encoding.UTF8.GetString(decryptedResult.plaintext);
+
+            return (true, plaintext);
+        }
+        catch
         {
             return (false, string.Empty);
         }
-
-        string plaintext = Encoding.UTF8.GetString(decryptedResult.plaintext);
-
-        return (true, plaintext);
     }
 
     /// <summary>
@@ -164,11 +198,22 @@ internal abstract class SymmetricCipher
     /// </item>
     /// </list>
     /// </returns>
-    public (bool success, byte[] encrypted) EncryptBase64(string key, byte[] plaintext)
+    public static (bool success, byte[] encrypted) EncryptBase64(
+        this SymmetricCipher cipher,
+        string key,
+        byte[] plaintext
+    )
     {
-        byte[] keyBytes = Convert.FromBase64String(key);
-        (bool success, byte[] encrypted) encryptedResult = Encrypt(keyBytes, plaintext);
-        return encryptedResult;
+        try
+        {
+            byte[] keyBytes = Convert.FromBase64String(key);
+            (bool success, byte[] encrypted) encryptedResult = cipher.Encrypt(keyBytes, plaintext);
+            return encryptedResult;
+        }
+        catch
+        {
+            return (false, Array.Empty<byte>());
+        }
     }
 
     /// <summary>
@@ -188,38 +233,49 @@ internal abstract class SymmetricCipher
     /// </item>
     /// </list>
     /// </returns>
-    public (bool success, byte[] plaintext) DecryptBase64(string key, byte[] encrypted)
+    public static (bool success, byte[] plaintext) DecryptBase64(
+        this SymmetricCipher cipher,
+        string key,
+        byte[] encrypted
+    )
     {
-        byte[] keyBytes = Convert.FromBase64String(key);
-        (bool success, byte[] plaintext) decryptedResult = Decrypt(keyBytes, encrypted);
-        return decryptedResult;
+        try
+        {
+            byte[] keyBytes = Convert.FromBase64String(key);
+            (bool success, byte[] plaintext) decryptedResult = cipher.Decrypt(keyBytes, encrypted);
+            return decryptedResult;
+        }
+        catch
+        {
+            return (false, Array.Empty<byte>());
+        }
     }
 
     /// <summary>
     /// Generates a new cryptographic key for use in encryption or decryption operations.
     /// </summary>
     /// <returns>A byte array containing the generated cryptographic key.</returns>
-    public virtual byte[] GenerateKey()
+    public static byte[] GenerateKey(this SymmetricCipher cipher)
     {
-        return CryptoHelper.GetBytes(KeySizeBytes);
+        return CryptoHelper.GetBytes(cipher.KeySizeBytes);
     }
 
     /// <summary>
     /// Generates a new cryptographic nonce for use in encryption or decryption operations.
     /// </summary>
     /// <returns>A byte array containing the generated cryptographic nonce.</returns>
-    public virtual byte[] GenerateNonce()
+    public static byte[] GenerateNonce(this SymmetricCipher cipher)
     {
-        return CryptoHelper.GetBytes(NonceSizeBytes);
+        return CryptoHelper.GetBytes(cipher.NonceSizeBytes);
     }
 
     /// <summary>
     /// Generates a new cryptographic key and returns it as a Base64 encoded string.
     /// </summary>
     /// <returns>The generated key as a Base64 string.</returns>
-    public string GenerateKeyBase64()
+    public static string GenerateKeyBase64(this SymmetricCipher cipher)
     {
-        byte[] key = GenerateKey();
+        byte[] key = cipher.GenerateKey();
         string result = Convert.ToBase64String(key);
         return result;
     }
@@ -231,12 +287,17 @@ internal abstract class SymmetricCipher
     /// <param name="plaintext">The plaintext to verify.</param>
     /// <param name="nonce">The nonce to verify.</param>
     /// <returns>True when the parameters passed verification, false when it fails; missing required parameters.</returns>
-    protected virtual bool VerifyEncryptionParameters(byte[] key, byte[] plaintext, byte[] nonce)
+    public static bool VerifyEncryptionParameters(
+        this SymmetricCipher cipher,
+        byte[] key,
+        byte[] plaintext,
+        byte[] nonce
+    )
     {
         return LibraryHelper.NotNull(key, plaintext, nonce)
-            && key.Length == KeySizeBytes
+            && key.Length == cipher.KeySizeBytes
             && plaintext.Length > 0
-            && nonce.Length == NonceSizeBytes;
+            && nonce.Length == cipher.NonceSizeBytes;
     }
 
     /// <summary>

@@ -5,6 +5,32 @@
 /// </summary>
 internal static class LibraryHelper
 {
+    internal static IPasswordKdf? GetPasswordKdfFromID(PasswordKdfID kdfID)
+    {
+        switch (kdfID)
+        {
+            case PasswordKdfID.Pbkdf2:
+                return Pbkdf2Impl.Shared;
+            case PasswordKdfID.None:
+            default:
+                return null;
+        }
+    }
+
+    internal static IKeyExpansionKdf? GetKeyExpansionKdfFromID(KeyExpansionKdfID kdfID)
+    {
+        switch (kdfID)
+        {
+#if NET8_0_OR_GREATER
+            case KeyExpansionKdfID.HkdfSystem:
+                return HkdfImpl.Shared;
+#endif
+            case KeyExpansionKdfID.None:
+            default:
+                return null;
+        }
+    }
+
     internal static SymmetricCipher? GetSymmetricCipherFromID(SymmetricCipherID cipherID)
     {
         switch (cipherID)
@@ -27,7 +53,7 @@ internal static class LibraryHelper
         }
     }
 
-    internal static AsymmetricCipher? GetAsymmetricCipherFromID(AsymmetricCipherID cipherID)
+    internal static IAsymmetricCipher? GetAsymmetricCipherFromID(AsymmetricCipherID cipherID)
     {
         switch (cipherID)
         {

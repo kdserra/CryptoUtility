@@ -1,8 +1,9 @@
-﻿using System.Text;
+﻿namespace CryptoUtility;
 
-namespace CryptoUtility;
-
-internal abstract class DigitalSignature
+/// <summary>
+/// Digital signature algorithms support signing and verifying messages using secret and public keys.
+/// </summary>
+public interface IDigitalSignature
 {
     /// <summary>
     /// Signs the specified message using the provided secret key and returns a value indicating whether the operation
@@ -12,7 +13,7 @@ internal abstract class DigitalSignature
     /// <param name="secretKey">The secret key used to sign the message, represented as a byte array. This parameter must not be null or empty.</param>
     /// <returns>A tuple containing a boolean that indicates whether the signing operation succeeded, and a byte array containing
     /// the generated signature. If the operation fails, the signature array will be empty.</returns>
-    public abstract (bool success, byte[] signature) Sign(byte[] message, byte[] secretKey);
+    public (bool success, byte[] signature) Sign(byte[] message, byte[] secretKey);
 
     /// <summary>
     /// Verifies the authenticity of a message using the specified digital signature and public key.
@@ -21,35 +22,11 @@ internal abstract class DigitalSignature
     /// <param name="signature">The byte array that holds the digital signature to validate against the message.</param>
     /// <param name="publicKey">The byte array representing the public key to use for signature verification.</param>
     /// <returns>true if the signature is valid for the given message and public key; otherwise, false.</returns>
-    public abstract bool Verify(byte[] message, byte[] signature, byte[] publicKey);
+    public bool Verify(byte[] message, byte[] signature, byte[] publicKey);
 
-    public (bool success, string signature) SignBase64(string message, string secretKey)
-    {
-        if (!LibraryHelper.NotNull(message, secretKey))
-        {
-            return (false, string.Empty);
-        }
-
-        byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
-        (bool success, byte[] signatureBytes) = Sign(messageBytes, secretKeyBytes);
-        string signature = Convert.ToBase64String(signatureBytes);
-
-        return (success, signature);
-    }
-
-    public bool VerifyBase64(string message, string signature, string publicKey)
-    {
-        if (!LibraryHelper.NotNull(message, signature, publicKey))
-        {
-            return false;
-        }
-
-        byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-        byte[] signatureBytes = Convert.FromBase64String(signature);
-        byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
-        bool isValid = Verify(messageBytes, signatureBytes, publicKeyBytes);
-
-        return isValid;
-    }
+    /// <summary>
+    /// Generates a new cryptographic key for use in signature and verification operations.
+    /// </summary>
+    /// <returns>A byte array containing the generated cryptographic key.</returns>
+    public (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair();
 }

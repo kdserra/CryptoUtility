@@ -2,5 +2,5 @@
 
 public sealed class Rsa3072Tests : AsymmetricCipherTests
 {
-    internal override AsymmetricCipher Cipher => new Rsa3072Impl();
+    public override IAsymmetricCipher Cipher => new Rsa3072Impl();
 }
