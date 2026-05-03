@@ -31,7 +31,7 @@ internal static class LibraryHelper
         }
     }
 
-    internal static SymmetricCipher? GetSymmetricCipherFromID(SymmetricCipherID cipherID)
+    internal static ISymmetricCipher? GetSymmetricCipherFromID(SymmetricCipherID cipherID)
     {
         switch (cipherID)
         {

@@ -2,5 +2,5 @@
 
 public sealed class Aes256GcmTests : SymmetricCipherAEADTests
 {
-    internal override SymmetricCipher Cipher => new Aes256GcmImpl();
+    internal override ISymmetricCipher Cipher => new Aes256GcmImpl();
 }

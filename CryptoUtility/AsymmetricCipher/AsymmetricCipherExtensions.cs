@@ -132,7 +132,7 @@ public static class AsymmetricCipherExtensions
     /// containing the encrypted data. If the encryption fails, the byte array is empty.</returns>
     public static (bool success, byte[] encrypted) HybridEncrypt(
         this IAsymmetricCipher asymmetricCipher,
-        SymmetricCipher symmetricCipher,
+        ISymmetricCipher symmetricCipher,
         byte[] publicKey,
         byte[] plaintext
     )
@@ -196,7 +196,7 @@ public static class AsymmetricCipherExtensions
     /// decrypted plaintext. If decryption fails, the boolean is false and the plaintext is an empty array.</returns>
     public static (bool success, byte[] plaintext) HybridDecrypt(
         this IAsymmetricCipher asymmetricCipher,
-        SymmetricCipher symmetricCipher,
+        ISymmetricCipher symmetricCipher,
         byte[] secretKey,
         byte[] encrypted
     )
@@ -275,7 +275,7 @@ public static class AsymmetricCipherExtensions
                 return (false, Array.Empty<byte>());
             }
 
-            SymmetricCipher? symmetricCipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
+            ISymmetricCipher? symmetricCipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
             if (symmetricCipher == null)
             {
                 return (false, Array.Empty<byte>());
@@ -322,7 +322,7 @@ public static class AsymmetricCipherExtensions
                 return (false, Array.Empty<byte>());
             }
 
-            SymmetricCipher? symmetricCipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
+            ISymmetricCipher? symmetricCipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
             if (symmetricCipher == null)
             {
                 return (false, Array.Empty<byte>());

@@ -4,7 +4,7 @@ namespace CryptoUtility.Tests;
 
 public abstract class SymmetricCipherTests
 {
-    internal abstract SymmetricCipher Cipher { get; }
+    internal abstract ISymmetricCipher Cipher { get; }
 
     public byte[] GenerateKey()
     {
@@ -252,7 +252,7 @@ public abstract class SymmetricCipherTests
     [Fact]
     public void GetThisCipher_ReturnsNotNull()
     {
-        SymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(Cipher.CipherID);
+        ISymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(Cipher.CipherID);
         Assert.NotNull(cipher);
     }
 
@@ -266,7 +266,7 @@ public abstract class SymmetricCipherTests
                 continue;
             }
 
-            SymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
+            ISymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
             Assert.NotNull(cipher);
         }
     }
@@ -281,7 +281,7 @@ public abstract class SymmetricCipherTests
                 continue;
             }
 
-            SymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
+            ISymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
             Assert.NotNull(cipher);
 
             string cipherTypeName = cipher?.GetType().Name ?? "null";

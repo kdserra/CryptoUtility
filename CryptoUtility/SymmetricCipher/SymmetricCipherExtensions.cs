@@ -2,88 +2,30 @@
 
 namespace CryptoUtility;
 
-public interface SymmetricCipher
-{
-    /// <summary>
-    /// Gets the identifier for the symmetric cipher algorithm associated with this instance.
-    /// </summary>
-    public SymmetricCipherID CipherID { get; }
-
-    /// <summary>
-    /// Gets the size, in bytes, of the cryptographic key used for encryption and decryption operations.
-    /// </summary>
-    public int KeySizeBytes { get; }
-
-    /// <summary>
-    /// Gets the size, in bytes, of the nonce.
-    ///
-    /// A nonce is a unique value used for each encryption so that encrypting the
-    /// same data more than once produces different ciphertext. This helps prevent attackers from detecting patterns or
-    /// learning information about the original data.
-    /// </summary>
-    public int NonceSizeBytes { get; }
-
-    /// <summary>
-    /// Encrypts the specified plaintext using the provided cryptographic key.
-    /// </summary>
-    /// <param name="key">The cryptographic key used to perform the encryption.</param>
-    /// <param name="plaintext">The data to be encrypted.</param>
-    /// <returns>
-    /// A tuple containing:
-    /// <list type="bullet">
-    /// <item>
-    /// <description><c>success</c>: Indicates whether the encryption operation was successful.</description>
-    /// </item>
-    /// <item>
-    /// <description><c>encrypted</c>: The resulting encrypted byte array if successful; otherwise, an empty byte array.</description>
-    /// </item>
-    /// </list>
-    /// </returns>
-    public virtual (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext) =>
-        Encrypt(key, plaintext, nonce: this.GenerateNonce());
-
-    /// <summary>
-    /// Decrypts the specified encrypted data using the provided cryptographic key.
-    /// </summary>
-    /// <param name="key">The cryptographic key used to perform the decryption.</param>
-    /// <param name="encrypted">The encrypted data to decrypt.</param>
-    /// <returns>
-    /// A tuple containing:
-    /// <list type="bullet">
-    /// <item>
-    /// <description><c>success</c>: Indicates whether the decryption operation was successful.</description>
-    /// </item>
-    /// <item>
-    /// <description><c>plaintext</c>: The resulting decrypted byte array if successful; otherwise, an empty byte array.</description>
-    /// </item>
-    /// </list>
-    /// </returns>
-    public (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted);
-
-    /// <summary>
-    /// Encrypts the specified plaintext using the provided cryptographic key.
-    /// </summary>
-    /// <param name="key">The cryptographic key used to perform the encryption.</param>
-    /// <param name="plaintext">The data to be encrypted.</param>
-    /// <param name="nonce">A unique value used for this encryption operation that prevents reuse of ciphertext for the
-    /// same key, ensuring identical plaintexts encrypt differently each time.</param>
-    ///
-    /// <returns>
-    /// A tuple containing:
-    /// <list type="bullet">
-    /// <item>
-    /// <description><c>success</c>: Indicates whether the encryption operation was successful.</description>
-    /// </item>
-    /// <item>
-    /// <description><c>encrypted</c>: The resulting encrypted byte array if successful; otherwise, an empty byte array.</description>
-    /// </item>
-    /// </list>
-    /// </returns>
-    public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce);
-}
-
 public static class SymmetricCipherExtensions
 {
+    /// <summary>
+    /// Encrypts the specified plaintext using the provided cryptographic key.
+    /// </summary>
+    /// <param name="key">The cryptographic key used to perform the encryption.</param>
+    /// <param name="plaintext">The data to be encrypted.</param>
+    /// <returns>
+    /// A tuple containing:
+    /// <list type="bullet">
+    /// <item>
+    /// <description><c>success</c>: Indicates whether the encryption operation was successful.</description>
+    /// </item>
+    /// <item>
+    /// <description><c>encrypted</c>: The resulting encrypted byte array if successful; otherwise, an empty byte array.</description>
+    /// </item>
+    /// </list>
+    /// </returns>
+    public static (bool success, byte[] encrypted) Encrypt(
+        this ISymmetricCipher cipher,
+        byte[] key,
+        byte[] plaintext
+    ) => cipher.Encrypt(key, plaintext, nonce: cipher.GenerateNonce());
+
     /// <summary>
     /// Encrypts the specified plaintext UTF8 string using the provided Base64 key and returns a Base64-encoded result.
     /// </summary>
@@ -101,7 +43,7 @@ public static class SymmetricCipherExtensions
     /// </list>
     /// </returns>
     public static (bool success, string encrypted) EncryptBase64(
-        this SymmetricCipher cipher,
+        this ISymmetricCipher cipher,
         string key,
         string plaintext
     )
@@ -153,7 +95,7 @@ public static class SymmetricCipherExtensions
     /// </list>
     /// </returns>
     public static (bool success, string plaintext) DecryptBase64(
-        this SymmetricCipher cipher,
+        this ISymmetricCipher cipher,
         string key,
         string encrypted
     )
@@ -199,7 +141,7 @@ public static class SymmetricCipherExtensions
     /// </list>
     /// </returns>
     public static (bool success, byte[] encrypted) EncryptBase64(
-        this SymmetricCipher cipher,
+        this ISymmetricCipher cipher,
         string key,
         byte[] plaintext
     )
@@ -234,7 +176,7 @@ public static class SymmetricCipherExtensions
     /// </list>
     /// </returns>
     public static (bool success, byte[] plaintext) DecryptBase64(
-        this SymmetricCipher cipher,
+        this ISymmetricCipher cipher,
         string key,
         byte[] encrypted
     )
@@ -255,7 +197,7 @@ public static class SymmetricCipherExtensions
     /// Generates a new cryptographic key for use in encryption or decryption operations.
     /// </summary>
     /// <returns>A byte array containing the generated cryptographic key.</returns>
-    public static byte[] GenerateKey(this SymmetricCipher cipher)
+    public static byte[] GenerateKey(this ISymmetricCipher cipher)
     {
         return CryptoHelper.GetBytes(cipher.KeySizeBytes);
     }
@@ -264,7 +206,7 @@ public static class SymmetricCipherExtensions
     /// Generates a new cryptographic nonce for use in encryption or decryption operations.
     /// </summary>
     /// <returns>A byte array containing the generated cryptographic nonce.</returns>
-    public static byte[] GenerateNonce(this SymmetricCipher cipher)
+    public static byte[] GenerateNonce(this ISymmetricCipher cipher)
     {
         return CryptoHelper.GetBytes(cipher.NonceSizeBytes);
     }
@@ -273,7 +215,7 @@ public static class SymmetricCipherExtensions
     /// Generates a new cryptographic key and returns it as a Base64 encoded string.
     /// </summary>
     /// <returns>The generated key as a Base64 string.</returns>
-    public static string GenerateKeyBase64(this SymmetricCipher cipher)
+    public static string GenerateKeyBase64(this ISymmetricCipher cipher)
     {
         byte[] key = cipher.GenerateKey();
         string result = Convert.ToBase64String(key);
@@ -287,8 +229,8 @@ public static class SymmetricCipherExtensions
     /// <param name="plaintext">The plaintext to verify.</param>
     /// <param name="nonce">The nonce to verify.</param>
     /// <returns>True when the parameters passed verification, false when it fails; missing required parameters.</returns>
-    public static bool VerifyEncryptionParameters(
-        this SymmetricCipher cipher,
+    internal static bool VerifyEncryptionParameters(
+        this ISymmetricCipher cipher,
         byte[] key,
         byte[] plaintext,
         byte[] nonce
@@ -305,11 +247,28 @@ public static class SymmetricCipherExtensions
     /// </summary>
     /// <param name="envelope">The cipher envelope to verify.</param>
     /// <returns>True when the parameters passed verification, false when it fails; missing required parameters.</returns>
-    protected virtual bool VerifyDecryptionParameters(byte[] key, SymmetricCipherEnvelope envelope)
+    internal static bool VerifyDecryptionParametersBase(
+        this ISymmetricCipher cipher,
+        byte[] key,
+        SymmetricCipherEnvelope envelope
+    )
     {
         return LibraryHelper.NotNull(key, envelope)
-            && key.Length == KeySizeBytes
+            && key.Length == cipher.KeySizeBytes
             && envelope.Ciphertext.Length > 0
-            && envelope.Nonce.Length == NonceSizeBytes;
+            && envelope.Nonce.Length == cipher.NonceSizeBytes;
+    }
+
+    /// <inheritdoc cref="ISymmetricCipher.VerifyDecryptionParameters(byte[], SymmetricCipherEnvelope)"/>
+    internal static bool VerifyDecryptionParametersAE(
+        this ISymmetricCipherAE cipher,
+        byte[] key,
+        SymmetricCipherEnvelope envelope
+    )
+    {
+        return key.Length == cipher.KeySizeBytes
+            && envelope.Ciphertext.Length > 0
+            && envelope.Nonce.Length == cipher.NonceSizeBytes
+            && envelope.Tag.Length == cipher.AuthTagSizeBytes;
     }
 }

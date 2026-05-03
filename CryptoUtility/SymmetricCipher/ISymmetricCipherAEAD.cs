@@ -5,18 +5,11 @@
 /// during encryption that is verified upon decryption, ensuring both confidentiality and integrity of the ciphertext
 ///and any associated (non-encrypted) data.
 /// </summary>
-internal abstract class SymmetricCipherAEAD : SymmetricCipherAE
+public interface ISymmetricCipherAEAD : ISymmetricCipherAE
 {
-    /// <inheritdoc cref="SymmetricCipher.Encrypt" />
-    public override (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext) =>
-        Encrypt(key, plaintext, nonce: GenerateNonce(), aad: []);
-
-    /// <inheritdoc cref="SymmetricCipher.Encrypt(byte[], byte[], byte[])" />
-    public override (bool success, byte[] encrypted) Encrypt(
-        byte[] key,
-        byte[] plaintext,
-        byte[] nonce
-    ) => Encrypt(key, plaintext, nonce, aad: []);
+    /// <inheritdoc cref="ISymmetricCipher.Encrypt(byte[], byte[], byte[])" />
+    public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce) =>
+        Encrypt(key, plaintext, nonce, aad: []);
 
     /// <summary>
     /// Encrypts the specified plaintext using the provided cryptographic key.
@@ -38,21 +31,10 @@ internal abstract class SymmetricCipherAEAD : SymmetricCipherAE
     /// </item>
     /// </list>
     /// </returns>
-    public abstract (bool success, byte[] encrypted) Encrypt(
+    public (bool success, byte[] encrypted) Encrypt(
         byte[] key,
         byte[] plaintext,
         byte[] nonce,
         byte[] aad
     );
-
-    /// <inheritdoc cref="SymmetricCipher.VerifyDecryptionParameters(byte[], SymmetricCipherEnvelope)"/>
-    protected override bool VerifyDecryptionParameters(byte[] key, SymmetricCipherEnvelope envelope)
-    {
-        return key.Length == KeySizeBytes
-            && envelope.Ciphertext.Length > 0
-            && envelope.Nonce.Length == NonceSizeBytes
-            && envelope.Tag.Length == AuthTagSizeBytes;
-
-        // AAD not required.
-    }
 }

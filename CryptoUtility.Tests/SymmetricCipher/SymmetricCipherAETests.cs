@@ -2,7 +2,7 @@
 
 public abstract class SymmetricCipherAETests : SymmetricCipherTests
 {
-    internal SymmetricCipherAE CipherAE => (SymmetricCipherAE)Cipher;
+    internal ISymmetricCipherAE CipherAE => (ISymmetricCipherAE)Cipher;
 
     [Fact]
     public void Encrypt_CheckEnvelopeValidAE()

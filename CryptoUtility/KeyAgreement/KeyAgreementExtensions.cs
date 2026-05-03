@@ -63,7 +63,7 @@ public static class KeyAgreementExtensions
         KeyExpansionKdfID kdfID = KeyExpansionKdfID.HkdfSystem
     )
     {
-        SymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
+        ISymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
         if (cipher == null)
         {
             return (false, []);
@@ -100,7 +100,7 @@ public static class KeyAgreementExtensions
         KeyExpansionKdfID kdfID = KeyExpansionKdfID.HkdfSystem
     )
     {
-        SymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
+        ISymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
         if (cipher == null)
         {
             return (false, []);

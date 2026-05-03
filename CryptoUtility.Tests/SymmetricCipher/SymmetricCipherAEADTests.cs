@@ -4,7 +4,7 @@ namespace CryptoUtility.Tests;
 
 public abstract class SymmetricCipherAEADTests : SymmetricCipherAETests
 {
-    internal SymmetricCipherAEAD CipherAEAD => (SymmetricCipherAEAD)Cipher;
+    internal ISymmetricCipherAEAD CipherAEAD => (ISymmetricCipherAEAD)Cipher;
 
     [Fact]
     public void Encrypt_CheckEnvelopeValidAEAD()

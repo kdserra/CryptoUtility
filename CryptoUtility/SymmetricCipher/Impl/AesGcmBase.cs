@@ -2,23 +2,32 @@
 
 namespace CryptoUtility;
 
-internal abstract class AesGcmBase : SymmetricCipherAEAD
+internal abstract class AesGcmBase : ISymmetricCipherAEAD
 {
-    /// <inheritdoc cref="SymmetricCipher.Encrypt" />
-    public override (bool success, byte[] encrypted) Encrypt(
+    public abstract SymmetricCipherID CipherID { get; }
+    public abstract int KeySizeBytes { get; }
+    public abstract int NonceSizeBytes { get; }
+    public abstract int AuthTagSizeBytes { get; }
+
+    /// <inheritdoc cref="ISymmetricCipher.Encrypt" />
+    public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce) =>
+        Encrypt(key, plaintext, nonce: this.GenerateNonce(), aad: []);
+
+    /// <inheritdoc cref="ISymmetricCipher.Encrypt" />
+    public (bool success, byte[] encrypted) Encrypt(
         byte[] key,
         byte[] plaintext,
         byte[] nonce,
         byte[] aad
     )
     {
-        if (!VerifyEncryptionParameters(key, plaintext, nonce))
+        if (!this.VerifyEncryptionParameters(key, plaintext, nonce))
         {
             return (false, []);
         }
 
         byte[] ciphertext = new byte[plaintext.Length];
-        byte[] tag = new byte[AuthTagSizeBytes];
+        byte[] tag = new byte[this.AuthTagSizeBytes];
 
         try
         {
@@ -45,8 +54,8 @@ internal abstract class AesGcmBase : SymmetricCipherAEAD
         }
     }
 
-    /// <inheritdoc cref="SymmetricCipher.Decrypt" />
-    public override (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
+    /// <inheritdoc cref="ISymmetricCipher.Decrypt" />
+    public (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
     {
         SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
         if (envelope == null)
@@ -54,7 +63,7 @@ internal abstract class AesGcmBase : SymmetricCipherAEAD
             return (false, []);
         }
 
-        if (!VerifyDecryptionParameters(key, envelope))
+        if (!this.VerifyDecryptionParametersAE(key, envelope))
         {
             return (false, []);
         }

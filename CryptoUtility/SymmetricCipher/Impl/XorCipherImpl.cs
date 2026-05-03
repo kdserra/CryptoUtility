@@ -3,20 +3,20 @@
 namespace CryptoUtility;
 
 [GenerateStaticApi]
-internal sealed class XorCipherImpl : SymmetricCipher
+internal sealed class XorCipherImpl : ISymmetricCipher
 {
     internal static readonly XorCipherImpl Shared = new();
 
-    /// <inheritdoc cref="SymmetricCipher.CipherID" />
+    /// <inheritdoc cref="ISymmetricCipher.CipherID" />
     public override SymmetricCipherID CipherID => SymmetricCipherID.XorCipherStandard;
 
-    /// <inheritdoc cref="SymmetricCipher.KeySizeBytes" />
+    /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 32; // 256-bit
 
-    /// <inheritdoc cref="SymmetricCipher.NonceSizeBytes" />
+    /// <inheritdoc cref="ISymmetricCipher.NonceSizeBytes" />
     public override int NonceSizeBytes => 32; // 256-bit
 
-    /// <inheritdoc cref="SymmetricCipher.Encrypt(byte[], byte[], byte[])" />
+    /// <inheritdoc cref="ISymmetricCipher.Encrypt(byte[], byte[], byte[])" />
     public override (bool success, byte[] encrypted) Encrypt(
         byte[] key,
         byte[] plaintext,
@@ -47,7 +47,7 @@ internal sealed class XorCipherImpl : SymmetricCipher
         return (true, envelope.ToBytes());
     }
 
-    /// <inheritdoc cref="SymmetricCipher.Decrypt(byte[], byte[])" />
+    /// <inheritdoc cref="ISymmetricCipher.Decrypt(byte[], byte[])" />
     public override (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
     {
         SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
