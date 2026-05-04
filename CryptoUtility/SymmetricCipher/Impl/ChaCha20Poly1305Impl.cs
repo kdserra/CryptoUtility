@@ -31,7 +31,7 @@ internal sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
         byte[] aad
     )
     {
-        if (!VerifyEncryptionParameters(key, plaintext, nonce))
+        if (!this.VerifyEncryptionParameters(key, plaintext, nonce))
         {
             return (false, []);
         }
@@ -75,7 +75,7 @@ internal sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
             return (false, []);
         }
 
-        if (!VerifyDecryptionParameters(key, envelope))
+        if (!this.VerifyDecryptionParametersAE(key, envelope))
         {
             return (false, []);
         }

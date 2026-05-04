@@ -20,7 +20,7 @@ public abstract class XxHashBase : IHashProvider
         _variant = variant;
     }
 
-    public override byte[] Hash(byte[] message)
+    public byte[] Hash(byte[] message)
     {
         return _variant switch
         {

@@ -260,7 +260,7 @@ public static class SymmetricCipherExtensions
     }
 
     /// <inheritdoc cref="ISymmetricCipher.VerifyDecryptionParameters(byte[], SymmetricCipherEnvelope)"/>
-    internal static bool VerifyDecryptionParametersAE(
+    internal static bool VerifyDecryptionParametersAE_(
         this ISymmetricCipherAE cipher,
         byte[] key,
         SymmetricCipherEnvelope envelope
@@ -271,4 +271,11 @@ public static class SymmetricCipherExtensions
             && envelope.Nonce.Length == cipher.NonceSizeBytes
             && envelope.Tag.Length == cipher.AuthTagSizeBytes;
     }
+
+    /// <inheritdoc cref="ISymmetricCipher.VerifyDecryptionParameters(byte[], SymmetricCipherEnvelope)"/>
+    internal static bool VerifyDecryptionParametersAEAD(
+        this ISymmetricCipherAE cipher,
+        byte[] key,
+        SymmetricCipherEnvelope envelope
+    ) => cipher.VerifyDecryptionParametersAE_(key, envelope);
 }
