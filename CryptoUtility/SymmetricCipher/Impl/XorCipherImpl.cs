@@ -8,22 +8,18 @@ internal sealed class XorCipherImpl : ISymmetricCipher
     internal static readonly XorCipherImpl Shared = new();
 
     /// <inheritdoc cref="ISymmetricCipher.CipherID" />
-    public override SymmetricCipherID CipherID => SymmetricCipherID.XorCipherStandard;
+    public SymmetricCipherID CipherID => SymmetricCipherID.XorCipherStandard;
 
     /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />
-    public override int KeySizeBytes => 32; // 256-bit
+    public int KeySizeBytes => 32; // 256-bit
 
     /// <inheritdoc cref="ISymmetricCipher.NonceSizeBytes" />
-    public override int NonceSizeBytes => 32; // 256-bit
+    public int NonceSizeBytes => 32; // 256-bit
 
     /// <inheritdoc cref="ISymmetricCipher.Encrypt(byte[], byte[], byte[])" />
-    public override (bool success, byte[] encrypted) Encrypt(
-        byte[] key,
-        byte[] plaintext,
-        byte[] nonce
-    )
+    public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce)
     {
-        if (!VerifyEncryptionParameters(key, plaintext, nonce))
+        if (!this.VerifyEncryptionParameters(key, plaintext, nonce))
         {
             return (false, []);
         }
@@ -48,7 +44,7 @@ internal sealed class XorCipherImpl : ISymmetricCipher
     }
 
     /// <inheritdoc cref="ISymmetricCipher.Decrypt(byte[], byte[])" />
-    public override (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
+    public (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
     {
         SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
         if (envelope == null)
@@ -56,7 +52,7 @@ internal sealed class XorCipherImpl : ISymmetricCipher
             return (false, []);
         }
 
-        if (!VerifyDecryptionParameters(key, envelope))
+        if (!this.VerifyDecryptionParametersBase(key, envelope))
         {
             return (false, []);
         }

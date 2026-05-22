@@ -63,7 +63,7 @@ internal abstract class AesGcmBase : ISymmetricCipherAEAD
             return (false, []);
         }
 
-        if (!this.VerifyDecryptionParametersAE(key, envelope))
+        if (!this.VerifyDecryptionParametersAEAD(key, envelope))
         {
             return (false, []);
         }

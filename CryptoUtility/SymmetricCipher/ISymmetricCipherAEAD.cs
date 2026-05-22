@@ -7,10 +7,6 @@
 /// </summary>
 public interface ISymmetricCipherAEAD : ISymmetricCipherAE
 {
-    /// <inheritdoc cref="ISymmetricCipher.Encrypt(byte[], byte[], byte[])" />
-    public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce) =>
-        Encrypt(key, plaintext, nonce, aad: []);
-
     /// <summary>
     /// Encrypts the specified plaintext using the provided cryptographic key.
     /// </summary>
