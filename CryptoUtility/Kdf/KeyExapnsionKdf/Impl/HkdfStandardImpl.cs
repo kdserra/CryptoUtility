@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using HkdfStandard = HkdfStandard.Hkdf;
 
 namespace CryptoUtility;
@@ -19,15 +20,34 @@ public class HkdfStandardImpl : IKeyExpansionKdf
         byte[] info
     )
     {
-        return global::HkdfStandard.Hkdf.DeriveKey(
-            System.Security.Cryptography.HashAlgorithmName.SHA256,
+        return HkdfStandard.DeriveKey(
             inputKeyMaterial,
+            iterations,
             outputLength,
             salt,
-            info
+            info,
+            HashAlgorithmName.SHA256
         );
     }
+
+    public byte[] DeriveKey(
+        byte[] inputKeyMaterial,
+        int iterations,
+        int outputLength,
+        byte[] salt,
+        byte[] info,
+        HashAlgorithmName hashAlgorithm
+    )
+    {
+        byte[] key = HkdfStandard.DeriveKey(
+            inputKeyMaterial,
+            iterations,
+            outputLength,
+            salt,
+            info,
+            hashAlgorithm
+        );
+
+        return key;
+    }
 }
-
-
-
