@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using CryptoUtility.Extras;
 
 namespace CryptoUtility;
@@ -52,7 +52,7 @@ internal sealed class EcdhImpl : IKeyAgreement
     private static readonly ECCurve _defaultECCurve = ECCurve.NamedCurves.nistP256;
 
     /// <inheritdoc cref="IKeyAgreement.DeriveSharedSecret(byte[], byte[])"/>
-    public override (bool success, byte[] sharedSecret) DeriveSharedSecret(
+    public (bool success, byte[] sharedSecret) DeriveSharedSecret(
         byte[] secretKey,
         byte[] peerPublicKey
     )
@@ -75,7 +75,7 @@ internal sealed class EcdhImpl : IKeyAgreement
     }
 
     /// <inheritdoc cref="IKeyAgreement.GenerateKeyPair()"/>
-    public override (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
+    public (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
     {
         using var ecdh = ECDiffieHellman.Create(_defaultECCurve);
         byte[] publicKey = ecdh.ExportSubjectPublicKeyInfo();

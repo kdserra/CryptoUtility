@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
@@ -24,7 +24,7 @@ public abstract class ShaBase : IHashProvider
         _variant = variant;
     }
 
-    public override byte[] Hash(byte[] message)
+    public byte[] Hash(byte[] message)
     {
         using HashAlgorithm alg = CreateHashAlgorithm();
         byte[] hash = alg.ComputeHash(message);

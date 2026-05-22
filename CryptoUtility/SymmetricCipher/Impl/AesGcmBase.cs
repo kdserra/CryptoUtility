@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
@@ -11,7 +11,7 @@ internal abstract class AesGcmBase : ISymmetricCipherAEAD
 
     /// <inheritdoc cref="ISymmetricCipher.Encrypt" />
     public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce) =>
-        Encrypt(key, plaintext, nonce: this.GenerateNonce(), aad: []);
+        Encrypt(key, plaintext, nonce: nonce, aad: []);
 
     /// <inheritdoc cref="ISymmetricCipher.Encrypt" />
     public (bool success, byte[] encrypted) Encrypt(

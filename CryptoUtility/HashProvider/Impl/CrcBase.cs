@@ -1,4 +1,4 @@
-﻿using System.IO.Hashing;
+using System.IO.Hashing;
 using Crc32System = System.IO.Hashing.Crc32;
 using Crc64System = System.IO.Hashing.Crc64;
 
@@ -19,7 +19,7 @@ public abstract class CrcBase : IHashProvider
         _variant = variant;
     }
 
-    public override byte[] Hash(byte[] message)
+    public byte[] Hash(byte[] message)
     {
         return _variant switch
         {
