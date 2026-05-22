@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace CryptoUtility;
 
@@ -30,6 +30,11 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
+            if (!LibraryHelper.NotNull(cipher, publicKey, plaintext))
+            {
+                return (false, string.Empty);
+            }
+
             byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
             byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
             (bool success, byte[] encrypted) encryptedResult = cipher.Encrypt(
@@ -57,8 +62,8 @@ public static class AsymmetricCipherExtensions
     /// succeeded, and the plaintext UTF8 string.
     /// </summary>
     /// <param name="cipher">The asymmetric cipher used for the decryption operation.</param>
-    /// <param name="secretKey"></param>
-    /// <param name="plaintext"></param>
+    /// <param name="secretKey">The secret key in Base64 format.</param>
+    /// <param name="encrypted">The encrypted ciphertext in Base64 format.</param>
     /// <returns>
     /// A tuple containing:
     /// <list type="bullet">
@@ -78,6 +83,11 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
+            if (!LibraryHelper.NotNull(cipher, secretKey, encrypted))
+            {
+                return (false, string.Empty);
+            }
+
             byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
             byte[] encryptedBytes = Convert.FromBase64String(encrypted);
 
@@ -110,6 +120,11 @@ public static class AsymmetricCipherExtensions
         this IAsymmetricCipher cipher
     )
     {
+        if (!LibraryHelper.NotNull(cipher))
+        {
+            return (string.Empty, string.Empty);
+        }
+
         (byte[] PublicKeyBytes, byte[] SecretKeyBytes) keyPair = cipher.GenerateKeyPair();
         string publicKeyBase64 = Convert.ToBase64String(keyPair.PublicKeyBytes);
         string secretKeyBase64 = Convert.ToBase64String(keyPair.SecretKeyBytes);
@@ -139,7 +154,7 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(symmetricCipher, publicKey, plaintext))
+            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, symmetricCipher, publicKey, plaintext))
             {
                 return (false, Array.Empty<byte>());
             }
@@ -203,7 +218,7 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(symmetricCipher, secretKey, encrypted))
+            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, symmetricCipher, secretKey, encrypted))
             {
                 return (false, Array.Empty<byte>());
             }
@@ -270,7 +285,7 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(publicKey, plaintext, cipherID))
+            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, publicKey, plaintext))
             {
                 return (false, Array.Empty<byte>());
             }
@@ -317,7 +332,7 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(secretKey, encrypted, cipherID))
+            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, secretKey, encrypted))
             {
                 return (false, Array.Empty<byte>());
             }
@@ -363,7 +378,7 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(publicKey, plaintext, cipherID))
+            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, publicKey, plaintext))
             {
                 return (false, string.Empty);
             }
@@ -408,7 +423,7 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(secretKey, encrypted, cipherID))
+            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, secretKey, encrypted))
             {
                 return (false, string.Empty);
             }

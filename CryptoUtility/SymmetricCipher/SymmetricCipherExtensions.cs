@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace CryptoUtility;
 
@@ -7,6 +7,7 @@ public static class SymmetricCipherExtensions
     /// <summary>
     /// Encrypts the specified plaintext using the provided cryptographic key.
     /// </summary>
+    /// <param name="cipher">The symmetric cipher instance.</param>
     /// <param name="key">The cryptographic key used to perform the encryption.</param>
     /// <param name="plaintext">The data to be encrypted.</param>
     /// <returns>
@@ -24,11 +25,20 @@ public static class SymmetricCipherExtensions
         this ISymmetricCipher cipher,
         byte[] key,
         byte[] plaintext
-    ) => cipher.Encrypt(key, plaintext, nonce: cipher.GenerateNonce());
+    )
+    {
+        if (!LibraryHelper.NotNull(cipher, key, plaintext))
+        {
+            return (false, Array.Empty<byte>());
+        }
+
+        return cipher.Encrypt(key, plaintext, nonce: cipher.GenerateNonce());
+    }
 
     /// <summary>
     /// Encrypts the specified plaintext UTF8 string using the provided Base64 key and returns a Base64-encoded result.
     /// </summary>
+    /// <param name="cipher">The symmetric cipher instance.</param>
     /// <param name="key">The string representation of the cryptographic key in Base64.</param>
     /// <param name="plaintext">The plaintext UTF8 string to encrypt.</param>
     /// <returns>
@@ -50,7 +60,7 @@ public static class SymmetricCipherExtensions
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(key, plaintext))
+            if (!LibraryHelper.NotNullOrEmpty(cipher, key, plaintext))
             {
                 return (false, string.Empty);
             }
@@ -81,6 +91,7 @@ public static class SymmetricCipherExtensions
     /// Decrypts the specified Base64-encoded encrypted string using the provided Base64 key and returns the decrypted
     /// plaintext as a Base64 string.
     /// </summary>
+    /// <param name="cipher">The symmetric cipher instance.</param>
     /// <param name="key">The cryptographic key in Base64 format.</param>
     /// <param name="encrypted">The encrypted data to decrypt in Base64 format.</param>
     /// <returns>
@@ -102,6 +113,11 @@ public static class SymmetricCipherExtensions
     {
         try
         {
+            if (!LibraryHelper.NotNullOrEmpty(cipher, key, encrypted))
+            {
+                return (false, string.Empty);
+            }
+
             byte[] keyBytes = Convert.FromBase64String(key);
             byte[] encryptedBytes = Convert.FromBase64String(encrypted);
             (bool success, byte[] plaintext) decryptedResult = cipher.Decrypt(
@@ -127,6 +143,7 @@ public static class SymmetricCipherExtensions
     /// <summary>
     /// Encrypts the specified plaintext using the provided Base64 key and returns the encrypted base64 data.
     /// </summary>
+    /// <param name="cipher">The symmetric cipher instance.</param>
     /// <param name="key">The string representation of the cryptographic key in Base64.</param>
     /// <param name="plaintext">The data to be encrypted.</param>
     /// <returns>
@@ -148,6 +165,11 @@ public static class SymmetricCipherExtensions
     {
         try
         {
+            if (!LibraryHelper.NotNullOrEmpty(cipher, key) || !LibraryHelper.NotNull(plaintext))
+            {
+                return (false, Array.Empty<byte>());
+            }
+
             byte[] keyBytes = Convert.FromBase64String(key);
             (bool success, byte[] encrypted) encryptedResult = cipher.Encrypt(keyBytes, plaintext);
             return encryptedResult;
@@ -162,6 +184,7 @@ public static class SymmetricCipherExtensions
     /// Decrypts the specified encrypted data using the provided Base64 cryptographic key and returns the decrypted
     /// plaintext.
     /// </summary>
+    /// <param name="cipher">The symmetric cipher instance.</param>
     /// <param name="key">The cryptographic key used to perform the decryption.</param>
     /// <param name="encrypted">The encrypted data to decrypt.</param>
     /// <returns>
@@ -183,6 +206,11 @@ public static class SymmetricCipherExtensions
     {
         try
         {
+            if (!LibraryHelper.NotNullOrEmpty(cipher, key) || !LibraryHelper.NotNull(encrypted))
+            {
+                return (false, Array.Empty<byte>());
+            }
+
             byte[] keyBytes = Convert.FromBase64String(key);
             (bool success, byte[] plaintext) decryptedResult = cipher.Decrypt(keyBytes, encrypted);
             return decryptedResult;
@@ -196,36 +224,60 @@ public static class SymmetricCipherExtensions
     /// <summary>
     /// Generates a new cryptographic key for use in encryption or decryption operations.
     /// </summary>
+    /// <param name="cipher">The symmetric cipher instance.</param>
     /// <returns>A byte array containing the generated cryptographic key.</returns>
     public static byte[] GenerateKey(this ISymmetricCipher cipher)
     {
+        if (!LibraryHelper.NotNull(cipher))
+        {
+            return Array.Empty<byte>();
+        }
+
         return CryptoHelper.GetBytes(cipher.KeySizeBytes);
     }
 
     /// <summary>
     /// Generates a new cryptographic nonce for use in encryption or decryption operations.
     /// </summary>
+    /// <param name="cipher">The symmetric cipher instance.</param>
     /// <returns>A byte array containing the generated cryptographic nonce.</returns>
     public static byte[] GenerateNonce(this ISymmetricCipher cipher)
     {
+        if (!LibraryHelper.NotNull(cipher))
+        {
+            return Array.Empty<byte>();
+        }
+
         return CryptoHelper.GetBytes(cipher.NonceSizeBytes);
     }
 
     /// <summary>
     /// Generates a new cryptographic nonce for use in encryption or decryption operations.
     /// </summary>
-    /// <returns>A byte array containing the generated cryptographic nonce.</returns>
+    /// <param name="cipher">The symmetric cipher instance.</param>
+    /// <returns>A Base64 string containing the generated cryptographic nonce.</returns>
     public static string GenerateNonceBase64(this ISymmetricCipher cipher)
     {
+        if (!LibraryHelper.NotNull(cipher))
+        {
+            return string.Empty;
+        }
+
         return Convert.ToBase64String(cipher.GenerateNonce());
     }
 
     /// <summary>
     /// Generates a new cryptographic key and returns it as a Base64 encoded string.
     /// </summary>
+    /// <param name="cipher">The symmetric cipher instance.</param>
     /// <returns>The generated key as a Base64 string.</returns>
     public static string GenerateKeyBase64(this ISymmetricCipher cipher)
     {
+        if (!LibraryHelper.NotNull(cipher))
+        {
+            return string.Empty;
+        }
+
         byte[] key = cipher.GenerateKey();
         string result = Convert.ToBase64String(key);
         return result;

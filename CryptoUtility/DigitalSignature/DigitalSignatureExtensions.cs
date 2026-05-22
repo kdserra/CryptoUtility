@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace CryptoUtility;
 
@@ -8,6 +8,7 @@ public static class DigitalSignatureExtensions
     /// Signs a Base64-encoded message using the specified secret key and returns the result as a Base64-encoded
     /// signature.
     /// </summary>
+    /// <param name="digitalSignature">The digital signature instance used to perform the signing.</param>
     /// <param name="message">The Base64-encoded message to sign. Cannot be null.</param>
     /// <param name="secretKey">The Base64-encoded secret key used to sign the message. Cannot be null.</param>
     /// <returns>A tuple containing a value indicating whether the signing operation was successful and the Base64-encoded
@@ -20,7 +21,7 @@ public static class DigitalSignatureExtensions
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(message, secretKey))
+            if (!LibraryHelper.NotNullOrEmpty(digitalSignature, message, secretKey))
             {
                 return (false, string.Empty);
             }
@@ -44,6 +45,7 @@ public static class DigitalSignatureExtensions
     /// <summary>
     /// Verifies the authenticity of a message using its Base64-encoded signature and public key.
     /// </summary>
+    /// <param name="digitalSignature">The digital signature instance used to perform the verification.</param>
     /// <param name="message">The message to verify. This parameter must not be null.</param>
     /// <param name="signature">The Base64-encoded digital signature associated with the message. This parameter must not be null.</param>
     /// <param name="publicKey">The Base64-encoded public key to use for signature verification. This parameter must not be null.</param>
@@ -57,7 +59,7 @@ public static class DigitalSignatureExtensions
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(message, signature, publicKey))
+            if (!LibraryHelper.NotNullOrEmpty(digitalSignature, message, signature, publicKey))
             {
                 return false;
             }
@@ -78,12 +80,17 @@ public static class DigitalSignatureExtensions
     /// <summary>
     /// Generates a new cryptographic key and returns it as a Base64 encoded string.
     /// </summary>
-    /// <param name="cryptor">The symmetric cryptor instance.</param>
+    /// <param name="digitalSignature">The digital signature instance.</param>
     /// <returns>The generated key as a Base64 string.</returns>
     public static (string PublicKey, string SecretKey) GenerateKeyPairBase64(
         this IDigitalSignature digitalSignature
     )
     {
+        if (!LibraryHelper.NotNull(digitalSignature))
+        {
+            return (string.Empty, string.Empty);
+        }
+
         (byte[] PublicKeyBytes, byte[] SecretKeyBytes) keyPair = digitalSignature.GenerateKeyPair();
         string publicKeyBase64 = Convert.ToBase64String(keyPair.PublicKeyBytes);
         string secretKeyBase64 = Convert.ToBase64String(keyPair.SecretKeyBytes);

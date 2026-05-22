@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
@@ -9,10 +9,16 @@ public static class HashProviderExtensions
     /// <summary>
     /// Computes the hash value for the specified input data using the algorithm implemented by the derived class.
     /// </summary>
+    /// <param name="hashProvider">The hash provider instance.</param>
     /// <param name="message">The UTF8 string containing the data to hash.  This parameter must not be null or empty.</param>
     /// <returns>A base64 string that contains the computed hash value.</returns>
     public static string HashBase64(this IHashProvider hashProvider, string message)
     {
+        if (!LibraryHelper.NotNull(hashProvider, message))
+        {
+            return string.Empty;
+        }
+
         byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);
         byte[] hashBytes = hashProvider.Hash(messageBytes);
         string hashBase64 = Convert.ToBase64String(hashBytes);
@@ -27,6 +33,7 @@ public static class HashProviderExtensions
     /// <remarks>The method uses the configured HMAC provider to generate a secure signature. For best
     /// security, use a strong, randomly generated key and ensure both input and key are not null. The returned
     /// signature can be used to verify the authenticity and integrity of the input data.</remarks>
+    /// <param name="hashProvider">The hash provider instance.</param>
     /// <param name="message">The data to be signed. This must be a non-null byte array containing the message or payload
     /// to authenticate.</param>
     /// <param name="key">The secret key used to generate the HMAC signature. This must be a non-null byte array and
@@ -41,6 +48,11 @@ public static class HashProviderExtensions
         Func<HMAC>? hmacProvider = null
     )
     {
+        if (!LibraryHelper.NotNull(hashProvider, message, key))
+        {
+            return Array.Empty<byte>();
+        }
+
         hmacProvider ??= DefaultHmacProvider;
         using HMAC hmac = hmacProvider.Invoke();
         hmac.Key = key;
@@ -58,6 +70,7 @@ public static class HashProviderExtensions
     /// as a Base64-encoded string for convenient storage or transmission. For best security, use a strong, randomly
     /// generated key and ensure both inputs are not null.
     /// </remarks>
+    /// <param name="hashProvider">The hash provider instance.</param>
     /// <param name="message">The string data to be signed. Cannot be null.</param>
     /// <param name="key">The secret key used to generate the HMAC signature. Cannot be null and should be kept confidential.</param>
     /// <param name="hmacProvider">
@@ -71,6 +84,11 @@ public static class HashProviderExtensions
         Func<HMAC>? hmacProvider = null
     )
     {
+        if (!LibraryHelper.NotNull(hashProvider, message, key))
+        {
+            return string.Empty;
+        }
+
         byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
         byte[] signatureBytes = hashProvider.Sign(messageBytes, keyBytes, hmacProvider);
@@ -83,6 +101,7 @@ public static class HashProviderExtensions
     /// </summary>
     /// <remarks>This method performs a fixed-time comparison to help prevent timing attacks. All parameters
     /// must be non-null and of appropriate length for the verification to succeed.</remarks>
+    /// <param name="hashProvider">The hash provider instance.</param>
     /// <param name="message">The input data to verify, as a byte array. Cannot be null.</param>
     /// <param name="signature">The signature to verify against the input data, as a byte array. Cannot be null.</param>
     /// <param name="key">The key used to verify the signature, as a byte array. Cannot be null.</param>
@@ -97,6 +116,11 @@ public static class HashProviderExtensions
         Func<HMAC>? hmacProvider = null
     )
     {
+        if (!LibraryHelper.NotNull(hashProvider, message, signature, key))
+        {
+            return false;
+        }
+
         byte[] computedSignature = hashProvider.Sign(message, key, hmacProvider);
         bool result = CryptoHelper.FixedTimeEquals(computedSignature, signature);
         return result;
@@ -110,6 +134,7 @@ public static class HashProviderExtensions
     /// verification. This method performs a fixed-time comparison to help prevent timing attacks. All inputs must be
     /// non-null and properly formatted for verification to succeed.
     /// </remarks>
+    /// <param name="hashProvider">The hash provider instance.</param>
     /// <param name="message">The string data to verify. Cannot be null.</param>
     /// <param name="signature">The Base64-encoded signature to verify against the message. Cannot be null.</param>
     /// <param name="key">The secret key used to verify the signature. Cannot be null.</param>
@@ -125,6 +150,11 @@ public static class HashProviderExtensions
         Func<HMAC>? hmacProvider = null
     )
     {
+        if (!LibraryHelper.NotNull(hashProvider, message, signature, key))
+        {
+            return false;
+        }
+
         byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);
         byte[] keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
         byte[] signatureBytes = Convert.FromBase64String(signature);
