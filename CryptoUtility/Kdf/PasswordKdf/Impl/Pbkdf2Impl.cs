@@ -8,32 +8,20 @@ public sealed class Pbkdf2Impl : IPasswordKdf
     public static readonly Pbkdf2Impl Shared = new();
     private static readonly HashAlgorithmName DefaultHashAlgorithm = HashAlgorithmName.SHA256;
 
-    public byte[] DeriveKey(byte[] password, byte[] salt, int iterations, int outputLength)
-    {
-        byte[] key = DerieveKey(password, salt, iterations, outputLength, DefaultHashAlgorithm);
-        return key;
-    }
-
-    public byte[] DerieveKey(
-        byte[] password,
-        byte[] salt,
-        int iterations,
-        int outputLength,
-        HashAlgorithmName hashAlgorithm
-    )
+    public byte[] DeriveKey(string password, byte[] salt, int iterations, int outputLength)
     {
 #if NET8_0_OR_GREATER
         byte[] key = Rfc2898DeriveBytes.Pbkdf2(
             password,
             salt,
             iterations,
-            hashAlgorithm,
+            DefaultHashAlgorithm,
             outputLength
         );
 
         return key;
 #else
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations, hashAlgorithm);
+        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations, DefaultHashAlgorithm);
         byte[] key = pbkdf2.GetBytes(outputLength);
         return key;
 #endif

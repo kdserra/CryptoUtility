@@ -29,7 +29,6 @@ public abstract class SymmetricCipherAEADTests : SymmetricCipherAETests
         Assert.NotNull(envelope.Tag);
         Assert.NotEmpty(envelope.Tag);
 
-        // Not required (allowed to be empty byte[]), just can't be null.
         Assert.NotNull(envelope.Aad);
     }
 

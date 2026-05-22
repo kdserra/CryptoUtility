@@ -11,10 +11,10 @@ internal sealed class XorCipherImpl : ISymmetricCipher
     public SymmetricCipherID CipherID => SymmetricCipherID.XorCipherStandard;
 
     /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />
-    public int KeySizeBytes => 32; // 256-bit
+    public int KeySizeBytes => 32;
 
     /// <inheritdoc cref="ISymmetricCipher.NonceSizeBytes" />
-    public int NonceSizeBytes => 32; // 256-bit
+    public int NonceSizeBytes => 32;
 
     /// <inheritdoc cref="ISymmetricCipher.Encrypt(byte[], byte[], byte[])" />
     public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce)

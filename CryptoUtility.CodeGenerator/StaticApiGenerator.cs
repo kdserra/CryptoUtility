@@ -216,13 +216,11 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         );
         var name = symbol.Name;
 
-        // Only expose params that Cipher cannot satisfy
         var renderedParams = string.Join(
             ", ",
             parameters.Where((_, i) => !isInjected[i]).Select(RenderParameter)
         );
 
-        // Substitute Cipher for injected positions, forward the rest by name
         var argsList = new List<string> { "Cipher" };
         argsList.AddRange(parameters.Select((p, i) => isInjected[i] ? "Cipher" : p.Name));
         var args = string.Join(", ", argsList);

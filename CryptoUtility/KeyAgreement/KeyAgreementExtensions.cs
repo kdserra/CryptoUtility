@@ -59,29 +59,22 @@ public static class KeyAgreementExtensions
         this IKeyAgreement keyAgreement,
         byte[] sharedSecret,
         byte[] plaintext,
-        SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem,
-        KeyExpansionKdfID kdfID = KeyExpansionKdfID.HkdfSystem
+        byte[] info,
+        ISymmetricCipher? cipher,
+        IKeyExpansionKdf? kdf
     )
     {
-        ISymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
-        if (cipher == null)
-        {
-            return (false, []);
-        }
-
-        IKeyExpansionKdf? kdf = LibraryHelper.GetKeyExpansionKdfFromID(kdfID);
-        if (kdf == null)
-        {
-            return (false, []);
-        }
+        cipher ??= Aes256GcmImpl.Shared;
+        kdf ??= HkdfStandardImpl.Shared;
 
         byte[] sharedSalt = cipher.GenerateNonce();
 
         byte[] key = kdf.DeriveKey(
             inputKeyMaterial: sharedSecret,
-            salt: sharedSalt,
             iterations: 1,
-            cipher.KeySizeBytes
+            cipher.KeySizeBytes,
+            sharedSalt,
+            info
         );
 
         (bool success, byte[] encrypted) = cipher.Encrypt(key, plaintext);
@@ -96,29 +89,22 @@ public static class KeyAgreementExtensions
         this IKeyAgreement keyAgreement,
         byte[] sharedSecret,
         byte[] plaintext,
-        SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem,
-        KeyExpansionKdfID kdfID = KeyExpansionKdfID.HkdfSystem
+        byte[] info,
+        ISymmetricCipher? cipher,
+        IKeyExpansionKdf? kdf
     )
     {
-        ISymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
-        if (cipher == null)
-        {
-            return (false, []);
-        }
-
-        IKeyExpansionKdf? kdf = LibraryHelper.GetKeyExpansionKdfFromID(kdfID);
-        if (kdf == null)
-        {
-            return (false, []);
-        }
+        cipher ??= Aes256GcmImpl.Shared;
+        kdf ??= HkdfStandardImpl.Shared;
 
         byte[] sharedSalt = cipher.GenerateNonce();
 
         byte[] key = kdf.DeriveKey(
             inputKeyMaterial: sharedSecret,
-            salt: sharedSalt,
             iterations: 1,
-            cipher.KeySizeBytes
+            cipher.KeySizeBytes,
+            sharedSalt,
+            info
         );
 
         (bool success, byte[] decrypted) = cipher.Decrypt(key, plaintext);

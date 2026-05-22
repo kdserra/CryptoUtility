@@ -120,7 +120,6 @@ public abstract class HashProviderTests
     {
         var signature = HashProvider.SignBase64(MessageString, KeyString);
 
-        // corrupt base64 by flipping one byte after decoding
         var bytes = Convert.FromBase64String(signature);
         bytes[0] ^= 0xFF;
         var corrupted = Convert.ToBase64String(bytes);

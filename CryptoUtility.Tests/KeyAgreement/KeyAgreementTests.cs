@@ -110,9 +110,6 @@ public abstract class KeyAgreementTests
         Assert.True(string.IsNullOrEmpty(result.sharedSecret));
     }
 
-    // =========================
-    // Variation 1: same instance
-    // =========================
 
     [Fact]
     public void SameInstance_SharedSecret_Roundtrip()
@@ -190,9 +187,6 @@ public abstract class KeyAgreementTests
         Assert.True(string.IsNullOrEmpty(result.sharedSecret));
     }
 
-    // =========================
-    // Variation 2: new instance used for both sides
-    // =========================
 
     [Fact]
     public void NewInstance_SharedSecret_Roundtrip()

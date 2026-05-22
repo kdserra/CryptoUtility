@@ -202,7 +202,6 @@ public abstract class AsymmetricCipherTests
         var (okEnc, encrypted) = Cipher.HybridEncrypt(pub, plaintext);
         Assert.True(okEnc);
 
-        // use a different symmetric cipher ID
         var wrongCipher = SymmetricCipherID.ChaCha20Poly1305System;
 
         var (okDec, decrypted) = Cipher.HybridDecrypt(sec, encrypted, wrongCipher);

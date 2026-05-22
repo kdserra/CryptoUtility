@@ -71,7 +71,6 @@ public abstract class DigitalSignatureTests
         var (okSign, signature) = Cipher.SignBase64(message, sec);
         Assert.True(okSign);
 
-        // corrupt signature
         var bytes = Convert.FromBase64String(signature);
         bytes[0] ^= 0xFF;
         string tamperedSignature = Convert.ToBase64String(bytes);
@@ -153,7 +152,7 @@ public abstract class DigitalSignatureTests
         var (okSign, signature) = Cipher.Sign(message, sec);
         Assert.True(okSign);
 
-        signature[0] ^= 0xFF; // flip a bit
+        signature[0] ^= 0xFF;
 
         var verified = Cipher.Verify(message, signature, pub);
         Assert.False(verified);

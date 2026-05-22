@@ -10,10 +10,10 @@ public sealed class Rsa2048Impl : RsaBase
     public override AsymmetricCipherID CipherID => AsymmetricCipherID.Rsa2048System;
 
     /// <inheritdoc cref="IAsymmetricCipher.KeySizeBytes"/>
-    public override int KeySizeBytes => 256; // 2048 bits
+    public override int KeySizeBytes => 256;
 
     /// <inheritdoc cref="IAsymmetricCipher.SaltSizeBytes"/>
-    public override int SaltSizeBytes => 32; // 256 bits
+    public override int SaltSizeBytes => 32;
 }
 
 #endif

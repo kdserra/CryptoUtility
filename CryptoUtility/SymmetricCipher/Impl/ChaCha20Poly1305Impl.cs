@@ -16,13 +16,13 @@ internal sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
     public SymmetricCipherID CipherID => SymmetricCipherID.ChaCha20Poly1305System;
 
     /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />
-    public int KeySizeBytes => 32; // 256-bit
+    public int KeySizeBytes => 32;
 
     /// <inheritdoc cref="ISymmetricCipher.NonceSizeBytes" />
-    public int NonceSizeBytes => 12; // 96-bit
+    public int NonceSizeBytes => 12;
 
     /// <inheritdoc cref="ISymmetricCipherAE.AuthTagSizeBytes" />
-    public int AuthTagSizeBytes => 16; // 128-bit
+    public int AuthTagSizeBytes => 16;
 
     /// <inheritdoc cref="ISymmetricCipherAEAD.Encrypt" />
     public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce) =>
