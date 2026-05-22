@@ -12,6 +12,8 @@ public class HkdfStandardImpl : IKeyExpansionKdf
 {
     public static HkdfStandardImpl Shared = new();
 
+    private static readonly HashAlgorithmName DefaultHashAlgorithm = HashAlgorithmName.SHA256;
+
     public byte[] DeriveKey(
         byte[] inputKeyMaterial,
         int iterations,
@@ -26,7 +28,7 @@ public class HkdfStandardImpl : IKeyExpansionKdf
             outputLength,
             salt,
             info,
-            HashAlgorithmName.SHA256
+            DefaultHashAlgorithm
         );
     }
 

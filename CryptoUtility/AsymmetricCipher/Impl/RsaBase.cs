@@ -5,9 +5,6 @@ namespace CryptoUtility;
 
 public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
 {
-    /// <inheritdoc cref="IAsymmetricCipher.CipherID"/>
-    public abstract AsymmetricCipherID CipherID { get; }
-
     /// <inheritdoc cref="IAsymmetricCipher.KeySizeBytes"/>
     public abstract int KeySizeBytes { get; }
 

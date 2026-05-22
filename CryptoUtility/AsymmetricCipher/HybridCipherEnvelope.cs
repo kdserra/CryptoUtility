@@ -18,25 +18,13 @@ public partial class HybridCipherEnvelope
     public readonly int Version;
 
     /// <summary>
-    /// Gets the identifier of the asymmetric cipher that is responsible for encrypting the symmetric key.
-    /// </summary>
-    [MemoryPackOrder(1)]
-    public readonly AsymmetricCipherID AsymmetricCipherID;
-
-    /// <summary>
-    /// Gets the identifier of the symmetric cipher that is responsible for encrypting the plaintext.
-    /// </summary>
-    [MemoryPackOrder(2)]
-    public readonly SymmetricCipherID SymmetricCipherID;
-
-    /// <summary>
     /// The encrypted data produced by the asymmetric cipher, containing the ciphertext.
     /// </summary>
     /// <remarks>
     /// This is the bytes of the <see cref="AsymmetricCipherEnvelope"/>, which itself contains the asymmetric ciphertext.
     /// It may be an empty byte array if the payload is invalid, but it will never be null.
     /// </remarks>
-    [MemoryPackOrder(3)]
+    [MemoryPackOrder(1)]
     public readonly byte[] AsymmetricEncrypted;
 
     /// <summary>
@@ -46,31 +34,17 @@ public partial class HybridCipherEnvelope
     /// This is the bytes of the <see cref="SymmetricCipherEnvelope"/>, which itself contains the symmetric ciphertext.
     /// It may be an empty byte array if the payload is invalid, but it will never be null.
     /// </remarks>
-    [MemoryPackOrder(4)]
+    [MemoryPackOrder(2)]
     public readonly byte[] SymmetricEncrypted;
 
     [MemoryPackConstructor]
-    public HybridCipherEnvelope(
-        int version,
-        AsymmetricCipherID asymmetricCipherID,
-        SymmetricCipherID symmetricCipherID,
-        byte[] asymmetricEncrypted,
-        byte[] symmetricEncrypted
-    )
+    public HybridCipherEnvelope(int version, byte[] asymmetricEncrypted, byte[] symmetricEncrypted)
     {
         Version = version;
-        AsymmetricCipherID = asymmetricCipherID;
-        SymmetricCipherID = symmetricCipherID;
         AsymmetricEncrypted = asymmetricEncrypted;
         SymmetricEncrypted = symmetricEncrypted;
 
-        LibraryHelper.ThrowIfAnyNull(
-            version,
-            asymmetricCipherID,
-            symmetricCipherID,
-            asymmetricEncrypted,
-            symmetricEncrypted
-        );
+        LibraryHelper.ThrowIfAnyNull(version, asymmetricEncrypted, symmetricEncrypted);
     }
 
     /// <summary>

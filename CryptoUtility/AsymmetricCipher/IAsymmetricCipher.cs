@@ -8,11 +8,6 @@ namespace CryptoUtility;
 public interface IAsymmetricCipher
 {
     /// <summary>
-    /// Gets the identifier for the asymmetric cipher algorithm associated with this instance.
-    /// </summary>
-    public AsymmetricCipherID CipherID { get; }
-
-    /// <summary>
     /// Gets the size, in bytes, of the cryptographic key used for encryption and decryption operations.
     /// </summary>
     public int KeySizeBytes { get; }

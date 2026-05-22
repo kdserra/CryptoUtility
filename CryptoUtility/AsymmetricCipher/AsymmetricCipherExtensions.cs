@@ -154,7 +154,14 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, symmetricCipher, publicKey, plaintext))
+            if (
+                !LibraryHelper.NotNullOrEmpty(
+                    asymmetricCipher,
+                    symmetricCipher,
+                    publicKey,
+                    plaintext
+                )
+            )
             {
                 return (false, Array.Empty<byte>());
             }
@@ -181,8 +188,6 @@ public static class AsymmetricCipherExtensions
 
             HybridCipherEnvelope envelope = new(
                 HybridCipherEnvelope.LatestVersion,
-                asymmetricCipherID: asymmetricCipher.CipherID,
-                symmetricCipherID: symmetricCipher.CipherID,
                 asymmetricEncrypted,
                 symmetricEncrypted
             );
@@ -218,21 +223,20 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, symmetricCipher, secretKey, encrypted))
+            if (
+                !LibraryHelper.NotNullOrEmpty(
+                    asymmetricCipher,
+                    symmetricCipher,
+                    secretKey,
+                    encrypted
+                )
+            )
             {
                 return (false, Array.Empty<byte>());
             }
 
             HybridCipherEnvelope? envelope = HybridCipherEnvelope.FromBytes(encrypted);
             if (envelope == null)
-            {
-                return (false, Array.Empty<byte>());
-            }
-
-            if (
-                envelope.AsymmetricCipherID != asymmetricCipher.CipherID
-                || envelope.SymmetricCipherID != symmetricCipher.CipherID
-            )
             {
                 return (false, Array.Empty<byte>());
             }
@@ -280,27 +284,24 @@ public static class AsymmetricCipherExtensions
         this IAsymmetricCipher asymmetricCipher,
         byte[] publicKey,
         byte[] plaintext,
-        SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
+        ISymmetricCipher? cipher = null
     )
     {
         try
         {
+            cipher ??= Aes256GcmImpl.Shared;
+
             if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, publicKey, plaintext))
             {
                 return (false, Array.Empty<byte>());
             }
 
-            ISymmetricCipher? symmetricCipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
-            if (symmetricCipher == null)
-            {
-                return (false, Array.Empty<byte>());
-            }
-
             (bool success, byte[] encrypted) result = asymmetricCipher.HybridEncrypt(
-                symmetricCipher,
+                cipher,
                 publicKey,
                 plaintext
             );
+
             return result;
         }
         catch
@@ -327,25 +328,21 @@ public static class AsymmetricCipherExtensions
         this IAsymmetricCipher asymmetricCipher,
         byte[] secretKey,
         byte[] encrypted,
-        SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
+        ISymmetricCipher? cipher = null
     )
     {
         try
         {
-            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, secretKey, encrypted))
-            {
-                return (false, Array.Empty<byte>());
-            }
+            cipher ??= Aes256GcmImpl.Shared;
 
-            ISymmetricCipher? symmetricCipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
-            if (symmetricCipher == null)
+            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, secretKey, encrypted))
             {
                 return (false, Array.Empty<byte>());
             }
 
             (bool success, byte[] plaintext) result = HybridDecrypt(
                 asymmetricCipher,
-                symmetricCipher,
+                cipher,
                 secretKey,
                 encrypted
             );
@@ -373,11 +370,13 @@ public static class AsymmetricCipherExtensions
         this IAsymmetricCipher asymmetricCipher,
         string publicKey,
         string plaintext,
-        SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
+        ISymmetricCipher? cipher = null
     )
     {
         try
         {
+            cipher ??= Aes256GcmImpl.Shared;
+
             if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, publicKey, plaintext))
             {
                 return (false, string.Empty);
@@ -390,7 +389,7 @@ public static class AsymmetricCipherExtensions
                 asymmetricCipher,
                 publicKeyBytes,
                 plaintextBytes,
-                cipherID
+                cipher
             );
 
             string encryptedBase64 = Convert.ToBase64String(encrypted);
@@ -410,7 +409,7 @@ public static class AsymmetricCipherExtensions
     /// <param name="secretKey">The Base64-encoded secret key to use for decryption. Must be a valid Base64 string representing the symmetric
     /// key.</param>
     /// <param name="encrypted">The Base64-encoded string containing the encrypted data to decrypt. Must be a valid Base64 string.</param>
-    /// <param name="cipherID">The identifier of the symmetric cipher algorithm to use for decryption. Defaults to
+    /// <param name="cipher">The identifier of the symmetric cipher algorithm to use for decryption. Defaults to
     /// SymmetricCipherID.Aes256GcmSystem if not specified.</param>
     /// <returns>A tuple containing a Boolean value that indicates whether decryption was successful, and the decrypted plaintext
     /// string. If decryption fails, the plaintext will be an empty string.</returns>
@@ -418,11 +417,13 @@ public static class AsymmetricCipherExtensions
         this IAsymmetricCipher asymmetricCipher,
         string secretKey,
         string encrypted,
-        SymmetricCipherID cipherID = SymmetricCipherID.Aes256GcmSystem
+        ISymmetricCipher? cipher = null
     )
     {
         try
         {
+            cipher ??= Aes256GcmImpl.Shared;
+
             if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, secretKey, encrypted))
             {
                 return (false, string.Empty);
@@ -435,7 +436,7 @@ public static class AsymmetricCipherExtensions
                 asymmetricCipher,
                 secretKeyBytes,
                 encryptedBytes,
-                cipherID
+                cipher
             );
 
             string plaintext = Encoding.UTF8.GetString(result.plaintext);

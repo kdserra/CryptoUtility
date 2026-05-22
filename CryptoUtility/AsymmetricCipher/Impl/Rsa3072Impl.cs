@@ -6,9 +6,6 @@ public sealed class Rsa3072Impl : RsaBase
 {
     public static readonly Rsa3072Impl Shared = new();
 
-    /// <inheritdoc cref="IAsymmetricCipher.CipherID"/>
-    public override AsymmetricCipherID CipherID => AsymmetricCipherID.Rsa3072System;
-
     /// <inheritdoc cref="IAsymmetricCipher.KeySizeBytes"/>
     public override int KeySizeBytes => 384;
 

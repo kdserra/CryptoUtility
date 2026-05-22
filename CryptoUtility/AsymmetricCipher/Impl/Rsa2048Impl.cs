@@ -6,9 +6,6 @@ public sealed class Rsa2048Impl : RsaBase
 {
     public static readonly Rsa2048Impl Shared = new();
 
-    /// <inheritdoc cref="IAsymmetricCipher.CipherID"/>
-    public override AsymmetricCipherID CipherID => AsymmetricCipherID.Rsa2048System;
-
     /// <inheritdoc cref="IAsymmetricCipher.KeySizeBytes"/>
     public override int KeySizeBytes => 256;
 
