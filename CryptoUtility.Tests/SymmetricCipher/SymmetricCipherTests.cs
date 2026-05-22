@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace CryptoUtility.Tests;
 
@@ -294,4 +294,43 @@ public abstract class SymmetricCipherTests
             Assert.Equal(cipherTypeName, cipherIDName + "Impl");
         }
     }
+
+    [Fact]
+    public void SymmetricCipherExtensions_NullHandling()
+    {
+        ISymmetricCipher? nullSymmetric = null;
+
+        var (encSuccess, encrypted) = nullSymmetric!.Encrypt([1, 2], [3, 4]);
+        Assert.False(encSuccess);
+        Assert.Empty(encrypted);
+
+        var (encBase64Success, encBase64) = nullSymmetric!.EncryptBase64("key", "plain");
+        Assert.False(encBase64Success);
+        Assert.Equal(string.Empty, encBase64);
+
+        var (decBase64Success, decBase64) = nullSymmetric!.DecryptBase64("key", "enc");
+        Assert.False(decBase64Success);
+        Assert.Equal(string.Empty, decBase64);
+
+        var (encBytesSuccess, encBytes) = nullSymmetric!.EncryptBase64("key", new byte[] { 1, 2 });
+        Assert.False(encBytesSuccess);
+        Assert.Empty(encBytes);
+
+        var (decBytesSuccess, decBytes) = nullSymmetric!.DecryptBase64("key", new byte[] { 1, 2 });
+        Assert.False(decBytesSuccess);
+        Assert.Empty(decBytes);
+
+        byte[] key = nullSymmetric!.GenerateKey();
+        Assert.Empty(key);
+
+        byte[] nonce = nullSymmetric!.GenerateNonce();
+        Assert.Empty(nonce);
+
+        string nonceBase64 = nullSymmetric!.GenerateNonceBase64();
+        Assert.Equal(string.Empty, nonceBase64);
+
+        string keyBase64 = nullSymmetric!.GenerateKeyBase64();
+        Assert.Equal(string.Empty, keyBase64);
+    }
 }
+

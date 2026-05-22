@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using Xunit;
 
 namespace CryptoUtility.Tests;
@@ -151,4 +151,26 @@ public abstract class HashProviderTests
 
         Assert.True(result);
     }
+
+    [Fact]
+    public void HashProviderExtensions_NullHandling()
+    {
+        IHashProvider? nullHash = null;
+
+        string hash = nullHash!.HashBase64("message");
+        Assert.Equal(string.Empty, hash);
+
+        byte[] sigBytes = nullHash!.Sign([1, 2], [3, 4]);
+        Assert.Empty(sigBytes);
+
+        string sigStr = nullHash!.SignBase64("msg", "key");
+        Assert.Equal(string.Empty, sigStr);
+
+        bool verifyResult = nullHash!.Verify([1, 2], [3, 4], [5, 6]);
+        Assert.False(verifyResult);
+
+        bool verifyBase64Result = nullHash!.VerifyBase64("msg", "sig", "key");
+        Assert.False(verifyBase64Result);
+    }
 }
+

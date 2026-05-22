@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace CryptoUtility.Tests;
 
@@ -188,4 +188,22 @@ public abstract class DigitalSignatureTests
         var result = Cipher.Verify([], [], []);
         Assert.False(result);
     }
+
+    [Fact]
+    public void DigitalSignatureExtensions_NullHandling()
+    {
+        IDigitalSignature? nullSig = null;
+
+        var (signSuccess, signature) = nullSig!.SignBase64("msg", "secKey");
+        Assert.False(signSuccess);
+        Assert.Equal(string.Empty, signature);
+
+        bool verifyResult = nullSig!.VerifyBase64("msg", "sig", "pubKey");
+        Assert.False(verifyResult);
+
+        var (pub, sec) = nullSig!.GenerateKeyPairBase64();
+        Assert.Equal(string.Empty, pub);
+        Assert.Equal(string.Empty, sec);
+    }
 }
+

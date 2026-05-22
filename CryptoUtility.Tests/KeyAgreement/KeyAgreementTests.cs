@@ -1,4 +1,4 @@
-﻿namespace CryptoUtility.Tests;
+namespace CryptoUtility.Tests;
 
 public abstract class KeyAgreementTests
 {
@@ -271,4 +271,27 @@ public abstract class KeyAgreementTests
         Assert.False(result.success);
         Assert.True(string.IsNullOrEmpty(result.sharedSecret));
     }
+
+    [Fact]
+    public void KeyAgreementExtensions_NullHandling()
+    {
+        IKeyAgreement? nullAgreement = null;
+
+        var (deriveSuccess, secret) = nullAgreement!.DeriveSharedSecretBase64("secKey", "pubKey");
+        Assert.False(deriveSuccess);
+        Assert.Equal(string.Empty, secret);
+
+        var (pub, sec) = nullAgreement!.GenerateKeyPairBase64();
+        Assert.Equal(string.Empty, pub);
+        Assert.Equal(string.Empty, sec);
+
+        var (encSuccess, encrypted) = nullAgreement!.Encrypt([1, 2], [3, 4], [5, 6], cipher: null, kdf: null);
+        Assert.False(encSuccess);
+        Assert.Empty(encrypted);
+
+        var (decSuccess, decrypted) = nullAgreement!.Decrypt([1, 2], [3, 4], [5, 6], cipher: null, kdf: null);
+        Assert.False(decSuccess);
+        Assert.Empty(decrypted);
+    }
 }
+

@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace CryptoUtility.Tests;
 
@@ -409,4 +409,48 @@ public abstract class AsymmetricCipherTests
             Assert.Equal(cipherTypeName, cipherIDName + "Impl");
         }
     }
+
+    [Fact]
+    public void AsymmetricCipherExtensions_NullHandling()
+    {
+        IAsymmetricCipher? nullCipher = null;
+        ISymmetricCipher? mockSymmetric = Aes256GcmImpl.Shared;
+
+        var (encSuccess, encResult) = nullCipher!.EncryptBase64("publicKey", "plaintext");
+        Assert.False(encSuccess);
+        Assert.Equal(string.Empty, encResult);
+
+        var (decSuccess, decResult) = nullCipher!.DecryptBase64("secretKey", "encrypted");
+        Assert.False(decSuccess);
+        Assert.Equal(string.Empty, decResult);
+
+        var (pub, sec) = nullCipher!.GenerateKeyPairBase64();
+        Assert.Equal(string.Empty, pub);
+        Assert.Equal(string.Empty, sec);
+
+        var (h1Success, h1Encrypted) = nullCipher!.HybridEncrypt(mockSymmetric, [1, 2], [3, 4]);
+        Assert.False(h1Success);
+        Assert.Empty(h1Encrypted);
+
+        var (h1DecSuccess, h1Plaintext) = nullCipher!.HybridDecrypt(mockSymmetric, [1, 2], [3, 4]);
+        Assert.False(h1DecSuccess);
+        Assert.Empty(h1Plaintext);
+
+        var (h2Success, h2Encrypted) = nullCipher!.HybridEncrypt([1, 2], [3, 4]);
+        Assert.False(h2Success);
+        Assert.Empty(h2Encrypted);
+
+        var (h2DecSuccess, h2Plaintext) = nullCipher!.HybridDecrypt([1, 2], [3, 4]);
+        Assert.False(h2DecSuccess);
+        Assert.Empty(h2Plaintext);
+
+        var (h3Success, h3Encrypted) = nullCipher!.HybridEncryptBase64("pubKey", "plain");
+        Assert.False(h3Success);
+        Assert.Equal(string.Empty, h3Encrypted);
+
+        var (h3DecSuccess, h3Plaintext) = nullCipher!.HybridDecryptBase64("secKey", "enc");
+        Assert.False(h3DecSuccess);
+        Assert.Equal(string.Empty, h3Plaintext);
+    }
 }
+
