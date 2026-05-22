@@ -212,6 +212,15 @@ public static class SymmetricCipherExtensions
     }
 
     /// <summary>
+    /// Generates a new cryptographic nonce for use in encryption or decryption operations.
+    /// </summary>
+    /// <returns>A byte array containing the generated cryptographic nonce.</returns>
+    public static string GenerateNonceBase64(this ISymmetricCipher cipher)
+    {
+        return Convert.ToBase64String(cipher.GenerateNonce());
+    }
+
+    /// <summary>
     /// Generates a new cryptographic key and returns it as a Base64 encoded string.
     /// </summary>
     /// <returns>The generated key as a Base64 string.</returns>
