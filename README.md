@@ -131,7 +131,7 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 | **Signatures** | `Ecdsa` | Elliptic Curve Digital Signatures (ECDSA P-256/384/521). |
 | **Key Agreement**| `Ecdh` | Elliptic Curve Diffie-Hellman key derivation. |
 | **Key Derivation**| Official .NET `Hkdf`, [`HkdfStandard`](https://github.com/andreimilto/HKDF.Standard)  | Secure cryptographic key expansion. |
-| **Password Key Derivation**| `Pbkdf2` | Derivation of keys from passwords to strength password strength against brute-force attacks. | 
+| **Password Key Derivation**| `Pbkdf2` | Derivation of keys from passwords to strengthen against brute-force attacks. | 
 | **Hashing** | `Sha256`, `Sha3_256` | Secure, standard hashes and HMAC authentication. |
 | **Checksums** | `Crc32`, `Crc64`, `XxHash64` | Ultra-fast data integrity verification. |
 
