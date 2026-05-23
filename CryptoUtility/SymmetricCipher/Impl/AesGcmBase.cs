@@ -4,7 +4,6 @@ namespace CryptoUtility;
 
 internal abstract class AesGcmBase : ISymmetricCipherAEAD
 {
-    public abstract SymmetricCipherID CipherID { get; }
     public abstract int KeySizeBytes { get; }
     public abstract int NonceSizeBytes { get; }
     public abstract int AuthTagSizeBytes { get; }

@@ -200,6 +200,9 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         var parameters = string.Join(", ", method.Parameters.Select(RenderParameter));
         var args = string.Join(", ", method.Parameters.Select(p => p.Name));
 
+        sb.AppendLine(
+            $"    /// <inheritdoc cref=\"{method.ContainingType.Name}.{method.Name}\" />"
+        );
         sb.AppendLine($"    public static {returnType} {name}({parameters})");
         sb.AppendLine($"        => Cipher.{name}({args});");
         sb.AppendLine();

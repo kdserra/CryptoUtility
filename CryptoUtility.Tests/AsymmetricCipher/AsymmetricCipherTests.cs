@@ -194,20 +194,19 @@ public abstract class AsymmetricCipherTests
     }
 
     [Fact]
-    public void HybridDecrypt_WrongCipherID_Fails()
+    public void HybridDecrypt_WrongCipher_Fails()
     {
         var (pub, sec) = GenerateKeyPair();
         var plaintext = GeneratePlaintext();
 
-        var (okEnc, encrypted) = Cipher.HybridEncrypt(pub, plaintext);
+        var (okEnc, encrypted) = Cipher.HybridEncrypt(pub, plaintext, ChaCha20Poly1305Impl.Shared);
         Assert.True(okEnc);
 
-        var wrongCipher = SymmetricCipherID.ChaCha20Poly1305System;
-
-        var (okDec, decrypted) = Cipher.HybridDecrypt(sec, encrypted, wrongCipher);
+        var (okDec, decrypted) = Cipher.HybridDecrypt(sec, encrypted, Aes256GcmImpl.Shared);
         Assert.False(okDec);
         Assert.Empty(decrypted);
     }
+
 
     [Fact]
     public void HybridEncrypt_WithEmptyInputs_Fails()
@@ -253,31 +252,6 @@ public abstract class AsymmetricCipherTests
     public void HybridDecrypt_WithNullInputs_Fails()
     {
         var (success, plaintext) = Cipher.HybridDecrypt(null!, new byte[] { 1 });
-        Assert.False(success);
-        Assert.Empty(plaintext);
-    }
-
-    [Fact]
-    public void HybridEncrypt_InvalidCipherID_Fails()
-    {
-        var (pub, _) = GenerateKeyPair();
-        var plaintext = GeneratePlaintext();
-
-        var invalid = (SymmetricCipherID)(-1);
-
-        var (success, encrypted) = Cipher.HybridEncrypt(pub, plaintext, invalid);
-        Assert.False(success);
-        Assert.Empty(encrypted);
-    }
-
-    [Fact]
-    public void HybridDecrypt_InvalidCipherID_Fails()
-    {
-        var (_, sec) = GenerateKeyPair();
-
-        var invalid = (SymmetricCipherID)(-1);
-
-        var (success, plaintext) = Cipher.HybridDecrypt(sec, new byte[] { 1 }, invalid);
         Assert.False(success);
         Assert.Empty(plaintext);
     }
@@ -334,14 +308,12 @@ public abstract class AsymmetricCipherTests
         var (pub, sec) = GenerateKeyPair();
         var plaintext = GeneratePlaintext();
 
-        var cipherId = SymmetricCipherID.ChaCha20Poly1305System;
-
-        var (okEnc, encrypted) = Cipher.HybridEncrypt(pub, plaintext, cipherId);
+        var (okEnc, encrypted) = Cipher.HybridEncrypt(pub, plaintext, ChaCha20Poly1305Impl.Shared);
         Assert.True(okEnc);
         Assert.NotNull(encrypted);
         Assert.NotEmpty(encrypted);
 
-        var (okDec, decrypted) = Cipher.HybridDecrypt(sec, encrypted, cipherId);
+        var (okDec, decrypted) = Cipher.HybridDecrypt(sec, encrypted, ChaCha20Poly1305Impl.Shared);
         Assert.True(okDec);
         Assert.Equal(plaintext, decrypted);
     }
@@ -352,63 +324,15 @@ public abstract class AsymmetricCipherTests
         var (pub, sec) = Cipher.GenerateKeyPairBase64();
         string message = "hello world";
 
-        var cipherId = SymmetricCipherID.ChaCha20Poly1305System;
-
-        var (okEnc, encrypted) = Cipher.HybridEncryptBase64(pub, message, cipherId);
+        var (okEnc, encrypted) = Cipher.HybridEncryptBase64(pub, message, ChaCha20Poly1305Impl.Shared);
         Assert.True(okEnc);
         Assert.False(string.IsNullOrEmpty(encrypted));
 
-        var (okDec, decrypted) = Cipher.HybridDecryptBase64(sec, encrypted, cipherId);
+        var (okDec, decrypted) = Cipher.HybridDecryptBase64(sec, encrypted, ChaCha20Poly1305Impl.Shared);
         Assert.True(okDec);
         Assert.Equal(message, decrypted);
     }
 
-    [Fact]
-    public void GetThisCipher_ReturnsNotNull()
-    {
-        IAsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(Cipher.CipherID);
-        Assert.NotNull(cipher);
-    }
-
-    [Fact]
-    public void GetAllCiphers_ReturnsNotNull()
-    {
-        foreach (AsymmetricCipherID cipherID in Enum.GetValues(typeof(AsymmetricCipherID)))
-        {
-            if (cipherID == AsymmetricCipherID.None)
-            {
-                continue;
-            }
-
-            IAsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(cipherID);
-            Assert.NotNull(cipher);
-        }
-    }
-
-    [Fact]
-    public void GetAllCiphers_NotNullAndMatchesExpected()
-    {
-        foreach (AsymmetricCipherID cipherID in Enum.GetValues(typeof(AsymmetricCipherID)))
-        {
-            if (cipherID == AsymmetricCipherID.None)
-            {
-                continue;
-            }
-
-            IAsymmetricCipher? cipher = LibraryHelper.GetAsymmetricCipherFromID(cipherID);
-            Assert.NotNull(cipher);
-
-            string cipherTypeName = cipher?.GetType().Name ?? "null";
-            string cipherIDName = cipherID.ToString();
-
-            foreach (string suffix in Helper.ImplementationSuffixes)
-            {
-                cipherIDName = cipherIDName.Replace(suffix, "");
-            }
-
-            Assert.Equal(cipherTypeName, cipherIDName + "Impl");
-        }
-    }
 
     [Fact]
     public void AsymmetricCipherExtensions_NullHandling()

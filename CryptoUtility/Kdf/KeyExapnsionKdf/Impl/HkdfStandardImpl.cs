@@ -1,5 +1,4 @@
 using System.Security.Cryptography;
-using HkdfStandard = HkdfStandard.Hkdf;
 
 namespace CryptoUtility;
 
@@ -22,13 +21,12 @@ public class HkdfStandardImpl : IKeyExpansionKdf
         byte[] info
     )
     {
-        return HkdfStandard.DeriveKey(
+        return global::HkdfStandard.Hkdf.DeriveKey(
+            DefaultHashAlgorithm,
             inputKeyMaterial,
-            iterations,
             outputLength,
             salt,
-            info,
-            DefaultHashAlgorithm
+            info
         );
     }
 
@@ -41,15 +39,12 @@ public class HkdfStandardImpl : IKeyExpansionKdf
         HashAlgorithmName hashAlgorithm
     )
     {
-        byte[] key = HkdfStandard.DeriveKey(
+        return global::HkdfStandard.Hkdf.DeriveKey(
+            hashAlgorithm,
             inputKeyMaterial,
-            iterations,
             outputLength,
             salt,
-            info,
-            hashAlgorithm
+            info
         );
-
-        return key;
     }
 }

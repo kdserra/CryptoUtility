@@ -248,52 +248,6 @@ public abstract class SymmetricCipherTests
         Assert.Empty(encrypted);
     }
 
-    [Fact]
-    public void GetThisCipher_ReturnsNotNull()
-    {
-        ISymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(Cipher.CipherID);
-        Assert.NotNull(cipher);
-    }
-
-    [Fact]
-    public void GetAllCiphers_ReturnsNotNull()
-    {
-        foreach (SymmetricCipherID cipherID in Enum.GetValues(typeof(SymmetricCipherID)))
-        {
-            if (cipherID == SymmetricCipherID.None)
-            {
-                continue;
-            }
-
-            ISymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
-            Assert.NotNull(cipher);
-        }
-    }
-
-    [Fact]
-    public void GetAllCiphers_NotNullAndMatchesExpected()
-    {
-        foreach (SymmetricCipherID cipherID in Enum.GetValues(typeof(SymmetricCipherID)))
-        {
-            if (cipherID == SymmetricCipherID.None)
-            {
-                continue;
-            }
-
-            ISymmetricCipher? cipher = LibraryHelper.GetSymmetricCipherFromID(cipherID);
-            Assert.NotNull(cipher);
-
-            string cipherTypeName = cipher?.GetType().Name ?? "null";
-            string cipherIDName = cipherID.ToString();
-
-            foreach (string suffix in Helper.ImplementationSuffixes)
-            {
-                cipherIDName = cipherIDName.Replace(suffix, "");
-            }
-
-            Assert.Equal(cipherTypeName, cipherIDName + "Impl");
-        }
-    }
 
     [Fact]
     public void SymmetricCipherExtensions_NullHandling()

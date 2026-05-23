@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
@@ -6,9 +6,6 @@ namespace CryptoUtility;
 internal sealed class XorCipherImpl : ISymmetricCipher
 {
     internal static readonly XorCipherImpl Shared = new();
-
-    /// <inheritdoc cref="ISymmetricCipher.CipherID" />
-    public SymmetricCipherID CipherID => SymmetricCipherID.XorCipherStandard;
 
     /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />
     public int KeySizeBytes => 32;

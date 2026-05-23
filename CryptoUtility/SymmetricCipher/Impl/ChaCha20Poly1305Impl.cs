@@ -1,4 +1,4 @@
-﻿#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER
 using System.Security.Cryptography;
 using ChaCha20Poly1305System = System.Security.Cryptography.ChaCha20Poly1305;
 
@@ -11,9 +11,6 @@ namespace CryptoUtility;
 internal sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
 {
     internal static readonly ChaCha20Poly1305Impl Shared = new();
-
-    /// <inheritdoc cref="ISymmetricCipher.CipherID" />
-    public SymmetricCipherID CipherID => SymmetricCipherID.ChaCha20Poly1305System;
 
     /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />
     public int KeySizeBytes => 32;

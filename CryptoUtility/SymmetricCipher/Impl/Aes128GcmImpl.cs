@@ -1,4 +1,4 @@
-﻿namespace CryptoUtility;
+namespace CryptoUtility;
 
 /// <summary>
 /// Official .NET AES-128 GCM
@@ -7,9 +7,6 @@
 internal sealed class Aes128GcmImpl : AesGcmBase
 {
     internal static readonly Aes128GcmImpl Shared = new();
-
-    /// <inheritdoc cref="ISymmetricCipher.CipherID" />
-    public override SymmetricCipherID CipherID => SymmetricCipherID.Aes128GcmSystem;
 
     /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 16;

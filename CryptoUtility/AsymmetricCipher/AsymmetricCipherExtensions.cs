@@ -271,12 +271,11 @@ public static class AsymmetricCipherExtensions
     /// Encrypts the specified plaintext using a hybrid encryption scheme with the provided public key and symmetric
     /// cipher.
     /// </summary>
-    /// <remarks>If the specified cipher ID does not correspond to a supported symmetric cipher, the method
-    /// returns false and an empty byte array.</remarks>
+    /// <remarks>If encryption fails, the method returns false and an empty byte array.</remarks>
     /// <param name="asymmetricCipher">The asymmetric cipher used to encrypt the data encryption key. This parameter must not be null.</param>
     /// <param name="publicKey">The public key used to encrypt the symmetric key. Must be a valid key compatible with the encryption algorithm.</param>
     /// <param name="plaintext">The plaintext data to encrypt. Cannot be null.</param>
-    /// <param name="cipherID">The identifier of the symmetric cipher to use for encryption. Defaults to SymmetricCipherID.Aes256GcmSystem if
+    /// <param name="cipher">The symmetric cipher to use for encryption. Defaults to Aes256GcmImpl.Shared if
     /// not specified.</param>
     /// <returns>A tuple containing a value indicating whether the encryption was successful and a byte array with the encrypted
     /// data. The byte array is empty if encryption fails.</returns>
@@ -314,13 +313,12 @@ public static class AsymmetricCipherExtensions
     /// Decrypts the specified encrypted data using a hybrid cryptographic approach with the provided secret key and
     /// symmetric cipher.
     /// </summary>
-    /// <remarks>If the specified cipher identifier does not correspond to a valid symmetric cipher, the
-    /// method returns false and an empty plaintext array.</remarks>
+    /// <remarks>The method validates all input parameters and the integrity of the hybrid cipher envelope before attempting decryption.</remarks>
     /// <param name="asymmetricCipher">The asymmetric cipher used to encrypt the data encryption key. This parameter must not be null.</param>
     /// <param name="secretKey">The secret key to use for decryption. Must be compatible with the selected symmetric cipher.</param>
     /// <param name="encrypted">The encrypted data to decrypt. This data must have been encrypted using the corresponding hybrid encryption
     /// method.</param>
-    /// <param name="cipherID">The identifier of the symmetric cipher to use for decryption. Defaults to SymmetricCipherID.Aes256GcmSystem if
+    /// <param name="cipher">The symmetric cipher to use for decryption. Defaults to Aes256GcmImpl.Shared if
     /// not specified.</param>
     /// <returns>A tuple containing a value indicating whether decryption was successful and the resulting plaintext as a byte
     /// array. The plaintext is empty if decryption fails.</returns>
@@ -330,6 +328,7 @@ public static class AsymmetricCipherExtensions
         byte[] encrypted,
         ISymmetricCipher? cipher = null
     )
+
     {
         try
         {
@@ -363,7 +362,7 @@ public static class AsymmetricCipherExtensions
     /// <param name="publicKey">The public key, encoded as a Base64 string, to use for encrypting the plaintext. This key must be valid and
     /// properly formatted.</param>
     /// <param name="plaintext">The plaintext string to encrypt. The string is converted to UTF-8 bytes before encryption.</param>
-    /// <param name="cipherID">The symmetric cipher algorithm to use for encryption. Defaults to Aes256GcmSystem if not specified.</param>
+    /// <param name="cipher">The symmetric cipher algorithm to use for encryption. Defaults to Aes256GcmImpl.Shared if not specified.</param>
     /// <returns>A tuple containing a Boolean value that indicates whether the encryption was successful, and a Base64-encoded
     /// string representing the encrypted data. If encryption fails, the encrypted string will be null or empty.</returns>
     public static (bool success, string encrypted) HybridEncryptBase64(
@@ -409,8 +408,8 @@ public static class AsymmetricCipherExtensions
     /// <param name="secretKey">The Base64-encoded secret key to use for decryption. Must be a valid Base64 string representing the symmetric
     /// key.</param>
     /// <param name="encrypted">The Base64-encoded string containing the encrypted data to decrypt. Must be a valid Base64 string.</param>
-    /// <param name="cipher">The identifier of the symmetric cipher algorithm to use for decryption. Defaults to
-    /// SymmetricCipherID.Aes256GcmSystem if not specified.</param>
+    /// <param name="cipher">The symmetric cipher algorithm to use for decryption. Defaults to
+    /// Aes256GcmImpl.Shared if not specified.</param>
     /// <returns>A tuple containing a Boolean value that indicates whether decryption was successful, and the decrypted plaintext
     /// string. If decryption fails, the plaintext will be an empty string.</returns>
     public static (bool success, string plaintext) HybridDecryptBase64(
@@ -419,6 +418,7 @@ public static class AsymmetricCipherExtensions
         string encrypted,
         ISymmetricCipher? cipher = null
     )
+
     {
         try
         {

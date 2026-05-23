@@ -1,13 +1,9 @@
-﻿namespace CryptoUtility;
+namespace CryptoUtility;
 
 public interface ISymmetricCipher
 {
     /// <summary>
-    /// Gets the identifier for the symmetric cipher algorithm associated with this instance.
-    /// </summary>
-    public SymmetricCipherID CipherID { get; }
 
-    /// <summary>
     /// Gets the size, in bytes, of the cryptographic key used for encryption and decryption operations.
     /// </summary>
     public int KeySizeBytes { get; }
