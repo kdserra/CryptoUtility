@@ -1,8 +1,8 @@
-﻿using XxHash128System = System.IO.Hashing.XxHash128;
+using XxHash128System = System.IO.Hashing.XxHash128;
 using XxHash32System = System.IO.Hashing.XxHash32;
 using XxHash64System = System.IO.Hashing.XxHash64;
 
-namespace CryptoUtility.Extras;
+namespace CryptoUtility;
 
 public abstract class XxHashBase : IHashProvider
 {

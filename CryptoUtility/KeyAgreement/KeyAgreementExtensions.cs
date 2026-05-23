@@ -73,7 +73,7 @@ public static class KeyAgreementExtensions
     /// <param name="keyAgreement">The key agreement instance.</param>
     /// <param name="sharedSecret">The derived shared secret bytes.</param>
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
-    /// <param name="info">Context/application specific information bytes for KDF derivation.</param>
+    /// <param name="kdfInfo">Context/application specific information bytes for KDF derivation.</param>
     /// <param name="cipher">The symmetric cipher to use. If null, defaults to AES-256 GCM.</param>
     /// <param name="kdf">The key derivation function to use. If null, defaults to HKDF.</param>
     /// <returns>A tuple indicating success and the encrypted bytes.</returns>
@@ -81,7 +81,8 @@ public static class KeyAgreementExtensions
         this IKeyAgreement keyAgreement,
         byte[] sharedSecret,
         byte[] plaintext,
-        byte[] info,
+        byte[] kdfSalt,
+        byte[] kdfInfo,
         ISymmetricCipher? cipher = null,
         IKeyExpansionKdf? kdf = null
     )
@@ -89,24 +90,21 @@ public static class KeyAgreementExtensions
         cipher ??= Aes256GcmImpl.Shared;
         kdf ??= HkdfStandardImpl.Shared;
 
-        if (!LibraryHelper.NotNull(keyAgreement, sharedSecret, plaintext, info))
+        if (!LibraryHelper.NotNull(keyAgreement, sharedSecret, plaintext, kdfSalt, kdfInfo))
         {
             return (false, Array.Empty<byte>());
         }
-
-        byte[] sharedSalt = cipher.GenerateNonce();
 
         byte[] key = kdf.DeriveKey(
             inputKeyMaterial: sharedSecret,
             iterations: 1,
             cipher.KeySizeBytes,
-            sharedSalt,
-            info
+            kdfSalt,
+            kdfInfo
         );
 
         (bool success, byte[] encrypted) = cipher.Encrypt(key, plaintext);
 
-        CryptographicOperations.ZeroMemory(sharedSalt);
         CryptographicOperations.ZeroMemory(key);
 
         return (success, encrypted);
@@ -118,7 +116,7 @@ public static class KeyAgreementExtensions
     /// <param name="keyAgreement">The key agreement instance.</param>
     /// <param name="sharedSecret">The derived shared secret bytes.</param>
     /// <param name="encrypted">The encrypted bytes to decrypt.</param>
-    /// <param name="info">Context/application specific information bytes for KDF derivation.</param>
+    /// <param name="kdfInfo">Context/application specific information bytes for KDF derivation.</param>
     /// <param name="cipher">The symmetric cipher to use. If null, defaults to AES-256 GCM.</param>
     /// <param name="kdf">The key derivation function to use. If null, defaults to HKDF.</param>
     /// <returns>A tuple indicating success and the decrypted bytes.</returns>
@@ -126,7 +124,8 @@ public static class KeyAgreementExtensions
         this IKeyAgreement keyAgreement,
         byte[] sharedSecret,
         byte[] encrypted,
-        byte[] info,
+        byte[] kdfSalt,
+        byte[] kdfInfo,
         ISymmetricCipher? cipher = null,
         IKeyExpansionKdf? kdf = null
     )
@@ -134,24 +133,21 @@ public static class KeyAgreementExtensions
         cipher ??= Aes256GcmImpl.Shared;
         kdf ??= HkdfStandardImpl.Shared;
 
-        if (!LibraryHelper.NotNull(keyAgreement, sharedSecret, encrypted, info))
+        if (!LibraryHelper.NotNull(keyAgreement, sharedSecret, encrypted, kdfSalt, kdfInfo))
         {
             return (false, Array.Empty<byte>());
         }
-
-        byte[] sharedSalt = cipher.GenerateNonce();
 
         byte[] key = kdf.DeriveKey(
             inputKeyMaterial: sharedSecret,
             iterations: 1,
             cipher.KeySizeBytes,
-            sharedSalt,
-            info
+            kdfSalt,
+            kdfInfo
         );
 
         (bool success, byte[] decrypted) = cipher.Decrypt(key, encrypted);
 
-        CryptographicOperations.ZeroMemory(sharedSalt);
         CryptographicOperations.ZeroMemory(key);
 
         return (success, decrypted);

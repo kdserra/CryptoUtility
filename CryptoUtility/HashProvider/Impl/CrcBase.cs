@@ -2,7 +2,7 @@ using System.IO.Hashing;
 using Crc32System = System.IO.Hashing.Crc32;
 using Crc64System = System.IO.Hashing.Crc64;
 
-namespace CryptoUtility.Extras;
+namespace CryptoUtility;
 
 public abstract class CrcBase : IHashProvider
 {

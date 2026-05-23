@@ -1,6 +1,5 @@
 using System.Text;
 using CryptoUtility;
-using CryptoUtility.Extras;
 
 Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine(
@@ -226,6 +225,47 @@ void RunKeyAgreementShowcase()
             $"  - Do Alice and Bob's shared secrets match? {(secretsMatch ? "YES (Success)" : "NO (Failed)")}"
         );
         Console.ResetColor();
+
+        Console.WriteLine("\n[Hybrid Key Agreement Encryption / Decryption Demo]");
+        string plainText = "Hello Bob! This is Alice. Let's keep our communication secure.";
+        byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
+        byte[] kdfSalt = "ECDH-HKDF-Salt"u8.ToArray();
+        byte[] info = "ECDH-AES-GCM-HKDF-Context-Info"u8.ToArray();
+
+        var (encSuccess, ciphertext) = Ecdh.Encrypt(aliceSharedSecret, plainBytes, kdfSalt, info);
+        if (encSuccess)
+        {
+            Console.WriteLine($"  - Plaintext:            \"{plainText}\"");
+            Console.WriteLine($"  - Context Info:         \"{Encoding.UTF8.GetString(info)}\"");
+            Console.WriteLine($"  - Encrypted Ciphertext: {ciphertext.ToHexString(40)}");
+
+            var (decSuccess, decryptedBytes) = Ecdh.Decrypt(
+                bobSharedSecret,
+                ciphertext,
+                kdfSalt,
+                info
+            );
+
+            if (decSuccess)
+            {
+                string decryptedText = Encoding.UTF8.GetString(decryptedBytes);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"  - Decrypted Text:       \"{decryptedText}\" (Success)");
+                Console.ResetColor();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("  - Decryption failed!");
+                Console.ResetColor();
+            }
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("  - Encryption failed!");
+            Console.ResetColor();
+        }
     }
 }
 

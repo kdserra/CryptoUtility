@@ -1,4 +1,4 @@
-﻿namespace CryptoUtility.Extras;
+namespace CryptoUtility;
 
 /// <summary>
 /// Provides an implementation of the CRC64 hashing algorithm for calculating 64-bit cyclic redundancy checks.

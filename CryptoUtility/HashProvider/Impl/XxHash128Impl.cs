@@ -1,4 +1,4 @@
-﻿namespace CryptoUtility.Extras;
+namespace CryptoUtility;
 
 [GenerateStaticApi]
 internal sealed class XxHash128Impl : XxHashBase
