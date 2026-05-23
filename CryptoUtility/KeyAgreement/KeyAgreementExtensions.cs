@@ -82,17 +82,17 @@ public static class KeyAgreementExtensions
         byte[] sharedSecret,
         byte[] plaintext,
         byte[] info,
-        ISymmetricCipher? cipher,
-        IKeyExpansionKdf? kdf
+        ISymmetricCipher? cipher = null,
+        IKeyExpansionKdf? kdf = null
     )
     {
+        cipher ??= Aes256GcmImpl.Shared;
+        kdf ??= HkdfStandardImpl.Shared;
+
         if (!LibraryHelper.NotNull(keyAgreement, sharedSecret, plaintext, info))
         {
             return (false, Array.Empty<byte>());
         }
-
-        cipher ??= Aes256GcmImpl.Shared;
-        kdf ??= HkdfStandardImpl.Shared;
 
         byte[] sharedSalt = cipher.GenerateNonce();
 
@@ -127,17 +127,17 @@ public static class KeyAgreementExtensions
         byte[] sharedSecret,
         byte[] encrypted,
         byte[] info,
-        ISymmetricCipher? cipher,
-        IKeyExpansionKdf? kdf
+        ISymmetricCipher? cipher = null,
+        IKeyExpansionKdf? kdf = null
     )
     {
+        cipher ??= Aes256GcmImpl.Shared;
+        kdf ??= HkdfStandardImpl.Shared;
+
         if (!LibraryHelper.NotNull(keyAgreement, sharedSecret, encrypted, info))
         {
             return (false, Array.Empty<byte>());
         }
-
-        cipher ??= Aes256GcmImpl.Shared;
-        kdf ??= HkdfStandardImpl.Shared;
 
         byte[] sharedSalt = cipher.GenerateNonce();
 
