@@ -4,7 +4,7 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 public sealed class Rsa4096Impl : RsaBase
 {
-    public static readonly Rsa4096Impl Shared = new();
+    internal static readonly Rsa4096Impl Shared = new();
 
     /// <inheritdoc cref="IAsymmetricCipher.KeySizeBytes"/>
     public override int KeySizeBytes => 512;

@@ -2,7 +2,7 @@
 namespace CryptoUtility;
 
 [GenerateStaticApi]
-internal sealed class Sha3_512Impl : ShaBase
+public sealed class Sha3_512Impl : ShaBase
 {
     internal static readonly Sha3_512Impl Shared = new();
 

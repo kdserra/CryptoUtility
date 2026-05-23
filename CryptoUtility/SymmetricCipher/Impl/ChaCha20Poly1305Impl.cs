@@ -8,7 +8,7 @@ namespace CryptoUtility;
 /// Official .NET ChaCha20-Poly1305 Implementation.
 /// </summary>
 [GenerateStaticApi]
-internal sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
+public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
 {
     internal static readonly ChaCha20Poly1305Impl Shared = new();
 

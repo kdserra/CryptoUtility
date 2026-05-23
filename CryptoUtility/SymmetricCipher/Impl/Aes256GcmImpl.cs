@@ -4,7 +4,7 @@ namespace CryptoUtility;
 /// Official .NET AES-256 GCM
 /// </summary>
 [GenerateStaticApi]
-internal sealed class Aes256GcmImpl : AesGcmBase
+public sealed class Aes256GcmImpl : AesGcmBase
 {
     internal static readonly Aes256GcmImpl Shared = new();
 

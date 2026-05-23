@@ -1,7 +1,7 @@
 namespace CryptoUtility;
 
 [GenerateStaticApi]
-internal sealed class XxHash64Impl : XxHashBase
+public sealed class XxHash64Impl : XxHashBase
 {
     internal static readonly XxHash64Impl Shared = new();
 

@@ -1,7 +1,7 @@
 ﻿namespace CryptoUtility;
 
 [GenerateStaticApi]
-internal sealed class Sha256Impl : ShaBase
+public sealed class Sha256Impl : ShaBase
 {
     internal static readonly Sha256Impl Shared = new();
 

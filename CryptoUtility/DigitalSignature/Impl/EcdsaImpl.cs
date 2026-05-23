@@ -3,7 +3,7 @@
 namespace CryptoUtility;
 
 [GenerateStaticApi]
-internal sealed class EcdsaImpl : IDigitalSignature
+public sealed class EcdsaImpl : IDigitalSignature
 {
     internal static readonly EcdsaImpl Shared = new();
 

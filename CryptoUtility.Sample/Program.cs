@@ -281,18 +281,20 @@ void RunKdfShowcase()
     byte[] masterSecret = "transient-master-secret"u8.ToArray();
     byte[] hkdfSalt = "hkdf-salt-value"u8.ToArray();
 
-    byte[] encryptionSubKey = HkdfImpl.Shared.DeriveKey(
+    byte[] encryptionSubKey = CryptoUtility.HkdfStandard.DeriveKey(
         masterSecret,
-        hkdfSalt,
         1,
         32,
+        hkdfSalt,
+        [],
         System.Security.Cryptography.HashAlgorithmName.SHA256
     );
-    byte[] signatureSubKey = HkdfImpl.Shared.DeriveKey(
+    byte[] signatureSubKey = CryptoUtility.HkdfStandard.DeriveKey(
         masterSecret,
-        hkdfSalt,
         1,
         32,
+        hkdfSalt,
+        [],
         System.Security.Cryptography.HashAlgorithmName.SHA384
     );
 

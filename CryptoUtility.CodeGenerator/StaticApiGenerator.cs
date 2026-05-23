@@ -98,15 +98,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         sb.AppendLine($"public static partial class {apiName}");
         sb.AppendLine("{");
 
-        var accessibility = symbol.DeclaredAccessibility switch
-        {
-            Accessibility.Public => "public",
-            Accessibility.Internal => "internal",
-            Accessibility.Private => "private",
-            Accessibility.Protected => "protected",
-            _ => "internal"
-        };
-        sb.AppendLine($"    {accessibility} static readonly {implName} Cipher = {implName}.Shared;");
+        sb.AppendLine($"    public static readonly {implName} Cipher = {implName}.Shared;");
         sb.AppendLine();
 
         var generatedSignatures = new HashSet<string>();

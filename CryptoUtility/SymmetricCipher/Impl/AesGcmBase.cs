@@ -2,7 +2,7 @@ using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
-internal abstract class AesGcmBase : ISymmetricCipherAEAD
+public abstract class AesGcmBase : ISymmetricCipherAEAD
 {
     public abstract int KeySizeBytes { get; }
     public abstract int NonceSizeBytes { get; }

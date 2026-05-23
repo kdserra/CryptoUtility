@@ -45,7 +45,7 @@ namespace CryptoUtility;
 /// </list>
 /// </remarks>
 [GenerateStaticApi]
-internal sealed class EcdhImpl : IKeyAgreement
+public sealed class EcdhImpl : IKeyAgreement
 {
     internal static readonly EcdhImpl Shared = new();
     private static readonly ECCurve _defaultECCurve = ECCurve.NamedCurves.nistP256;
