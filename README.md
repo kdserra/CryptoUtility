@@ -10,26 +10,26 @@
 
 ---
 
-## Why CryptoUtility?
+# ❓ Why CryptoUtility?
 
 Standard cryptography APIs are notoriously complex, boilerplate-heavy, and easy to misconfigure. Because of this, developers often default to older, less secure options like `AES-CBC` simply because modern authenticated ciphers like `AES-GCM` are significantly harder to set up.
 
 CryptoUtility bridges this gap by offering:
 
-### ⚡ State-of-the-Art Security, Simple APIs
+## ⚡ State-of-the-Art Security, Simple APIs
 With CryptoUtility, executing high-security authenticated encryption (AEAD) like **AES-256-GCM** or **ChaCha20-Poly1305** is just as straightforward as running a stateless cipher. All complex logic—such as secure nonce generation, authentication tag handling, and associated data verification—is managed automatically.
 
-### 🧩 Unified Interfaces & Base Classes
+## 🧩 Unified Interfaces & Base Classes
 We define clean, unified interfaces like `ISymmetricCipher`, `IAsymmetricCipher`, `IHashProvider`, `IKeyAgreement`, and `IPasswordKdf`. 
 
 This is incredibly powerful for building modular application systems (such as a `SaveManager` or a networking layer). Your high-level managers can depend directly on `ISymmetricCipher` without being bound to a concrete implementation. You can swap your entire encryption algorithm from AES to ChaCha20 with a single line of code, without rewriting your business logic.
 
-### 📦 Automatic Cryptographic Envelopes
+## 📦 Automatic Cryptographic Envelopes
 For symmetric ciphers and hybrid encryption, CryptoUtility automatically packages the encrypted payload, random nonce, and authentication tag into a serialized cryptographic envelope under the hood using `MemoryPack` (an ultra-fast binary serializer). You receive a single, ready-to-transmit byte array or Base64 string. During decryption, the envelope is parsed automatically.
 
 ---
 
-## Features
+# ✨ Features
 
 * **Unified API Design**: Identical syntax patterns for encryption, decryption, signatures, key agreement, and hashing.
 * **Built-in Utilities**: Out-of-the-box helper methods for seamless **Base64 string operations** and **easy key generation** (`GenerateKey()`).
@@ -41,11 +41,11 @@ For symmetric ciphers and hybrid encryption, CryptoUtility automatically package
 
 ---
 
-## Getting Started
+# 🚀 Getting Started
 
-### 1. Symmetric Encryption (AES-256-GCM)
+## 1️⃣ Symmetric Encryption (AES-256-GCM)
 
-#### Base64 String Workflow
+### 🔤 Base64 String Workflow
 ```csharp
 using CryptoUtility;
 
@@ -64,7 +64,7 @@ if (encSuccess)
 }
 ```
 
-#### Byte Array Workflow
+### 📦 Byte Array Workflow
 ```csharp
 using CryptoUtility;
 
@@ -79,7 +79,7 @@ var (decSuccess, decrypted) = Aes256Gcm.Decrypt(key, ciphertext);
 
 ---
 
-### 2. Hybrid Asymmetric Encryption (RSA-4096 + AES)
+## 2️⃣ Hybrid Asymmetric Encryption (RSA-4096 + AES)
 
 ```csharp
 using CryptoUtility;
@@ -97,7 +97,7 @@ var (decSuccess, decryptedPayload) = Rsa4096.HybridDecryptBase64(privateKey, env
 
 ---
 
-### 3. Key Agreement & Hybrid ECDH
+## 3️⃣ Key Agreement & Hybrid ECDH
 
 ```csharp
 using CryptoUtility;
@@ -121,7 +121,7 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 
 ---
 
-## Complete API Reference
+# 📚 Complete API Reference
 
 | Category | Algorithm / Class | Description |
 | :--- | :--- | :--- |
@@ -136,7 +136,7 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 
 ---
 
-## Security Best Practices
+# 🛡️ Security Best Practices
 
 * **No Static Nonces**: CryptoUtility generates a unique, cryptographically secure random nonce for every single symmetric encryption.
 * **Authentication-First**: We default to AEAD (Authenticated Encryption with Associated Data) ciphers to prevent bit-flipping and padding oracle attacks.
@@ -145,7 +145,7 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 
 ---
 
-## Installation
+# 📦 Installation
 
 Add the NuGet package to your project:
 
@@ -155,6 +155,6 @@ dotnet add package CryptoUtility
 
 ---
 
-## License
+# 📄 License
 
 This project is licensed under the MIT License. See [LICENSE.md](LICENSE.md) for details.
