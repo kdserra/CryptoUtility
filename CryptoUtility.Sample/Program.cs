@@ -121,15 +121,7 @@ void RunSymmetricShowcase()
         Console.WriteLine($"  - Decrypted Text:          \"{decryptedCC}\"");
     }
 
-    Console.WriteLine("\n[XOR Stream Cipher Demonstration]");
-    string xorKey = XorCipher.GenerateKeyBase64();
-    var (encXorSuccess, encryptedXor) = XorCipher.EncryptBase64(xorKey, plaintext);
-    if (encXorSuccess)
-    {
-        Console.WriteLine($"  - XOR Ciphertext Envelope: {encryptedXor}");
-        var (decXorSuccess, decryptedXor) = XorCipher.DecryptBase64(xorKey, encryptedXor);
-        Console.WriteLine($"  - Decrypted Text:          \"{decryptedXor}\"");
-    }
+
 }
 
 void RunAsymmetricAndHybridShowcase()
