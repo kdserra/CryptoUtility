@@ -141,7 +141,7 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 * **No Static Nonces**: CryptoUtility generates a unique, cryptographically secure random nonce for every single symmetric encryption.
 * **Authentication-First**: We default to AEAD (Authenticated Encryption with Associated Data) ciphers to prevent bit-flipping and padding oracle attacks.
 * **Memory Sanitation**: Sensitive derived keys are zeroed out of system memory immediately after use.
-* **Standard Implementations**: We do not roll custom cryptographic algorithms. We wrap standard, industry-vetted implementations (such as native .NET algorithms, with planned support for libraries like BouncyCastle, NaCl, etc.).
+* **Standard Implementations**: We do not roll custom cryptographic algorithms. We wrap standard, industry-vetted implementations.
 
 ---
 
