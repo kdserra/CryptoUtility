@@ -6,7 +6,7 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 public sealed class Aes128GcmImpl : AesGcmBase
 {
-    internal static readonly Aes128GcmImpl Shared = new();
+    public static readonly Aes128GcmImpl Shared = new();
 
     /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />
     public override int KeySizeBytes => 16;

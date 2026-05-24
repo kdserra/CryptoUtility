@@ -1,11 +1,11 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
 [GenerateStaticApi]
 public sealed class Pbkdf2Impl : IPasswordKdf
 {
-    internal static readonly Pbkdf2Impl Shared = new();
+    public static readonly Pbkdf2Impl Shared = new();
     private static readonly HashAlgorithmName DefaultHashAlgorithm = HashAlgorithmName.SHA256;
 
     public byte[] DeriveKey(string password, byte[] salt, int iterations, int outputLength)

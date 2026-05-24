@@ -1,11 +1,11 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
 [GenerateStaticApi]
 public sealed class EcdsaImpl : IDigitalSignature
 {
-    internal static readonly EcdsaImpl Shared = new();
+    public static readonly EcdsaImpl Shared = new();
 
     public (bool success, byte[] signature) Sign(byte[] message, byte[] secretKey)
     {

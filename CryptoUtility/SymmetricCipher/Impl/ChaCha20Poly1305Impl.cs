@@ -10,7 +10,7 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
 {
-    internal static readonly ChaCha20Poly1305Impl Shared = new();
+    public static readonly ChaCha20Poly1305Impl Shared = new();
 
     /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />
     public int KeySizeBytes => 32;

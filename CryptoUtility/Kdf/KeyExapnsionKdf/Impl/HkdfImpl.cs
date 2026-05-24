@@ -5,7 +5,7 @@ namespace CryptoUtility;
 
 public class HkdfImpl : IKeyExpansionKdf
 {
-    internal static readonly HkdfImpl Shared = new();
+    public static readonly HkdfImpl Shared = new();
     private static readonly HashAlgorithmName DefaultHashAlgorithm = HashAlgorithmName.SHA256;
 
     public byte[] DeriveKey(

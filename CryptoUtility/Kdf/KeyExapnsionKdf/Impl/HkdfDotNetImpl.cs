@@ -9,7 +9,7 @@ namespace CryptoUtility;
 [GenerateStaticApi]
 public class HkdfDotNetImpl : IKeyExpansionKdf
 {
-    internal static readonly HkdfDotNetImpl Shared = new();
+    public static readonly HkdfDotNetImpl Shared = new();
 
     private static readonly HashAlgorithmName DefaultHashAlgorithm = HashAlgorithmName.SHA256;
 

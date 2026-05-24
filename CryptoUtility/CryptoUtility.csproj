@@ -55,6 +55,7 @@
     <InternalsVisibleTo Include="CryptoUtility.Tests" />
     <InternalsVisibleTo Include="CryptoUtility.Extras" />
     <InternalsVisibleTo Include="CryptoUtility.HkdfStandard" />
+    <InternalsVisibleTo Include="CryptoUtility.NaClCore" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MemoryPack" Version="1.21.4" />
