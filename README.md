@@ -2,8 +2,8 @@
 
 [![NuGet Version](https://img.shields.io/badge/nuget-v0.7.0-blue.svg)](https://nuget.org)
 [![Target Framework](https://img.shields.io/badge/.NET-Standard%202.1%20|%208.0%20|%2010.0-green.svg)](https://dotnet.microsoft.com)
-[![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE.md)
-[![Build Status](https://github.com/kdserra/CryptoUtility/actions/workflows/builder.yml/badge.svg)](https://github.com/kdserra/CryptoUtility/actions/workflows/builder.yml)
+[![License](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/kdserra/CryptoUtility/blob/master/LICENSE.md)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/kdserra/CryptoUtility/builder.yml?branch=master)](https://github.com/kdserra/CryptoUtility/actions/workflows/builder.yml)
 
 > **Cryptography, Simplified & Unified.**  
 > A developer-first cryptography abstraction library for .NET. Secure your data with state-of-the-art ciphers using a single, unified interface.
