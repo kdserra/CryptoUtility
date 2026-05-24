@@ -19,7 +19,7 @@ CryptoUtility bridges this gap by offering:
 ## ⚡ State-of-the-Art Security, Simple APIs
 With CryptoUtility, executing high-security authenticated encryption (AEAD) like **AES-256-GCM** or **ChaCha20-Poly1305** is just as straightforward as running a stateless cipher. All complex logic—such as secure nonce generation, authentication tag handling, and associated data verification—is managed automatically.
 
-## 🧩 Unified Interfaces & Base Classes
+## 🧩 Unified Interfaces
 We define clean, unified interfaces like `ISymmetricCipher`, `IAsymmetricCipher`, `IHashProvider`, `IKeyAgreement`, and `IPasswordKdf`. 
 
 This is incredibly powerful for building modular application systems (such as a `SaveManager` or a networking layer). Your high-level managers can depend directly on `ISymmetricCipher` without being bound to a concrete implementation. You can swap your entire encryption algorithm from AES to ChaCha20 with a single line of code, without rewriting your business logic.
