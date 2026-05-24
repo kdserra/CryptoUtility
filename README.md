@@ -131,7 +131,7 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 | **Key Agreement**| `Ecdh` | Elliptic Curve Diffie-Hellman key derivation. |
 | **Key Derivation**| Official .NET `Hkdf`, [`HkdfDotNet`](https://github.com/samuel-lucas6/HKDF.NET), [`HkdfStandard`](https://github.com/andreimilto/HKDF.Standard)  | Secure cryptographic key expansion. |
 | **Password Key Derivation**| `Pbkdf2` | Derivation of keys from passwords to strengthen against brute-force attacks. | 
-| **Hashing** | `Sha1`, `Sha256`, `Sha384`, `Sha512`, `Sha3_256`, `Sha3_384`, `Sha3_512`, `Crc32`, `Crc64`, `XxHash32`, `XxHash64`, `XxHash128` | Hashing algorithms. |
+| **Hashing** | `Sha1`, `Sha256`, `Sha384`, `Sha512`, `Sha3_256`, `Sha3_384`, `Sha3_512`, `Crc32`, `Crc64`, `XxHash32`, `XxHash64`, `XxHash128` | Hashing algorithms, and checksums. |
 
 **NOTE:** When available on the target platform, the native .NET implementation is used by default. Otherwise, the library automatically selects the most appropriate compatible implementation.
 
