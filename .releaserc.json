@@ -2,7 +2,14 @@
   "branches": ["master"],
   "plugins": [
     "@semantic-release/commit-analyzer",
-    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "writerOpts": {
+          "headerPartial": "## {{version}}{{#if subtitle}} {{subtitle}}{{/if}}{{#if date}} ({{date}}){{/if}}\n\n**Full Changelog**: {{host}}/{{owner}}/{{repository}}/compare/{{previousTag}}...{{currentTag}}\n"
+        }
+      }
+    ],
     [
       "@semantic-release/exec",
       {
