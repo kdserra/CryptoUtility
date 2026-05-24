@@ -1,6 +1,6 @@
 # 🔐 CryptoUtility
 
-[![NuGet Version](https://img.shields.io/badge/nuget-v0.9.1-blue.svg)](https://nuget.org)
+[![NuGet Version](https://img.shields.io/badge/nuget-v0.9.1-blue.svg)](https://www.nuget.org/packages/CryptoUtility)
 [![Target Framework](https://img.shields.io/badge/.NET-Standard%202.1%20|%208.0%20|%2010.0-green.svg)](https://dotnet.microsoft.com)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/kdserra/CryptoUtility/blob/master/LICENSE.md)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/kdserra/CryptoUtility/builder.yml?branch=master)](https://github.com/kdserra/CryptoUtility/actions/workflows/builder.yml)
@@ -33,7 +33,8 @@ For symmetric ciphers and hybrid encryption, CryptoUtility automatically package
 
 * **Unified API Design**: Identical syntax patterns for encryption, decryption, signatures, key agreement, and hashing.
 * **Built-in Utilities**: Out-of-the-box helper methods for seamless **Base64 string operations** and **easy key generation** (`GenerateKey()`).
-* **Symmetric Encryption (AEAD)**: Modern standards including **AES-256-GCM**, **AES-192-GCM**, **AES-128-GCM**, and **ChaCha20-Poly1305**.
+* **Symmetric Encryption (AEAD)**: Modern standards including **AES-256-GCM**, **AES-192-GCM**, **AES-128-GCM**, **ChaCha20-Poly1305**, and **XChaCha20-Poly1305** (via the `CryptoUtility.NaCl` package).
+* **Stream Ciphers**: High-speed stream encryption including **ChaCha20**, **XChaCha20**, and **Salsa20** (via the `CryptoUtility.NaCl` package).
 * **Hybrid Encryption**: Encrypt large payloads easily using RSA public keys combined with the speed of AES-256-GCM under the hood.
 * **Asymmetric & Signatures**: Full support for **RSA-2048**, **RSA-4096**, and elliptic curve digital signatures (**ECDSA**).
 * **Key Agreement (ECDH)**: Establish secure session keys over open channels with Elliptic Curve Diffie-Hellman.
@@ -125,8 +126,10 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 
 | Category | Algorithm / Class | Description |
 | :--- | :--- | :--- |
-| **Symmetric AEAD** | `Aes256Gcm`, `Aes192Gcm`, `Aes128Gcm`, `ChaCha20Poly1305` | Industry standard authenticated encryption. |
-| **Symmetric Basic** | `XorCipher` | Basic, fast, weak cipher, useful for obfuscation purposes. |
+| **Symmetric AEAD (System)** | `Aes256Gcm`, `Aes192Gcm`, `Aes128Gcm`, `ChaCha20Poly1305` | Built-in .NET implementation of industry standard authenticated encryption. |
+| **Symmetric AEAD (NaCl)** | `ChaCha20Poly1305`, `XChaCha20Poly1305` | Managed authenticated encryption implementations via [`NaCl.Core`](https://github.com/daviddesmet/NaCl.Core). |
+| **Symmetric (NaCl)** | `Salsa20`, `ChaCha20`, `XChaCha20` | Non-authenticated ciphers via [`NaCl.Core`](https://github.com/daviddesmet/NaCl.Core). |
+| **Symmetric** | `XorCipher` | Non-authenticated ciphers, not for security use, useful for fast obfuscation. |
 | **Asymmetric** | `Rsa1024`, `Rsa2048`, `Rsa3072`, `Rsa4096` | Ciphers for public/key cryptography, with support for hybrid encryption. |
 | **Signatures** | `Ecdsa` | Digital Signatures used for message verification. |
 | **Key Agreement**| `Ecdh` | Shared key derivation algorithms. |
@@ -136,9 +139,9 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 
 **NOTE:** When available on the target platform, the native .NET implementation is used by default. Otherwise, the library automatically selects the most appropriate compatible implementation.
 
-`HkdfDotNet` is provided for it's ease of inclusion into this library, backwards compatibility compared to the official .NET implementation which is limited to .NET 5 and above, but it's not as industry vetted as the official .NET HKDF, or HKDF.NET.  Included in the core CryptoUtility library.
+[`HkdfDotNet`](https://github.com/samuel-lucas6/HKDF.NET) is provided for it's ease of inclusion into this library, backwards compatibility compared to the official .NET implementation which is limited to .NET 5 and above, but it's not as industry vetted as the official .NET HKDF, or [HKDF.Standard](https://github.com/andreimilto/HKDF.Standard).  This implementation is included in the core CryptoUtility library.
 
-`HkdfStandard` implementation is offered due to it's popularity, and it's backwards compatibility compared to the official .NET implementation which is limited to .NET 5 and above.  Requires `CryptoUtility.HkdfStandard`.
+[`HkdfStandard`](https://github.com/andreimilto/HKDF.Standard) implementation is offered due to it's popularity, and it's backwards compatibility compared to the official .NET implementation which is limited to .NET 5 and above.  Requires `CryptoUtility.HkdfStandard`.
 
 **PLANNED:** Bcrypt, Scrypt, Argon2id, maybe more.
 

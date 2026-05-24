@@ -5,9 +5,9 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <WarningsAsErrors>Nullable</WarningsAsErrors>
-    <PackageId>CryptoUtility</PackageId>
-    <Product>CryptoUtility</Product>
-    <Version>0.9.1</Version>
+    <PackageId>CryptoUtility.NaCl</PackageId>
+    <Product>CryptoUtility.NaCl</Product>
+    <Version>0.7.1</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
@@ -53,12 +53,10 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="CryptoUtility.Tests" />
-    <InternalsVisibleTo Include="CryptoUtility.Extras" />
-    <InternalsVisibleTo Include="CryptoUtility.HkdfStandard" />
-    <InternalsVisibleTo Include="CryptoUtility.NaCl" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MemoryPack" Version="1.21.4" />
+    <PackageReference Include="NaCl.Core" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference
@@ -66,5 +64,6 @@
       OutputItemType="Analyzer"
       ReferenceOutputAssembly="false"
     />
+    <ProjectReference Include="..\CryptoUtility\CryptoUtility.csproj" />
   </ItemGroup>
 </Project>

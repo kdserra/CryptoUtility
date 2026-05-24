@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 
 namespace CryptoUtility.Tests;
 
@@ -37,7 +37,7 @@ public abstract class SymmetricCipherAEADTests : SymmetricCipherAETests
     {
         var key = Cipher.GenerateKey();
         var plaintext = Encoding.UTF8.GetBytes("aad test");
-        var nonce = new byte[12];
+        var nonce = new byte[Cipher.NonceSizeBytes];
         var aad = Encoding.UTF8.GetBytes("associated data");
 
         new Random().NextBytes(nonce);
@@ -54,7 +54,7 @@ public abstract class SymmetricCipherAEADTests : SymmetricCipherAETests
     {
         var key = CipherAEAD.GenerateKey();
         var plaintext = Encoding.UTF8.GetBytes("roundtrip aad");
-        var nonce = new byte[12];
+        var nonce = new byte[Cipher.NonceSizeBytes];
         var aad = Encoding.UTF8.GetBytes("aad");
 
         new Random().NextBytes(nonce);
