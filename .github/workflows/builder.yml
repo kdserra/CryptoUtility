@@ -1,11 +1,14 @@
 name: Builder
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
   build_and_release:
-    name: Build and Release
+    name: Build, Test, and Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -13,7 +16,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch all history so git tags are available for changelog/compare
+          fetch-depth: 0 # Fetch all history so git tags are available for semantic-release
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
@@ -23,73 +26,19 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore
 
-      - name: Build Projects
-        run: |
-          dotnet build CryptoUtility/CryptoUtility.csproj -c Release --no-restore
-          dotnet build CryptoUtility.Extras/CryptoUtility.Extras.csproj -c Release --no-restore
-          dotnet build CryptoUtility.HkdfStandard/CryptoUtility.HkdfStandard.csproj -c Release --no-restore
+      - name: Run Tests
+        run: dotnet test CryptoUtility.Tests/CryptoUtility.Tests.csproj --no-restore
 
-      - name: Publish Sample Executables
-        run: |
-          dotnet publish CryptoUtility.Sample/CryptoUtility.Sample.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o out/publish/win-x64
-          dotnet publish CryptoUtility.Sample/CryptoUtility.Sample.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o out/publish/linux-x64
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Pack Projects
-        run: |
-          dotnet pack CryptoUtility/CryptoUtility.csproj -c Release -o out/ --no-restore
-          dotnet pack CryptoUtility.Extras/CryptoUtility.Extras.csproj -c Release -o out/ --no-restore
-          dotnet pack CryptoUtility.HkdfStandard/CryptoUtility.HkdfStandard.csproj -c Release -o out/ --no-restore
+      - name: Install Semantic Release & Plugins
+        run: npm install --save-dev semantic-release @semantic-release/exec @semantic-release/github
 
-      - name: Prepare Release Artifacts
-        run: |
-          mkdir -p release_artifacts
-          # Copy NuGet packages
-          cp out/*.nupkg release_artifacts/
-          cp out/*.snupkg release_artifacts/ 2>/dev/null || true
-          
-          # Create a zip of compiled library binaries
-          zip -r release_artifacts/CryptoUtility-binaries.zip \
-            CryptoUtility/bin/Release/ \
-            CryptoUtility.Extras/bin/Release/ \
-            CryptoUtility.HkdfStandard/bin/Release/
-          
-          # Copy published sample executables
-          cp out/publish/win-x64/CryptoUtility.Sample.exe release_artifacts/CryptoUtility.Sample-win-x64.exe
-          cp out/publish/linux-x64/CryptoUtility.Sample release_artifacts/CryptoUtility.Sample-linux-x64
-
-      - name: Generate Release Notes & Create Release
+      - name: Run Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Extract version from primary csproj
-          VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' CryptoUtility/CryptoUtility.csproj | head -n 1 | xargs)
-          DATE=$(date +'%Y-%m-%d')
-          
-          # Get previous release tag
-          PREVIOUS=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null || echo "")
-          if [ -z "$PREVIOUS" ] || [ "$PREVIOUS" = "null" ]; then
-            PREVIOUS="v0.0.0"
-          fi
-          
-          # Match the existing tag convention (v-prefix)
-          if [[ "$PREVIOUS" =~ ^v ]]; then
-            TAG_NAME="v$VERSION"
-          else
-            TAG_NAME="$VERSION"
-          fi
-          
-          # Write the release notes using the user's template
-          cat <<EOF > notes.md
-          ## ${VERSION} - ${DATE}
-          
-          **Full Changelog**: https://github.com/kdserra/CryptoUtility/compare/${PREVIOUS}...${TAG_NAME}
-          EOF
-          
-          # Check if release already exists, if not, create it
-          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
-            echo "Release $TAG_NAME already exists. Uploading artifacts to existing release..."
-            gh release upload "$TAG_NAME" release_artifacts/* --clobber
-          else
-            echo "Creating new release $TAG_NAME..."
-            gh release create "$TAG_NAME" release_artifacts/* --title "$TAG_NAME" --notes-file notes.md --prerelease
-          fi
+          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+        run: npx semantic-release

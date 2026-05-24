@@ -1,0 +1,27 @@
+{
+  "branches": ["master"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "sed -i \"s|<Version>.*</Version>|<Version>${nextRelease.version}</Version>|g\" CryptoUtility/CryptoUtility.csproj CryptoUtility.Extras/CryptoUtility.Extras.csproj CryptoUtility.HkdfStandard/CryptoUtility.HkdfStandard.csproj && dotnet build -c Release && dotnet publish CryptoUtility.Sample/CryptoUtility.Sample.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o out/publish/win-x64 && dotnet publish CryptoUtility.Sample/CryptoUtility.Sample.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o out/publish/linux-x64 && dotnet pack CryptoUtility/CryptoUtility.csproj -c Release -o out/ && dotnet pack CryptoUtility.Extras/CryptoUtility.Extras.csproj -c Release -o out/ && dotnet pack CryptoUtility.HkdfStandard/CryptoUtility.HkdfStandard.csproj -c Release -o out/ && mkdir -p release_artifacts && cp out/*.nupkg release_artifacts/ && cp out/*.snupkg release_artifacts/ 2>/dev/null || true && zip -r release_artifacts/CryptoUtility-binaries.zip CryptoUtility/bin/Release/ CryptoUtility.Extras/bin/Release/ CryptoUtility.HkdfStandard/bin/Release/ && cp out/publish/win-x64/CryptoUtility.Sample.exe release_artifacts/CryptoUtility.Sample-win-x64.exe && cp out/publish/linux-x64/CryptoUtility.Sample release_artifacts/CryptoUtility.Sample-linux-x64",
+        "publishCmd": "for f in out/*.nupkg; do dotnet nuget push \"$f\" -k ${env.NUGET_API_KEY} -s https://api.nuget.org/v3/index.json --skip-duplicate; done"
+      }
+    ],
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          {"path": "release_artifacts/*.nupkg", "label": "NuGet Package"},
+          {"path": "release_artifacts/*.snupkg", "label": "Symbols Package"},
+          {"path": "release_artifacts/CryptoUtility-binaries.zip", "label": "Binaries ZIP"},
+          {"path": "release_artifacts/CryptoUtility.Sample-win-x64.exe", "label": "Sample Windows Executable"},
+          {"path": "release_artifacts/CryptoUtility.Sample-linux-x64", "label": "Sample Linux Executable"}
+        ],
+        "prerelease": true
+      }
+    ]
+  ]
+}
