@@ -1,7 +1,7 @@
 # 🔐 CryptoUtility
 
 [![NuGet Version](https://img.shields.io/badge/nuget-v0.4.0-blue.svg)](https://nuget.org)
-[![Target Framework](https://img.shields.io/badge/.NET-8.0%20%7C%2010.0-green.svg)](https://dotnet.microsoft.com)
+[![Target Framework](https://img.shields.io/badge/.NET-Standard%202.1%20|%208.0%20|%2010.0-green.svg)](https://dotnet.microsoft.com)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE.md)
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com)
 
