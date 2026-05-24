@@ -5,6 +5,9 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <PackageId>CryptoUtility.Extras</PackageId>
+    <Product>CryptoUtility.Extras</Product>
+    <Version>0.3.0</Version>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Enable viewing of generated files. -->
@@ -24,13 +27,5 @@
       ReferenceOutputAssembly="false"
     />
     <ProjectReference Include="..\CryptoUtility\CryptoUtility.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="AsymmetricCipher\" />
-    <Folder Include="DigitalSignature\" />
-    <Folder Include="Kdf\KeyExapnsionKdf\" />
-    <Folder Include="Kdf\PasswordKdf\" />
-    <Folder Include="KeyAgreement\" />
-    <Folder Include="SymmetricCipher\" />
   </ItemGroup>
 </Project>

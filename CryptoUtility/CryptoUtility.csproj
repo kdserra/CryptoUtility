@@ -1,10 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net8.0;net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <PackageId>CryptoUtility</PackageId>
+    <Product>CryptoUtility</Product>
+    <Version>0.3.0</Version>
   </PropertyGroup>
   <PropertyGroup>
     <!-- Enable viewing of generated files. -->
