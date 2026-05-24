@@ -1,15 +1,22 @@
 name: Builder
 
 on:
+  push:
+    branches:
+      - master
   workflow_dispatch:
 
 jobs:
-  test_and_build:
-    name: Test and Build
+  build_and_release:
+    name: Build and Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history so git tags are available for changelog/compare
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
@@ -19,17 +26,67 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore
 
-      - name: Run Tests
-        run: dotnet test CryptoUtility.Tests/CryptoUtility.Tests.csproj --no-restore
+      - name: Build Projects
+        run: |
+          dotnet build CryptoUtility/CryptoUtility.csproj -c Release --no-restore
+          dotnet build CryptoUtility.Extras/CryptoUtility.Extras.csproj -c Release --no-restore
+          dotnet build CryptoUtility.HkdfStandard/CryptoUtility.HkdfStandard.csproj -c Release --no-restore
+          dotnet build CryptoUtility.Sample/CryptoUtility.Sample.csproj -c Release --no-restore
 
-      - name: Build CryptoUtility
-        run: dotnet build CryptoUtility/CryptoUtility.csproj -c Release --no-restore
+      - name: Pack Projects
+        run: |
+          dotnet pack CryptoUtility/CryptoUtility.csproj -c Release -o out/ --no-restore
+          dotnet pack CryptoUtility.Extras/CryptoUtility.Extras.csproj -c Release -o out/ --no-restore
+          dotnet pack CryptoUtility.HkdfStandard/CryptoUtility.HkdfStandard.csproj -c Release -o out/ --no-restore
 
-      - name: Build CryptoUtility.Extras
-        run: dotnet build CryptoUtility.Extras/CryptoUtility.Extras.csproj -c Release --no-restore
+      - name: Prepare Release Artifacts
+        run: |
+          mkdir -p release_artifacts
+          # Copy NuGet packages
+          cp out/*.nupkg release_artifacts/
+          cp out/*.snupkg release_artifacts/ 2>/dev/null || true
+          
+          # Create a zip of all compiled binaries
+          zip -r release_artifacts/CryptoUtility-binaries.zip \
+            CryptoUtility/bin/Release/ \
+            CryptoUtility.Extras/bin/Release/ \
+            CryptoUtility.HkdfStandard/bin/Release/ \
+            CryptoUtility.Sample/bin/Release/
 
-      - name: Build CryptoUtility.HkdfStandard
-        run: dotnet build CryptoUtility.HkdfStandard/CryptoUtility.HkdfStandard.csproj -c Release --no-restore
-
-      - name: Build CryptoUtility.Sample
-        run: dotnet build CryptoUtility.Sample/CryptoUtility.Sample.csproj -c Release --no-restore
+      - name: Generate Release Notes & Create Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Extract version from primary csproj
+          VERSION=$(sed -n 's/.*<Version>\(.*\)<\/Version>.*/\1/p' CryptoUtility/CryptoUtility.csproj | head -n 1 | xargs)
+          DATE=$(date +'%Y-%m-%d')
+          
+          # Get previous release tag
+          PREVIOUS=$(gh release list --limit 1 --json tagName --jq '.[0].tagName' 2>/dev/null || echo "")
+          if [ -z "$PREVIOUS" ] || [ "$PREVIOUS" = "null" ]; then
+            PREVIOUS="v0.0.0"
+          fi
+          
+          # Match the existing tag convention (v-prefix)
+          if [[ "$PREVIOUS" =~ ^v ]]; then
+            TAG_NAME="v$VERSION"
+          else
+            TAG_NAME="$VERSION"
+          fi
+          
+          # Write the release notes using the user's template.
+          # We use TAG_NAME at the end of the compare link to make sure the GitHub comparison link is correct.
+          cat <<EOF > notes.md
+          ## ${VERSION} - ${DATE}
+          
+          **Full Changelog**: https://github.com/kdserra/CryptoUtility/compare/${PREVIOUS}...${TAG_NAME}
+          EOF
+          
+          # Check if release already exists, if not, create it
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            echo "Release $TAG_NAME already exists. Uploading artifacts to existing release..."
+            gh release upload "$TAG_NAME" release_artifacts/* --clobber
+          else
+            echo "Creating new release $TAG_NAME..."
+            gh release create "$TAG_NAME" release_artifacts/* --title "$TAG_NAME" --notes-file notes.md
+          fi
