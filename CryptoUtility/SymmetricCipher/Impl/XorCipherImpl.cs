@@ -3,9 +3,9 @@
 namespace CryptoUtility;
 
 [GenerateStaticApi]
-internal sealed class XorCipherImpl : ISymmetricCipher
+public sealed class XorCipherImpl : ISymmetricCipher
 {
-    internal static readonly XorCipherImpl Shared = new();
+    public static readonly XorCipherImpl Shared = new();
 
     /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />
     public int KeySizeBytes => 32;
