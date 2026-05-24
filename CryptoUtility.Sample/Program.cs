@@ -346,6 +346,8 @@ static void PrintHeader(string title)
 
 #endregion
 
+Console.ReadLine();
+
 public static class Extensions
 {
     public static string ToHexString(this byte[]? bytes, int maxLength = 32)
