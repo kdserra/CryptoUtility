@@ -10,6 +10,8 @@
     <Version>0.7.1</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl>https://raw.githubusercontent.com/kdserra/CryptoUtility/master/icon.png</PackageIconUrl>
   </PropertyGroup>
   <PropertyGroup>
     <Authors>Kevin Serra</Authors>
