@@ -7,7 +7,7 @@
     <WarningsAsErrors>Nullable</WarningsAsErrors>
     <PackageId>CryptoUtility.HkdfStandard</PackageId>
     <Product>CryptoUtility.HkdfStandard</Product>
-    <Version>0.7.1</Version>
+    <Version>0.8.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
