@@ -1,9 +1,6 @@
 name: Builder
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
 
 jobs:
@@ -31,7 +28,11 @@ jobs:
           dotnet build CryptoUtility/CryptoUtility.csproj -c Release --no-restore
           dotnet build CryptoUtility.Extras/CryptoUtility.Extras.csproj -c Release --no-restore
           dotnet build CryptoUtility.HkdfStandard/CryptoUtility.HkdfStandard.csproj -c Release --no-restore
-          dotnet build CryptoUtility.Sample/CryptoUtility.Sample.csproj -c Release --no-restore
+
+      - name: Publish Sample Executables
+        run: |
+          dotnet publish CryptoUtility.Sample/CryptoUtility.Sample.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o out/publish/win-x64
+          dotnet publish CryptoUtility.Sample/CryptoUtility.Sample.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o out/publish/linux-x64
 
       - name: Pack Projects
         run: |
@@ -46,12 +47,15 @@ jobs:
           cp out/*.nupkg release_artifacts/
           cp out/*.snupkg release_artifacts/ 2>/dev/null || true
           
-          # Create a zip of all compiled binaries
+          # Create a zip of compiled library binaries
           zip -r release_artifacts/CryptoUtility-binaries.zip \
             CryptoUtility/bin/Release/ \
             CryptoUtility.Extras/bin/Release/ \
-            CryptoUtility.HkdfStandard/bin/Release/ \
-            CryptoUtility.Sample/bin/Release/
+            CryptoUtility.HkdfStandard/bin/Release/
+          
+          # Copy published sample executables
+          cp out/publish/win-x64/CryptoUtility.Sample.exe release_artifacts/CryptoUtility.Sample-win-x64.exe
+          cp out/publish/linux-x64/CryptoUtility.Sample release_artifacts/CryptoUtility.Sample-linux-x64
 
       - name: Generate Release Notes & Create Release
         env:
@@ -74,8 +78,7 @@ jobs:
             TAG_NAME="$VERSION"
           fi
           
-          # Write the release notes using the user's template.
-          # We use TAG_NAME at the end of the compare link to make sure the GitHub comparison link is correct.
+          # Write the release notes using the user's template
           cat <<EOF > notes.md
           ## ${VERSION} - ${DATE}
           
