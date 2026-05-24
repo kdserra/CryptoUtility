@@ -91,5 +91,5 @@ jobs:
             gh release upload "$TAG_NAME" release_artifacts/* --clobber
           else
             echo "Creating new release $TAG_NAME..."
-            gh release create "$TAG_NAME" release_artifacts/* --title "$TAG_NAME" --notes-file notes.md
+            gh release create "$TAG_NAME" release_artifacts/* --title "$TAG_NAME" --notes-file notes.md --prerelease
           fi
