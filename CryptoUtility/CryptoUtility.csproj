@@ -7,7 +7,7 @@
     <WarningsAsErrors>Nullable</WarningsAsErrors>
     <PackageId>CryptoUtility</PackageId>
     <Product>CryptoUtility</Product>
-    <Version>0.4.1</Version>
+    <Version>0.4.2</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
@@ -33,8 +33,8 @@
     </RepositoryUrl>
 
     <PackageReleaseNotes>
-      Initial public release.
-    </PackageReleaseNotes>
+		View the release notes here: https://github.com/kdserra/CryptoUtility/releases
+	</PackageReleaseNotes>
 
     <Copyright>
       Copyright © Kevin Serra
