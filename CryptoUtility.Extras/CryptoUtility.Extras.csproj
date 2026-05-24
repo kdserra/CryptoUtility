@@ -11,6 +11,35 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <Authors>Kevin Serra</Authors>
+
+    <Description>
+      Cryptography, Simplified and Unified.  A developer-first cryptography abstraction library for .NET.  Secure your data with state-of-the-art ciphers using a single, unified interface.
+    </Description>
+
+    <PackageTags>
+      cryptography;crypto;security;encryption;dotnet
+    </PackageTags>
+
+    <PackageProjectUrl>
+      https://github.com/kdserra/CryptoUtility
+    </PackageProjectUrl>
+
+    <RepositoryType>git</RepositoryType>
+
+    <RepositoryUrl>
+      https://github.com/kdserra/CryptoUtility.git
+    </RepositoryUrl>
+
+    <PackageReleaseNotes>
+      Initial public release.
+    </PackageReleaseNotes>
+
+    <Copyright>
+      Copyright © Kevin Serra
+    </Copyright>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="../README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
