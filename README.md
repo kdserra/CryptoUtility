@@ -127,9 +127,9 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 | :--- | :--- | :--- |
 | **Symmetric AEAD** | `Aes256Gcm`, `Aes192Gcm`, `Aes128Gcm`, `ChaCha20Poly1305` | Industry standard authenticated encryption. |
 | **Symmetric Basic** | `XorCipher` | Basic, fast, weak cipher, useful for obfuscation purposes. |
-| **Asymmetric** | `Rsa1024`, `Rsa2048`, `Rsa3072`, `Rsa4096` | Standard RSA ciphers & Hybrid Encryption. |
-| **Signatures** | `Ecdsa` | Elliptic Curve Digital Signatures (ECDSA P-256/384/521). |
-| **Key Agreement**| `Ecdh` | Elliptic Curve Diffie-Hellman key derivation. |
+| **Asymmetric** | `Rsa1024`, `Rsa2048`, `Rsa3072`, `Rsa4096` | Ciphers for public/key cryptography, with support for hybrid encryption. |
+| **Signatures** | `Ecdsa` | Digital Signatures used for message verification. |
+| **Key Agreement**| `Ecdh` | Shared key derivation algorithms. |
 | **Key Derivation**| Official .NET `Hkdf`, [`HkdfDotNet`](https://github.com/samuel-lucas6/HKDF.NET), [`HkdfStandard`](https://github.com/andreimilto/HKDF.Standard)  | Secure cryptographic key expansion. |
 | **Password Key Derivation**| `Pbkdf2` | Derivation of keys from passwords to strengthen against brute-force attacks. | 
 | **Hashing** | `Sha1`, `Sha256`, `Sha384`, `Sha512`, `Sha3_256`, `Sha3_384`, `Sha3_512`, `Crc32`, `Crc64`, `XxHash32`, `XxHash64`, `XxHash128` | Hashing algorithms, and checksums. |
