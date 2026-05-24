@@ -126,6 +126,7 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 | Category | Algorithm / Class | Description |
 | :--- | :--- | :--- |
 | **Symmetric AEAD** | `Aes256Gcm`, `Aes192Gcm`, `Aes128Gcm`, `ChaCha20Poly1305` | Industry standard authenticated encryption. |
+| **Symmetric Basic** | `XorCipher` | Basic, fast, weak cipher, useful for obfuscation purposes. |
 | **Asymmetric** | `Rsa1024`, `Rsa2048`, `Rsa3072`, `Rsa4096` | Standard RSA ciphers & Hybrid Encryption. |
 | **Signatures** | `Ecdsa` | Elliptic Curve Digital Signatures (ECDSA P-256/384/521). |
 | **Key Agreement**| `Ecdh` | Elliptic Curve Diffie-Hellman key derivation. |
@@ -148,7 +149,7 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 * **No Static Nonces**: CryptoUtility generates a unique, cryptographically secure random nonce for every single symmetric encryption.
 * **Authentication-First**: We default to AEAD (Authenticated Encryption with Associated Data) ciphers to prevent bit-flipping and padding oracle attacks.
 * **Memory Sanitation**: Sensitive derived keys are zeroed out of system memory immediately after use.
-* **Standard Implementations**: We do not roll custom cryptographic algorithms. We wrap standard, industry-vetted implementations.
+* **Standard Implementations**: We do not roll custom cryptographic algorithms. We wrap standard, industry-vetted implementations, except where one is not available.
 
 ---
 

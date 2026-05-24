@@ -1,0 +1,6 @@
+﻿namespace CryptoUtility.Tests;
+
+public sealed class XorTests : SymmetricCipherTests
+{
+    internal override ISymmetricCipher Cipher => new XorCipherImpl();
+}
