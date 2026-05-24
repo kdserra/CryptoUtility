@@ -20,4 +20,4 @@ jobs:
         run: dotnet restore
 
       - name: Run Tests
-        run: dotnet test CryptoUtility.Tests/CryptoUtility.Tests.csproj --no-restore
+        run: dotnet test --no-restore
