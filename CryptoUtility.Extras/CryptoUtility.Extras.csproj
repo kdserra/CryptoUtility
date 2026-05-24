@@ -8,7 +8,12 @@
     <PackageId>CryptoUtility.Extras</PackageId>
     <Product>CryptoUtility.Extras</Product>
     <Version>0.3.0</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
   <PropertyGroup>
     <!-- Enable viewing of generated files. -->
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
