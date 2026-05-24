@@ -12,7 +12,7 @@
 
 # ❓ Why CryptoUtility?
 
-Standard cryptography APIs are notoriously complex, boilerplate-heavy, and easy to misconfigure. Because of this, developers often default to older, less secure options like `AES-CBC` simply because modern authenticated ciphers like `AES-GCM` are significantly harder to set up.
+Standard cryptography APIs are notoriously complex, boilerplate-heavy, and easy to misconfigure. Because of this, developers often default to older, less secure options like `AES-CBC` simply because modern authenticated ciphers like `AES-GCM` are harder to set up.
 
 CryptoUtility bridges this gap by offering:
 
@@ -125,17 +125,21 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 
 | Category | Algorithm / Class | Description |
 | :--- | :--- | :--- |
-| **Symmetric AEAD** | `Aes256Gcm`, `Aes192Gcm`, `Aes128Gcm` | Industry standard authenticated encryption. |
-| **Symmetric AEAD** | `ChaCha20Poly1305` | High-performance authenticated stream cipher. |
-| **Asymmetric** | `Rsa2048`, `Rsa4096` | Standard RSA ciphers & Hybrid Encryption. |
+| **Symmetric AEAD** | `Aes256Gcm`, `Aes192Gcm`, `Aes128Gcm`, `ChaCha20Poly1305` | Industry standard authenticated encryption. |
+| **Asymmetric** | `Rsa1024`, `Rsa2048`, `Rsa3072`, `Rsa4096` | Standard RSA ciphers & Hybrid Encryption. |
 | **Signatures** | `Ecdsa` | Elliptic Curve Digital Signatures (ECDSA P-256/384/521). |
 | **Key Agreement**| `Ecdh` | Elliptic Curve Diffie-Hellman key derivation. |
-| **Key Derivation**| Official .NET `Hkdf`, [`HkdfStandard`](https://github.com/andreimilto/HKDF.Standard)  | Secure cryptographic key expansion. |
+| **Key Derivation**| Official .NET `Hkdf`, [`HkdfDotNet`](https://github.com/samuel-lucas6/HKDF.NET), [`HkdfStandard`](https://github.com/andreimilto/HKDF.Standard)  | Secure cryptographic key expansion. |
 | **Password Key Derivation**| `Pbkdf2` | Derivation of keys from passwords to strengthen against brute-force attacks. | 
-| **Hashing** | `Sha256`, `Sha3_256` | Secure, standard hashes and HMAC authentication. |
-| **Checksums** | `Crc32`, `Crc64`, `XxHash64` | Ultra-fast data integrity verification. |
+| **Hashing** | `Sha1`, `Sha256`, `Sha384`, `Sha512`, `Sha3_256`, `Sha3_384`, `Sha3_512`, `Crc32`, `Crc64`, `XxHash32`, `XxHash64`, `XxHash128` | Hashing algorithms. |
 
-`HkdfStandard` is offered for it's backwards compatibility compared to the official .NET implementation which is limited to .NET 5 and above.
+**NOTE:** When available on the target platform, the native .NET implementation is used by default. Otherwise, the library automatically selects the most appropriate compatible implementation.
+
+`HkdfDotNet` is provided for it's ease of inclusion into this library, backwards compatibility compared to the official .NET implementation which is limited to .NET 5 and above, but it's not as industry vetted as the official .NET HKDF, or HKDF.NET.  Included in the core CryptoUtility library.
+
+`HkdfStandard` implementation is offered due to it's popularity, and it's backwards compatibility compared to the official .NET implementation which is limited to .NET 5 and above.  Requires `CryptoUtility.HkdfStandard`.
+
+**PLANNED:** Bcrypt, Scrypt, Argon2id, maybe more.
 
 ---
 

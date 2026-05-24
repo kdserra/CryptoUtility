@@ -98,7 +98,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         sb.AppendLine($"public static partial class {apiName}");
         sb.AppendLine("{");
 
-        sb.AppendLine($"    public static readonly {implName} Cipher = {implName}.Shared;");
+        sb.AppendLine($"    public static readonly {implName} Shared = {implName}.Shared;");
         sb.AppendLine();
 
         var generatedSignatures = new HashSet<string>();
@@ -131,8 +131,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
             if (ShouldSkipMethod(ext.Symbol))
                 continue;
 
-            var wrappedParams = ext.ParametersWithoutReceiver
-                .Where((_, i) => !ext.IsInjected[i]);
+            var wrappedParams = ext.ParametersWithoutReceiver.Where((_, i) => !ext.IsInjected[i]);
 
             var sigKey = GetSignatureKey(ext.Symbol.Name, wrappedParams);
             if (!generatedSignatures.Add(sigKey))
@@ -147,20 +146,22 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
 
     private static string GetSignatureKey(string name, IEnumerable<IParameterSymbol> parameters)
     {
-        var paramTypes = string.Join(", ", parameters.Select(p =>
-        {
-            var prefix = p.RefKind switch
+        var paramTypes = string.Join(
+            ", ",
+            parameters.Select(p =>
             {
-                RefKind.Ref => "ref ",
-                RefKind.Out => "out ",
-                RefKind.In => "in ",
-                _ => ""
-            };
-            return prefix + p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-        }));
+                var prefix = p.RefKind switch
+                {
+                    RefKind.Ref => "ref ",
+                    RefKind.Out => "out ",
+                    RefKind.In => "in ",
+                    _ => "",
+                };
+                return prefix + p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            })
+        );
         return $"{name}({paramTypes})";
     }
-
 
     private static bool ShouldSkipMethod(IMethodSymbol method)
     {
@@ -196,7 +197,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
             $"    /// <inheritdoc cref=\"{method.ContainingType.Name}.{method.Name}\" />"
         );
         sb.AppendLine($"    public static {returnType} {name}({parameters})");
-        sb.AppendLine($"        => Cipher.{name}({args});");
+        sb.AppendLine($"        => Shared.{name}({args});");
         sb.AppendLine();
     }
 
@@ -216,11 +217,13 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
             parameters.Where((_, i) => !isInjected[i]).Select(RenderParameter)
         );
 
-        var argsList = new List<string> { "Cipher" };
-        argsList.AddRange(parameters.Select((p, i) => isInjected[i] ? "Cipher" : p.Name));
+        var argsList = new List<string> { "Shared" };
+        argsList.AddRange(parameters.Select((p, i) => isInjected[i] ? "Shared" : p.Name));
         var args = string.Join(", ", argsList);
 
-        var extClass = symbol.ContainingType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        var extClass = symbol.ContainingType.ToDisplayString(
+            SymbolDisplayFormat.FullyQualifiedFormat
+        );
 
         sb.AppendLine(
             $"    /// <inheritdoc cref=\"{symbol.ContainingType.Name}.{symbol.Name}\" />"
@@ -285,14 +288,14 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
 
         if (prop.IsReadOnly)
         {
-            sb.AppendLine($"    public static {type} {prop.Name} => Cipher.{prop.Name};");
+            sb.AppendLine($"    public static {type} {prop.Name} => Shared.{prop.Name};");
         }
         else
         {
             sb.AppendLine($"    public static {type} {prop.Name}");
             sb.AppendLine("    {");
-            sb.AppendLine($"        get => Cipher.{prop.Name};");
-            sb.AppendLine($"        set => Cipher.{prop.Name} = value;");
+            sb.AppendLine($"        get => Shared.{prop.Name};");
+            sb.AppendLine($"        set => Shared.{prop.Name} = value;");
             sb.AppendLine("    }");
         }
 

@@ -13,11 +13,9 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="CryptoUtility.Tests" />
-    <InternalsVisibleTo Include="CryptoUtility.Extras" />
-    <InternalsVisibleTo Include="CryptoUtility.HkdfStandard" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MemoryPack" Version="1.21.4" />
+    <PackageReference Include="HKDF.Standard" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference
@@ -25,5 +23,6 @@
       OutputItemType="Analyzer"
       ReferenceOutputAssembly="false"
     />
+    <ProjectReference Include="..\CryptoUtility\CryptoUtility.csproj" />
   </ItemGroup>
 </Project>

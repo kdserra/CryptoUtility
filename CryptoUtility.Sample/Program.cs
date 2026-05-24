@@ -120,8 +120,6 @@ void RunSymmetricShowcase()
         );
         Console.WriteLine($"  - Decrypted Text:          \"{decryptedCC}\"");
     }
-
-
 }
 
 void RunAsymmetricAndHybridShowcase()
@@ -281,7 +279,7 @@ void RunKdfShowcase()
     byte[] masterSecret = "transient-master-secret"u8.ToArray();
     byte[] hkdfSalt = "hkdf-salt-value"u8.ToArray();
 
-    byte[] encryptionSubKey = CryptoUtility.HkdfStandard.DeriveKey(
+    byte[] encryptionSubKey = CryptoUtility.HkdfDotNet.DeriveKey(
         masterSecret,
         1,
         32,
@@ -289,7 +287,7 @@ void RunKdfShowcase()
         [],
         System.Security.Cryptography.HashAlgorithmName.SHA256
     );
-    byte[] signatureSubKey = CryptoUtility.HkdfStandard.DeriveKey(
+    byte[] signatureSubKey = CryptoUtility.HkdfDotNet.DeriveKey(
         masterSecret,
         1,
         32,

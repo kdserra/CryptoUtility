@@ -1,7 +1,7 @@
 namespace CryptoUtility;
 
 /// <summary>
-/// Provides extension methods for Password-based Key Derivation Functions (KDFs).
+/// Provides extension methods for Password-based Key Derivation Functions (Such as PBKDF2).
 /// </summary>
 public static class PasswordKdfExtensions
 {
@@ -17,9 +17,9 @@ public static class PasswordKdfExtensions
     public static string DeriveKeyBase64(
         this IPasswordKdf kdf,
         string password,
-        byte[] salt,
         int iterations,
-        int outputLength
+        int outputLength,
+        byte[] salt
     )
     {
         try

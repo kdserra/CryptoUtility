@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CryptoUtility.HkdfStandard\CryptoUtility.HkdfStandard.csproj" />
     <ProjectReference Include="..\CryptoUtility\CryptoUtility.csproj" />
   </ItemGroup>
 

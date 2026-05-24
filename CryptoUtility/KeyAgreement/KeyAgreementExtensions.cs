@@ -4,6 +4,12 @@ namespace CryptoUtility;
 
 public static class KeyAgreementExtensions
 {
+#if NET8_0_OR_GREATER
+    public static IKeyExpansionKdf DefaultKeyExpansion = HkdfImpl.Shared;
+#else
+    public static IKeyExpansionKdf DefaultKeyExpansion = HkdfDotNet.Shared;
+#endif
+
     /// <summary>
     /// Derives a shared secret in Base64 using the specified secret key and peer public key.
     /// </summary>
@@ -87,8 +93,8 @@ public static class KeyAgreementExtensions
         IKeyExpansionKdf? kdf = null
     )
     {
-        cipher ??= Aes256GcmImpl.Shared;
-        kdf ??= HkdfStandardImpl.Shared;
+        cipher ??= Aes256Gcm.Shared;
+        kdf ??= HkdfDotNet.Shared;
 
         if (!LibraryHelper.NotNull(keyAgreement, sharedSecret, plaintext, kdfSalt, kdfInfo))
         {
@@ -130,8 +136,8 @@ public static class KeyAgreementExtensions
         IKeyExpansionKdf? kdf = null
     )
     {
-        cipher ??= Aes256GcmImpl.Shared;
-        kdf ??= HkdfStandardImpl.Shared;
+        cipher ??= Aes256Gcm.Shared;
+        kdf ??= HkdfDotNet.Shared;
 
         if (!LibraryHelper.NotNull(keyAgreement, sharedSecret, encrypted, kdfSalt, kdfInfo))
         {

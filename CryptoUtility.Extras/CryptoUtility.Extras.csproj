@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard2.1;net8.0;net10.0</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -13,11 +13,9 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="CryptoUtility.Tests" />
-    <InternalsVisibleTo Include="CryptoUtility.Extras" />
-    <InternalsVisibleTo Include="CryptoUtility.HkdfStandard" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MemoryPack" Version="1.21.4" />
+    <PackageReference Include="System.IO.Hashing" Version="10.0.6" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference
@@ -25,5 +23,14 @@
       OutputItemType="Analyzer"
       ReferenceOutputAssembly="false"
     />
+    <ProjectReference Include="..\CryptoUtility\CryptoUtility.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="AsymmetricCipher\" />
+    <Folder Include="DigitalSignature\" />
+    <Folder Include="Kdf\KeyExapnsionKdf\" />
+    <Folder Include="Kdf\PasswordKdf\" />
+    <Folder Include="KeyAgreement\" />
+    <Folder Include="SymmetricCipher\" />
   </ItemGroup>
 </Project>
