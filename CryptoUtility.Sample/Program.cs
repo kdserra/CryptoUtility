@@ -222,7 +222,14 @@ void RunKeyAgreementShowcase()
         byte[] kdfSalt = "ECDH-HKDF-Salt"u8.ToArray();
         byte[] info = "ECDH-AES-GCM-HKDF-Context-Info"u8.ToArray();
 
-        var (encSuccess, ciphertext) = Ecdh.Encrypt(aliceSharedSecret, plainBytes, kdfSalt, info);
+        var (encSuccess, ciphertext) = Ecdh.Encrypt(
+            Aes256Gcm.Shared,
+            Hkdf.Shared,
+            aliceSharedSecret,
+            plainBytes,
+            kdfSalt,
+            info
+        );
         if (encSuccess)
         {
             Console.WriteLine($"  - Plaintext:            \"{plainText}\"");
@@ -230,6 +237,8 @@ void RunKeyAgreementShowcase()
             Console.WriteLine($"  - Encrypted Ciphertext: {ciphertext.ToHexString(40)}");
 
             var (decSuccess, decryptedBytes) = Ecdh.Decrypt(
+                Aes256Gcm.Shared,
+                Hkdf.Shared,
                 bobSharedSecret,
                 ciphertext,
                 kdfSalt,
@@ -279,22 +288,8 @@ void RunKdfShowcase()
     byte[] masterSecret = "transient-master-secret"u8.ToArray();
     byte[] hkdfSalt = "hkdf-salt-value"u8.ToArray();
 
-    byte[] encryptionSubKey = CryptoUtility.HkdfDotNet.DeriveKey(
-        masterSecret,
-        1,
-        32,
-        hkdfSalt,
-        [],
-        System.Security.Cryptography.HashAlgorithmName.SHA256
-    );
-    byte[] signatureSubKey = CryptoUtility.HkdfDotNet.DeriveKey(
-        masterSecret,
-        1,
-        32,
-        hkdfSalt,
-        [],
-        System.Security.Cryptography.HashAlgorithmName.SHA384
-    );
+    byte[] encryptionSubKey = Hkdf.DeriveKey(masterSecret, 1, 32, hkdfSalt, []);
+    byte[] signatureSubKey = Hkdf.DeriveKey(masterSecret, 1, 32, hkdfSalt, []);
 
     Console.WriteLine($"  - Master Secret:      {masterSecret.ToHexString()}");
     Console.WriteLine($"  - Derived Enc SubKey: {encryptionSubKey.ToHexString()}");

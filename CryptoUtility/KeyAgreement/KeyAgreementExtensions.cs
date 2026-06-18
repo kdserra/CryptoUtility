@@ -4,12 +4,6 @@ namespace CryptoUtility;
 
 public static class KeyAgreementExtensions
 {
-#if NET8_0_OR_GREATER
-    public static IKeyExpansionKdf DefaultKeyExpansion = HkdfImpl.Shared;
-#else
-    public static IKeyExpansionKdf DefaultKeyExpansion = HkdfDotNet.Shared;
-#endif
-
     /// <summary>
     /// Derives a shared secret in Base64 using the specified secret key and peer public key.
     /// </summary>
@@ -85,18 +79,25 @@ public static class KeyAgreementExtensions
     /// <returns>A tuple indicating success and the encrypted bytes.</returns>
     public static (bool success, byte[] encrypted) Encrypt(
         this IKeyAgreement keyAgreement,
+        ISymmetricCipher cipher,
+        IKeyExpansionKdf kdf,
         byte[] sharedSecret,
         byte[] plaintext,
         byte[] kdfSalt,
-        byte[] kdfInfo,
-        ISymmetricCipher? cipher = null,
-        IKeyExpansionKdf? kdf = null
+        byte[] kdfInfo
     )
     {
-        cipher ??= Aes256Gcm.Shared;
-        kdf ??= HkdfDotNet.Shared;
-
-        if (!LibraryHelper.NotNull(keyAgreement, sharedSecret, plaintext, kdfSalt, kdfInfo))
+        if (
+            !LibraryHelper.NotNull(
+                keyAgreement,
+                cipher,
+                kdf,
+                sharedSecret,
+                plaintext,
+                kdfSalt,
+                kdfInfo
+            )
+        )
         {
             return (false, Array.Empty<byte>());
         }
@@ -128,18 +129,25 @@ public static class KeyAgreementExtensions
     /// <returns>A tuple indicating success and the decrypted bytes.</returns>
     public static (bool success, byte[] decrypted) Decrypt(
         this IKeyAgreement keyAgreement,
+        ISymmetricCipher cipher,
+        IKeyExpansionKdf kdf,
         byte[] sharedSecret,
         byte[] encrypted,
         byte[] kdfSalt,
-        byte[] kdfInfo,
-        ISymmetricCipher? cipher = null,
-        IKeyExpansionKdf? kdf = null
+        byte[] kdfInfo
     )
     {
-        cipher ??= Aes256Gcm.Shared;
-        kdf ??= HkdfDotNet.Shared;
-
-        if (!LibraryHelper.NotNull(keyAgreement, sharedSecret, encrypted, kdfSalt, kdfInfo))
+        if (
+            !LibraryHelper.NotNull(
+                keyAgreement,
+                cipher,
+                kdf,
+                sharedSecret,
+                encrypted,
+                kdfSalt,
+                kdfInfo
+            )
+        )
         {
             return (false, Array.Empty<byte>());
         }

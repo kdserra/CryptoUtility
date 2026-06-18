@@ -110,7 +110,6 @@ public abstract class KeyAgreementTests
         Assert.True(string.IsNullOrEmpty(result.sharedSecret));
     }
 
-
     [Fact]
     public void SameInstance_SharedSecret_Roundtrip()
     {
@@ -186,7 +185,6 @@ public abstract class KeyAgreementTests
         Assert.False(result.success);
         Assert.True(string.IsNullOrEmpty(result.sharedSecret));
     }
-
 
     [Fact]
     public void NewInstance_SharedSecret_Roundtrip()
@@ -291,11 +289,26 @@ public abstract class KeyAgreementTests
         var salt = System.Text.Encoding.UTF8.GetBytes("TestSalt");
         var info = System.Text.Encoding.UTF8.GetBytes("ApplicationInfo");
 
-        var (encSuccess, ciphertext) = a.Encrypt(secretA, plaintext, salt, info);
+        var (encSuccess, ciphertext) = a.Encrypt(
+            Aes256Gcm.Shared,
+            Hkdf.Shared,
+            secretA,
+            plaintext,
+            salt,
+            info
+        );
+
         Assert.True(encSuccess);
         Assert.NotEmpty(ciphertext);
 
-        var (decSuccess, decrypted) = b.Decrypt(secretB, ciphertext, salt, info);
+        var (decSuccess, decrypted) = b.Decrypt(
+            Aes256Gcm.Shared,
+            Hkdf.Shared,
+            secretB,
+            ciphertext,
+            salt,
+            info
+        );
         Assert.True(decSuccess);
         Assert.Equal(plaintext, decrypted);
     }
@@ -316,13 +329,27 @@ public abstract class KeyAgreementTests
         var salt = System.Text.Encoding.UTF8.GetBytes("TestSalt");
         var info = System.Text.Encoding.UTF8.GetBytes("ApplicationInfo");
 
-        var (encSuccess, ciphertext) = a.Encrypt(secretA, plaintext, salt, info);
+        var (encSuccess, ciphertext) = a.Encrypt(
+            Aes256Gcm.Shared,
+            Hkdf.Shared,
+            secretA,
+            plaintext,
+            salt,
+            info
+        );
         Assert.True(encSuccess);
 
         // Derive wrong secret (e.g. from Bob's own keys)
         var (_, wrongSec) = b.DeriveSharedSecret(bSec, bPub);
 
-        var (decSuccess, decrypted) = b.Decrypt(wrongSec, ciphertext, salt, info);
+        var (decSuccess, decrypted) = b.Decrypt(
+            Aes256Gcm.Shared,
+            Hkdf.Shared,
+            wrongSec,
+            ciphertext,
+            salt,
+            info
+        );
         Assert.False(decSuccess);
         Assert.Empty(decrypted);
     }
@@ -344,10 +371,24 @@ public abstract class KeyAgreementTests
         var info = System.Text.Encoding.UTF8.GetBytes("ApplicationInfo");
         var wrongInfo = System.Text.Encoding.UTF8.GetBytes("WrongApplicationInfo");
 
-        var (encSuccess, ciphertext) = a.Encrypt(secretA, plaintext, salt, info);
+        var (encSuccess, ciphertext) = a.Encrypt(
+            Aes256Gcm.Shared,
+            Hkdf.Shared,
+            secretA,
+            plaintext,
+            salt,
+            info
+        );
         Assert.True(encSuccess);
 
-        var (decSuccess, decrypted) = b.Decrypt(secretB, ciphertext, salt, wrongInfo);
+        var (decSuccess, decrypted) = b.Decrypt(
+            Aes256Gcm.Shared,
+            Hkdf.Shared,
+            secretB,
+            ciphertext,
+            salt,
+            wrongInfo
+        );
         Assert.False(decSuccess);
         Assert.Empty(decrypted);
     }
@@ -365,13 +406,26 @@ public abstract class KeyAgreementTests
         Assert.Equal(string.Empty, pub);
         Assert.Equal(string.Empty, sec);
 
-        var (encSuccess, encrypted) = nullAgreement!.Encrypt([1, 2], [3, 4], [5, 6], [7, 8], cipher: null, kdf: null);
+        var (encSuccess, encrypted) = nullAgreement!.Encrypt(
+            Aes256Gcm.Shared,
+            Hkdf.Shared,
+            [1, 2],
+            [3, 4],
+            [5, 6],
+            [7, 8]
+        );
         Assert.False(encSuccess);
         Assert.Empty(encrypted);
 
-        var (decSuccess, decrypted) = nullAgreement!.Decrypt([1, 2], [3, 4], [5, 6], [7, 8], cipher: null, kdf: null);
+        var (decSuccess, decrypted) = nullAgreement!.Decrypt(
+            Aes256Gcm.Shared,
+            Hkdf.Shared,
+            [1, 2],
+            [3, 4],
+            [5, 6],
+            [7, 8]
+        );
         Assert.False(decSuccess);
         Assert.Empty(decrypted);
     }
 }
-
