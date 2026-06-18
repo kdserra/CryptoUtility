@@ -19,7 +19,13 @@ public sealed class EcdsaImpl : IDigitalSignature
             using var ecdsa = ECDsa.Create();
             ecdsa.ImportPkcs8PrivateKey(secretKey, out _);
 
-            var signature = ecdsa.SignData(message, HashAlgorithmName.SHA256);
+            byte[]? signature = ecdsa.SignData(message, HashAlgorithmName.SHA256);
+
+            if (signature == null || signature.Length < 1)
+            {
+                return (false, Array.Empty<byte>());
+            }
+
             return (true, signature);
         }
         catch
