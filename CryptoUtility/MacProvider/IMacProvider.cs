@@ -6,6 +6,17 @@
 public interface IMacProvider
 {
     /// <summary>
+    /// Gets the required or recommended key size in bytes.
+    /// Values < 1 represent that there is no minimum key size requirement.
+    /// </summary>
+    public int RequiredKeySizeInBytes { get; }
+
+    /// <summary>
+    /// Gets the output size of the MAC in bytes.
+    /// </summary>
+    public int MacSizeInBytes { get; }
+
+    /// <summary>
     /// Computes a Message Authentication Code (MAC) using the key for the message to later be verified against tampering.
     /// </summary>
     /// <param name="key">The key that will be used to compute the MAC.</param>

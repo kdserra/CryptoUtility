@@ -12,8 +12,8 @@ public static class MacProviderExtensions
             return string.Empty;
         }
 
-        byte[] keyBytes = Encoding.UTF8.GetBytes(key);
-        byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+        byte[] keyBytes = Convert.FromBase64String(key);
+        byte[] messageBytes = Convert.FromBase64String(message);
         byte[] macBytes = macProvider.ComputeMac(keyBytes, messageBytes);
         string macBase64 = Convert.ToBase64String(macBytes);
 
@@ -64,8 +64,8 @@ public static class MacProviderExtensions
 
         try
         {
-            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+            byte[] keyBytes = Convert.FromBase64String(key);
+            byte[] messageBytes = Convert.FromBase64String(message);
             byte[] macBytes = Convert.FromBase64String(mac);
             bool isValid = macProvider.VerifyMac(keyBytes, messageBytes, macBytes);
 

@@ -13,7 +13,7 @@
 # ❓ Why CryptoUtility?
 CryptoUtility makes it quick, simple, and easy to work with cryptography.
 
-We provide commonly requested utilities like Base64 support, unified interfaces that make it easy to swap implementations, or abstract dependencies, and provide backwards compatible implementations for common cryptographic operations.
+We provide commonly requested utilities like Base64 support, easy key generation, unified interfaces that make it easy to swap implementations, or abstract dependencies, and provide backwards compatible implementations for common cryptographic operations.
 
 CryptoUtility enables access to an entire ecosystem; no longer requiring you to learn different crypto APIs for different libraries.  In our library, using an authenticated cipher is just as simple and easy as a stateless cipher.  You no longer have to manage `IDisposable` objects and risk memory leaks as our wrappers deal with them.
 
@@ -230,6 +230,19 @@ var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciph
 | XxHash128 | System.IO.Hashing | CryptoUtility.Extras | High-speed hashing |
 
 ---
+
+### Message Authentication Code
+
+| Algorithm | Implementation | Package | Notes |
+|------------|----------------|----------|------|
+| HmacSha256 | .NET Built-in | CryptoUtility | Secure hash function |
+| HmacSha384 | .NET Built-in | CryptoUtility | Secure hash function |
+| HmacSha512 | .NET Built-in | CryptoUtility | Secure hash function |
+| HmacSha3_256 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
+| HmacSha3_384 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
+| HmacSha3_512 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
+| HmacSha1 | .NET Built-in | CryptoUtility | Deprecated, insecure |
+| Poly1305 | NaCl.Core | CryptoUtility.NaCl | Fast, secure one-time MAC (requires a unique key/nonce per message; often paired with ChaCha20) |
 
 ## 📝 API Notes
 

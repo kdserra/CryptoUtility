@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using Xunit;
 
 namespace CryptoUtility.Tests;
@@ -7,11 +8,29 @@ public abstract class MacProviderTests
 {
     internal abstract IMacProvider Mac { get; }
 
+    private byte[] CreateValidKey()
+    {
+        int size = (Mac.RequiredKeySizeInBytes < 1) ? 32 : Mac.RequiredKeySizeInBytes;
+        byte[] key = new byte[size];
+        Array.Fill(key, (byte)0x41); // 'A'
+        return key;
+    }
+
+    private string CreateValidKeyBase64()
+    {
+        return Convert.ToBase64String(CreateValidKey());
+    }
+
+    private string CreateValidMessageBase64()
+    {
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes("Hello, World!"));
+    }
+
     [Fact]
     public void ComputeMac_ValidInput_ReturnsExpectedLength()
     {
         // Arrange
-        byte[] key = Encoding.UTF8.GetBytes("secret-key-12345678901234567890123");
+        byte[] key = CreateValidKey();
         byte[] message = Encoding.UTF8.GetBytes("Hello, World!");
 
         // Act
@@ -19,22 +38,21 @@ public abstract class MacProviderTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.NotEmpty(result);
+        Assert.Equal(Mac.MacSizeInBytes, result.Length);
     }
 
     [Fact]
     public void ComputeMacBase64_ValidInput_ReturnsBase64String()
     {
         // Arrange
-        string key = "secret-key-12345678901234567890123";
-        string message = "Hello, World!";
+        string key = CreateValidKeyBase64();
+        string message = CreateValidMessageBase64();
 
         // Act
         string result = Mac.ComputeMacBase64(key, message);
 
         // Assert
         Assert.False(string.IsNullOrEmpty(result));
-        // Verify it is valid Base64
         Assert.NotNull(Convert.FromBase64String(result));
     }
 
@@ -42,7 +60,7 @@ public abstract class MacProviderTests
     public void VerifyMac_CorrectMac_ReturnsTrue()
     {
         // Arrange
-        byte[] key = Encoding.UTF8.GetBytes("secret-key-12345678901234567890123");
+        byte[] key = CreateValidKey();
         byte[] message = Encoding.UTF8.GetBytes("Hello, World!");
         byte[] mac = Mac.ComputeMac(key, message);
 
@@ -57,13 +75,13 @@ public abstract class MacProviderTests
     public void VerifyMac_IncorrectMac_ReturnsFalse()
     {
         // Arrange
-        byte[] key = Encoding.UTF8.GetBytes("secret-key-12345678901234567890123");
+        byte[] key = CreateValidKey();
         byte[] message = Encoding.UTF8.GetBytes("Hello, World!");
         byte[] tamperedMac = Mac.ComputeMac(key, message);
 
         if (tamperedMac.Length > 0)
         {
-            tamperedMac[0] ^= 0x01; // Tamper with the MAC
+            tamperedMac[0] ^= 0x01;
         }
 
         // Act
@@ -77,8 +95,8 @@ public abstract class MacProviderTests
     public void VerifyBase64_CorrectMac_ReturnsTrue()
     {
         // Arrange
-        string key = "secret-key-12345678901234567890123";
-        string message = "Hello, World!";
+        string key = CreateValidKeyBase64();
+        string message = CreateValidMessageBase64();
         string macBase64 = Mac.ComputeMacBase64(key, message);
 
         // Act
@@ -92,12 +110,16 @@ public abstract class MacProviderTests
     public void VerifyBase64_IncorrectMac_ReturnsFalse()
     {
         // Arrange
-        string key = "secret-key-12345678901234567890123";
-        string message = "Hello, World!";
+        string key = CreateValidKeyBase64();
+        string message = CreateValidMessageBase64();
         string macBase64 = Mac.ComputeMacBase64(key, message);
-        string tamperedMacBase64 = macBase64.EndsWith("A")
-            ? macBase64.Replace("A", "B")
-            : macBase64 + "Q==";
+
+        byte[] rawMac = Convert.FromBase64String(macBase64);
+        if (rawMac.Length > 0)
+        {
+            rawMac[0] ^= 0x01;
+        }
+        string tamperedMacBase64 = Convert.ToBase64String(rawMac);
 
         // Act
         bool isValid = Mac.VerifyBase64(key, message, tamperedMacBase64);
@@ -107,8 +129,8 @@ public abstract class MacProviderTests
     }
 
     [Theory]
-    [InlineData(null, "message")]
-    [InlineData("key", null)]
+    [InlineData(null, "bWVzc2FnZQ==")]
+    [InlineData("a2V5", null)]
     public void ComputeMacBase64_NullInputs_ReturnsEmptyString(string? key, string? message)
     {
         // Act
@@ -131,9 +153,9 @@ public abstract class MacProviderTests
     }
 
     [Theory]
-    [InlineData(null, "message", "mac")]
-    [InlineData("key", null, "mac")]
-    [InlineData("key", "message", null)]
+    [InlineData(null, "bWVzc2FnZQ==", "bWFj")]
+    [InlineData("a2V5", null, "bWFj")]
+    [InlineData("a2V5", "bWVzc2FnZQ==", null)]
     public void VerifyBase64_NullInputs_ReturnsFalse(string? key, string? message, string? mac)
     {
         // Act
