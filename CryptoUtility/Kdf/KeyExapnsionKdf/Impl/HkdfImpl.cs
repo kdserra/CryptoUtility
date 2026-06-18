@@ -3,7 +3,8 @@ using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
-public class HkdfImpl : IKeyExpansionKdf
+[GenerateStaticApi]
+public sealed class HkdfImpl : IKeyExpansionKdf
 {
     public static readonly HkdfImpl Shared = new();
     private static readonly HashAlgorithmName DefaultHashAlgorithm = HashAlgorithmName.SHA256;
