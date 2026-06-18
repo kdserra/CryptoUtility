@@ -1,10 +1,17 @@
+using System.Security.Cryptography;
+
 namespace CryptoUtility;
 
 [GenerateStaticApi]
-public sealed class Sha256Impl : ShaBase
+public sealed class Sha256Impl : IHashProvider
 {
     public static readonly Sha256Impl Shared = new();
 
-    public Sha256Impl()
-        : base(ShaVariant.Sha256) { }
+    public byte[] Hash(byte[] message)
+    {
+        LibraryHelper.ThrowIfAnyNull(message);
+        using var alg = SHA256.Create();
+        byte[] hash = alg.ComputeHash(message);
+        return hash;
+    }
 }

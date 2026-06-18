@@ -1,12 +1,19 @@
 #if NET8_0_OR_GREATER
+using System.Security.Cryptography;
+
 namespace CryptoUtility;
 
 [GenerateStaticApi]
-public sealed class Sha3_256Impl : ShaBase
+public sealed class Sha3_256Impl : IHashProvider
 {
     public static readonly Sha3_256Impl Shared = new();
 
-    public Sha3_256Impl()
-        : base(ShaVariant.Sha3_256) { }
+    public byte[] Hash(byte[] message)
+    {
+        LibraryHelper.ThrowIfAnyNull(message);
+        using var alg = SHA3_256.Create();
+        byte[] hash = alg.ComputeHash(message);
+        return hash;
+    }
 }
 #endif
