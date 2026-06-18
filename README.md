@@ -20,12 +20,18 @@ CryptoUtility bridges this gap by offering:
 With CryptoUtility, executing high-security authenticated encryption (AEAD) like **AES-256-GCM** or **ChaCha20-Poly1305** is just as straightforward as running a stateless cipher. All complex logic—such as secure nonce generation, authentication tag handling, and associated data verification—is managed automatically.
 
 ## 🧩 Unified Interfaces
-We define clean, unified interfaces like `ISymmetricCipher`, `IAsymmetricCipher`, `IHashProvider`, `IKeyAgreement`, and `IPasswordKdf`. 
+We define clean, unified interfaces like `ISymmetricCipher`, `IAsymmetricCipher`, `IHashProvider`, `IKeyAgreement`, `IKeyExpansionKdf`, and `IPasswordKdf`. 
 
 This is incredibly powerful for building modular application systems (such as a `SaveManager` or a networking layer). Your high-level managers can depend directly on `ISymmetricCipher` without being bound to a concrete implementation. You can swap your entire encryption algorithm from AES to ChaCha20 with a single line of code, without rewriting your business logic.
 
 ## 📦 Automatic Cryptographic Envelopes
 For symmetric ciphers and hybrid encryption, CryptoUtility automatically packages the encrypted payload, random nonce, and authentication tag into a serialized cryptographic envelope under the hood using `MemoryPack` (an ultra-fast binary serializer). You receive a single, ready-to-transmit byte array or Base64 string. During decryption, the envelope is parsed automatically.
+
+## ♻️ Cached Instance
+To avoid allocations, we provide a `<Algo>.Shared` cached instance that can always be used so you don't have to instantiate new objects to work with the instance APIs.
+
+## 🧣 Static Wrapper API
+All of our instance APIs are also wrapped with a static API, allowing direct usage of your desired algoithm for brevity, and convenience.
 
 ---
 
