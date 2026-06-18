@@ -13,7 +13,7 @@ public static class CryptoHelper
     /// <param name="left"></param>
     /// <param name="right"></param>
     /// <returns>Boolean representing whether the values are equal.</returns>
-    internal static bool FixedTimeEquals(byte[] left, byte[] right)
+    public static bool FixedTimeEquals(byte[] left, byte[] right)
     {
 #if NET8_0_OR_GREATER
         return CryptographicOperations.FixedTimeEquals(left, right);
@@ -35,7 +35,7 @@ public static class CryptoHelper
     /// cryptographically strong random bytes
     /// </summary>
     /// <param name="buffer">The byte array to populate with random data. This parameter must not be null.</param>
-    internal static void Fill(byte[] buffer)
+    public static void Fill(byte[] buffer)
     {
 #if NET8_0_OR_GREATER
         RandomNumberGenerator.Fill(buffer);
@@ -50,7 +50,7 @@ public static class CryptoHelper
     /// </summary>
     /// <param name="length">The number of random bytes to generate. Must be a positive integer.</param>
     /// <returns>A byte array of the specified length filled with random values.</returns>
-    internal static byte[] GetBytes(int length)
+    public static byte[] GetBytes(int length)
     {
 #if NET8_0_OR_GREATER
         return RandomNumberGenerator.GetBytes(length);
