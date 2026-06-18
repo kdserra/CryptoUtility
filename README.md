@@ -11,27 +11,35 @@
 ---
 
 # ❓ Why CryptoUtility?
+CryptoUtility makes it quick, simple, and easy to work with cryptography.
 
-Standard cryptography APIs are notoriously complex, boilerplate-heavy, and easy to misconfigure. Because of this, developers often default to older, less secure options like `AES-CBC` simply because modern authenticated ciphers like `AES-GCM` are harder to set up.
+We provide commonly requested utilities like Base64 support, unified interfaces that make it easy to swap implementations, or abstract dependencies, and provide backwards compatible implementations for common cryptographic operations.
 
-CryptoUtility bridges this gap by offering:
+CryptoUtility enables access to an entire ecosystem; no longer requiring you to learn different crypto APIs for different libraries.  In our library, using an authenticated cipher is just as simple and easy as a stateless cipher.  You no longer have to manage `IDisposable` objects and risk memory leaks as our wrappers deal with them.
+
+This keeps your focus where it belongs: writing your application.
 
 ## ⚡ State-of-the-Art Security, Simple APIs
 With CryptoUtility, executing high-security authenticated encryption (AEAD) like **AES-256-GCM** or **ChaCha20-Poly1305** is just as straightforward as running a stateless cipher. All complex logic—such as secure nonce generation, authentication tag handling, and associated data verification—is managed automatically.
 
 ## 🧩 Unified Interfaces
-We define clean, unified interfaces like `ISymmetricCipher`, `IAsymmetricCipher`, `IHashProvider`, `IKeyAgreement`, `IMacProvider`, `IKeyExpansionKdf`, and `IPasswordKdf`. 
+We define clean, unified interfaces like `ISymmetricCipher`, `IAsymmetricCipher`, `IKeyAgreement`, `IDigitalSignature`, `IHashProvider`, `IMacProvider`, `IKeyExpansionKdf`, and `IPasswordKdf`.
 
 This is incredibly powerful for building modular application systems (such as a `SaveManager` or a networking layer). Your high-level managers can depend directly on `ISymmetricCipher` without being bound to a concrete implementation. You can swap your entire encryption algorithm from AES to ChaCha20 with a single line of code, without rewriting your business logic.
 
 ## 📦 Automatic Cryptographic Envelopes
 For symmetric ciphers and hybrid encryption, CryptoUtility automatically packages the encrypted payload, random nonce, and authentication tag into a serialized cryptographic envelope under the hood using `MemoryPack` (an ultra-fast binary serializer). You receive a single, ready-to-transmit byte array or Base64 string. During decryption, the envelope is parsed automatically.
 
-## ♻️ Cached Instance
-To avoid allocations, we provide a `<Algo>.Shared` cached instance that can always be used so you don't have to instantiate new objects to work with the instance APIs.
+## ♻️ Cached Instances
+To completely avoid allocations, we provide a `<Algo>.Shared` cached instance.
+
+This allows you to leverage instance-based APIs continuously without the overhead of instantiating new objects for every cryptographic operation.
 
 ## 🧣 Static Wrapper API
 All of our instance APIs are also wrapped with a static API, allowing direct usage of your desired algoithm for brevity, and convenience.
+
+## 🗺️ One API, Every Implementation
+Instead of learning a dozen distinct libraries, paradigms, and syntax patterns for different cryptographic requirements, you only need to learn CryptoUtility. As the project grows, it will continue to expand into a rich ecosystem of supported algorithms and third-party wrappers, giving you a singular, unified gateway to the entire modern cryptographic landscape.
 
 ---
 
