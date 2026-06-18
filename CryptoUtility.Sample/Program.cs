@@ -330,10 +330,10 @@ void RunHashAndHmacShowcase()
     Console.WriteLine("\n[HMAC Hashing Signatures]");
     string hmacKey = "secret-hmac-authentication-key";
 
-    string hmacSig = Sha256.SignBase64(message, hmacKey);
-    Console.WriteLine($"  - HMAC Signature:    {hmacSig}");
+    string hmac = HmacSha256.ComputeMacBase64(message, hmacKey);
+    Console.WriteLine($"  - HMAC:    {hmac}");
 
-    bool isHmacValid = Sha256.VerifyBase64(message, hmacSig, hmacKey);
+    bool isHmacValid = HmacSha256.VerifyBase64(message, hmac, hmacKey);
     Console.WriteLine($"  - HMAC is valid?     {isHmacValid}");
 }
 

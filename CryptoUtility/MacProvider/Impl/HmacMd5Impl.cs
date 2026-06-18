@@ -1,0 +1,17 @@
+﻿using System.Security.Cryptography;
+
+namespace CryptoUtility;
+
+[GenerateStaticApi]
+public sealed class HmacMd5Impl : IMacProvider
+{
+    public static readonly HmacMd5Impl Shared = new();
+
+    public byte[] ComputeMac(byte[] key, byte[] message)
+    {
+        LibraryHelper.ThrowIfAnyNull(key, message);
+        using var hmac = new HMACMD5(key);
+
+        return hmac.ComputeHash(message);
+    }
+}

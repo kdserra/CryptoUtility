@@ -44,7 +44,7 @@ internal static class LibraryHelper
         {
             if (obj == null)
             {
-                throw new InvalidOperationException();
+                throw new ArgumentNullException();
             }
         }
     }

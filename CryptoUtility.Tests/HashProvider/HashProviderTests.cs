@@ -1,6 +1,3 @@
-using System.Security.Cryptography;
-using Xunit;
-
 namespace CryptoUtility.Tests;
 
 public abstract class HashProviderTests
@@ -8,9 +5,7 @@ public abstract class HashProviderTests
     internal abstract IHashProvider HashProvider { get; }
 
     private static readonly byte[] MessageBytes = "test-data"u8.ToArray();
-    private static readonly byte[] KeyBytes = "secret-key"u8.ToArray();
     private const string MessageString = "test-data";
-    private const string KeyString = "secret-key";
 
     [Fact]
     public void Hash_ShouldBeDeterministic()
@@ -19,46 +14,6 @@ public abstract class HashProviderTests
         var second = HashProvider.Hash(MessageBytes);
 
         Assert.Equal(first, second);
-    }
-
-    [Fact]
-    public void Sign_ShouldBeDeterministic_WithDefaultProvider()
-    {
-        var first = HashProvider.Sign(MessageBytes, KeyBytes);
-        var second = HashProvider.Sign(MessageBytes, KeyBytes);
-
-        Assert.Equal(first, second);
-    }
-
-    [Fact]
-    public void Sign_And_Verify_ShouldReturnTrue_ForValidSignature()
-    {
-        var signature = HashProvider.Sign(MessageBytes, KeyBytes);
-        var result = HashProvider.Verify(MessageBytes, signature, KeyBytes);
-
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void Verify_ShouldReturnFalse_ForModifiedSignature()
-    {
-        var signature = HashProvider.Sign(MessageBytes, KeyBytes);
-        signature[0] ^= 0xFF;
-
-        var result = HashProvider.Verify(MessageBytes, signature, KeyBytes);
-
-        Assert.False(result);
-    }
-
-    [Fact]
-    public void Sign_ShouldUseCustomHmacProvider_WhenProvided()
-    {
-        Func<HMAC> provider = () => new HMACSHA3_512();
-
-        var expected = HashProvider.Sign(MessageBytes, KeyBytes, provider);
-        var actual = HashProvider.Sign(MessageBytes, KeyBytes, provider);
-
-        Assert.Equal(expected, actual);
     }
 
     [Fact]
@@ -82,95 +37,41 @@ public abstract class HashProviderTests
     }
 
     [Fact]
-    public void SignBase64_ShouldBeDeterministic()
+    public void Hash_NullInput_ThrowsArgumentNullException()
     {
-        var first = HashProvider.SignBase64(MessageString, KeyString);
-        var second = HashProvider.SignBase64(MessageString, KeyString);
-
-        Assert.Equal(first, second);
+        Assert.Throws<ArgumentNullException>(() => HashProvider.Hash(null!));
     }
 
     [Fact]
-    public void SignBase64_ShouldMatch_ByteSign()
+    public void Hash_EmptyInput_HandlesOrThrows()
     {
-        var expectedBytes = HashProvider.Sign(
-            System.Text.Encoding.UTF8.GetBytes(MessageString),
-            System.Text.Encoding.UTF8.GetBytes(KeyString)
-        );
-
-        var expectedBase64 = Convert.ToBase64String(expectedBytes);
-
-        var actual = HashProvider.SignBase64(MessageString, KeyString);
-
-        Assert.Equal(expectedBase64, actual);
+        var result = HashProvider.Hash(Array.Empty<byte>());
+        Assert.NotEmpty(result);
     }
 
     [Fact]
-    public void VerifyBase64_ShouldReturnTrue_ForValidSignature()
+    public void HashBase64_NullHashProvider_ThrowsArgumentNullException()
     {
-        var signature = HashProvider.SignBase64(MessageString, KeyString);
-
-        var result = HashProvider.VerifyBase64(MessageString, signature, KeyString);
-
-        Assert.True(result);
+        IHashProvider nullProvider = null!;
+        Assert.Throws<ArgumentNullException>(() => nullProvider.HashBase64(MessageString));
     }
 
     [Fact]
-    public void VerifyBase64_ShouldReturnFalse_ForModifiedSignature()
+    public void HashBase64_NullMessage_ThrowsArgumentNullException()
     {
-        var signature = HashProvider.SignBase64(MessageString, KeyString);
-
-        var bytes = Convert.FromBase64String(signature);
-        bytes[0] ^= 0xFF;
-        var corrupted = Convert.ToBase64String(bytes);
-
-        var result = HashProvider.VerifyBase64(MessageString, corrupted, KeyString);
-
-        Assert.False(result);
+        Assert.Throws<ArgumentNullException>(() => HashProvider.HashBase64(null!));
     }
 
     [Fact]
-    public void SignBase64_ShouldUseCustomHmacProvider_WhenProvided()
+    public void HashBase64_EmptyString_ReturnsValidHash()
     {
-        Func<HMAC> provider = () => new HMACSHA3_512();
-
-        var first = HashProvider.SignBase64(MessageString, KeyString, provider);
-        var second = HashProvider.SignBase64(MessageString, KeyString, provider);
-
-        Assert.Equal(first, second);
+        var result = HashProvider.HashBase64(string.Empty);
+        Assert.False(string.IsNullOrEmpty(result));
     }
 
     [Fact]
-    public void VerifyBase64_ShouldUseCustomHmacProvider_WhenProvided()
+    public void SharedInstance_IsNotNull()
     {
-        Func<HMAC> provider = () => new HMACSHA3_512();
-
-        var signature = HashProvider.SignBase64(MessageString, KeyString, provider);
-
-        var result = HashProvider.VerifyBase64(MessageString, signature, KeyString, provider);
-
-        Assert.True(result);
-    }
-
-    [Fact]
-    public void HashProviderExtensions_NullHandling()
-    {
-        IHashProvider? nullHash = null;
-
-        string hash = nullHash!.HashBase64("message");
-        Assert.Equal(string.Empty, hash);
-
-        byte[] sigBytes = nullHash!.Sign([1, 2], [3, 4]);
-        Assert.Empty(sigBytes);
-
-        string sigStr = nullHash!.SignBase64("msg", "key");
-        Assert.Equal(string.Empty, sigStr);
-
-        bool verifyResult = nullHash!.Verify([1, 2], [3, 4], [5, 6]);
-        Assert.False(verifyResult);
-
-        bool verifyBase64Result = nullHash!.VerifyBase64("msg", "sig", "key");
-        Assert.False(verifyBase64Result);
+        Assert.NotNull(HashProvider);
     }
 }
-

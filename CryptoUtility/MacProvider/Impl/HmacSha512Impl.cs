@@ -1,0 +1,17 @@
+﻿using System.Security.Cryptography;
+
+namespace CryptoUtility;
+
+[GenerateStaticApi]
+public sealed class HmacSha512Impl : IMacProvider
+{
+    public static readonly HmacSha512Impl Shared = new();
+
+    public byte[] ComputeMac(byte[] key, byte[] message)
+    {
+        LibraryHelper.ThrowIfAnyNull(key, message);
+        using var hmac = new HMACSHA512(key);
+
+        return hmac.ComputeHash(message);
+    }
+}
