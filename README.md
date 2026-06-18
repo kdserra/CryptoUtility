@@ -32,9 +32,8 @@ For symmetric ciphers and hybrid encryption, CryptoUtility automatically package
 # ✨ Features
 
 * **Unified API Design**: Identical syntax patterns for encryption, decryption, signatures, key agreement, and hashing.
-* **Built-in Utilities**: Out-of-the-box helper methods for seamless **Base64 string operations** and **easy key generation** (`GenerateKey()`).
-* **Symmetric Encryption (AEAD)**: Modern standards including **AES-256-GCM**, **AES-192-GCM**, **AES-128-GCM**, **ChaCha20-Poly1305**, and **XChaCha20-Poly1305** (via the `CryptoUtility.NaCl` package).
-* **Stream Ciphers**: High-speed stream encryption including **ChaCha20**, **XChaCha20**, and **Salsa20** (via the `CryptoUtility.NaCl` package).
+* **Built-in Utilities**: Out-of-the-box helper methods for seamless **Base64 string operations** and **easy key generation** using `Cipher.GenerateKey()`.
+* **Symmetric Encryption (AEAD)**: Modern standards including **AES-256-GCM**, **AES-192-GCM**, **AES-128-GCM**, **ChaCha20-Poly1305**, and more.
 * **Hybrid Encryption**: Encrypt large payloads easily using RSA public keys combined with the speed of AES-256-GCM under the hood.
 * **Asymmetric & Signatures**: Full support for **RSA-2048**, **RSA-4096**, and elliptic curve digital signatures (**ECDSA**).
 * **Key Agreement (ECDH)**: Establish secure session keys over open channels with Elliptic Curve Diffie-Hellman.
@@ -122,28 +121,113 @@ var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
 
 ---
 
-# 📚 Complete API Reference
+# 📚 Cryptography API Reference
 
-| Category | Algorithm / Class | Description |
-| :--- | :--- | :--- |
-| **Symmetric AEAD (System)** | `Aes256Gcm`, `Aes192Gcm`, `Aes128Gcm`, `ChaCha20Poly1305` | Built-in .NET implementation of industry standard authenticated encryption. |
-| **Symmetric AEAD (NaCl)** | `ChaCha20Poly1305`, `XChaCha20Poly1305` | Managed authenticated encryption implementations via [`NaCl.Core`](https://github.com/daviddesmet/NaCl.Core). |
-| **Symmetric (NaCl)** | `Salsa20`, `ChaCha20`, `XChaCha20` | Non-authenticated ciphers via [`NaCl.Core`](https://github.com/daviddesmet/NaCl.Core). |
-| **Symmetric** | `XorCipher` | Non-authenticated ciphers, not for security use, useful for fast obfuscation. |
-| **Asymmetric** | `Rsa1024`, `Rsa2048`, `Rsa3072`, `Rsa4096` | Ciphers for public/key cryptography, with support for hybrid encryption. |
-| **Signatures** | `Ecdsa` | Digital Signatures used for message verification. |
-| **Key Agreement**| `Ecdh` | Shared key derivation algorithms. |
-| **Key Derivation**| Official .NET `Hkdf`, [`HkdfDotNet`](https://github.com/samuel-lucas6/HKDF.NET), [`HkdfStandard`](https://github.com/andreimilto/HKDF.Standard)  | Secure cryptographic key expansion. |
-| **Password Key Derivation**| `Pbkdf2` | Derivation of keys from passwords to strengthen against brute-force attacks. | 
-| **Hashing** | `Sha1`, `Sha256`, `Sha384`, `Sha512`, `Sha3_256`, `Sha3_384`, `Sha3_512`, `Crc32`, `Crc64`, `XxHash32`, `XxHash64`, `XxHash128` | Hashing algorithms, and checksums. |
+## Symmetric Encryption (AEAD — Recommended)
 
-**NOTE:** When available on the target platform, the native .NET implementation is used by default. Otherwise, the library automatically selects the most appropriate compatible implementation.
+| Algorithm | Implementation | Package | Notes |
+|------------|----------------|----------|------|
+| Aes256Gcm | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Industry standard. |
+| Aes192Gcm | .NET Built-in / BouncyCastle| CryptoUtility / CryptoUtility.BouncyCastle | Lower key size variant. |
+| Aes128Gcm | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Fast, widely supported. |
+| ChaCha20Poly1305 | .NET Built-in / NaCl.Core | CryptoUtility / CryptoUtility.NaCl | Strong, efficient on software-only systems |
+| XChaCha20Poly1305 | NaCl.Core | CryptoUtility.NaCl | Extended nonce variant, safer nonce handling |
 
-[`HkdfDotNet`](https://github.com/samuel-lucas6/HKDF.NET) is provided for it's ease of inclusion into this library, backwards compatibility compared to the official .NET implementation which is limited to .NET 5 and above, but it's not as industry vetted as the official .NET HKDF, or [HKDF.Standard](https://github.com/andreimilto/HKDF.Standard).  This implementation is included in the core CryptoUtility library.
+---
 
-[`HkdfStandard`](https://github.com/andreimilto/HKDF.Standard) implementation is offered due to it's popularity, and it's backwards compatibility compared to the official .NET implementation which is limited to .NET 5 and above.  Requires `CryptoUtility.HkdfStandard`.
+## Symmetric Encryption (Non-AEAD)
 
-**PLANNED:** Bcrypt, Scrypt, Argon2id, maybe more.
+| Algorithm | Implementation | Package | Notes |
+|------------|----------------|----------|----------------|
+| Salsa20 | NaCl.Core | CryptoUtility.NaCl | No authentication |
+| ChaCha20 | NaCl.Core | CryptoUtility.NaCl | No authentication |
+| XChaCha20 | NaCl.Core | CryptoUtility.NaCl | No authentication |
+| XorCipher | Custom | CryptoUtility.Extras | Obfuscation only, not secure |
+
+---
+
+## Asymmetric Encryption
+
+| Algorithm  | Implementation | Package |  Notes |
+|------------|----------------|----------|----------|
+| Rsa1024 | .NET Built-in | CryptoUtility | Not secure |
+| Rsa2048 | .NET Built-in | CryptoUtility | Minimum acceptable |
+| Rsa3072 | .NET Built-in | CryptoUtility | Recommended |
+| Rsa4096 | .NET Built-in | CryptoUtility | High cost, high security margin |
+
+---
+
+## Digital Signatures
+
+| Algorithm | Implementation | Package | Notes |
+|------------|----------------|----------|------|
+| Ecdsa | .NET Built-in | CryptoUtility | Message integrity & authentication |
+
+---
+
+## Key Agreement
+
+| Algorithm | Implementation | Package | Notes |
+|------------|----------------|----------|--------|
+| Ecdh | .NET Built-in | CryptoUtility | Shared secret derivation |
+
+---
+
+## Key Derivation Functions
+
+| Algorithm | Implementation | Package | Notes |
+|------------|----------------|----------|------|
+| Hkdf | .NET Built-in / HKDF.Standard | CryptoUtility / CryptoUtility.HkdfStandard | Standard key expansion. |
+
+---
+
+## Password Based Key Derivation Functions
+
+| Algorithm | Implementation | Package | Notes |
+|------------|----------------|----------|------|
+| Pbkdf2 | .NET Built-in | CryptoUtility | Password-based key derivation |
+
+---
+
+## Hashing & Checksums
+
+### Cryptographic Hashes
+
+| Algorithm | Implementation | Package | Notes |
+|------------|----------------|----------|------|
+| Sha256 | .NET Built-in | CryptoUtility | Secure hash function |
+| Sha384 | .NET Built-in | CryptoUtility | Secure hash function |
+| Sha512 | .NET Built-in | CryptoUtility | Secure hash function |
+| Sha3_256 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
+| Sha3_384 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
+| Sha3_512 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
+| Sha1 | .NET Built-in | CryptoUtility | Deprecated, insecure |
+
+---
+
+### Non-Cryptographic Hashes / Checksums
+
+| Algorithm | Implementation | Package | Notes |
+|------------|----------------|----------|------|
+| Crc32 | System.IO.Hashing | CryptoUtility.Extras | Integrity check only |
+| Crc64 | System.IO.Hashing | CryptoUtility.Extras | Integrity check only |
+| XxHash32 | System.IO.Hashing | CryptoUtility.Extras | High-speed hashing |
+| XxHash64 | System.IO.Hashing | CryptoUtility.Extras | High-speed hashing |
+| XxHash128 | System.IO.Hashing | CryptoUtility.Extras | High-speed hashing |
+
+---
+
+## 📝 API Notes
+
+Official .NET implementations are recommended, as they are usually hardware accelerated, and have the best support, but they typically have less platform support, which is important if your on an older version of .NET; such as Unity developers, in those cases consider BouncyCastle or a purpose specific library that offers the implementation you need.
+
+Over time the goal of this library is to support and unify all the popular cryptographic concepts and implementations.
+
+---
+
+## 🎭 Disambiguation
+
+To maintain API brevity, this library has opted for all algorithm classes to use the same name, and are intended to be disambiguated through namespaces, and namespace aliases.
 
 ---
 
