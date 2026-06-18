@@ -105,16 +105,16 @@ void RunSymmetricShowcase()
     }
 
     Console.WriteLine("\n[ChaCha20-Poly1305 AEAD Demonstration]");
-    string base64KeyCC = CryptoUtility.ChaCha20Poly1305.GenerateKeyBase64();
+    string base64KeyCC = ChaCha20Poly1305.GenerateKeyBase64();
 
-    var (encCCSuccess, encryptedEnvelopeCC) = CryptoUtility.ChaCha20Poly1305.EncryptBase64(
+    var (encCCSuccess, encryptedEnvelopeCC) = ChaCha20Poly1305.EncryptBase64(
         base64KeyCC,
         plaintext
     );
     if (encCCSuccess)
     {
         Console.WriteLine($"  - Encrypted Envelope:      {encryptedEnvelopeCC}");
-        var (decCCSuccess, decryptedCC) = CryptoUtility.ChaCha20Poly1305.DecryptBase64(
+        var (decCCSuccess, decryptedCC) = ChaCha20Poly1305.DecryptBase64(
             base64KeyCC,
             encryptedEnvelopeCC
         );
@@ -147,14 +147,22 @@ void RunAsymmetricAndHybridShowcase()
     }
 
     Console.WriteLine("\n[Hybrid Encryption (RSA-2048 + AES-256-GCM)]");
-    var (hybridSuccess, hybridEnvelope) = Rsa2048.HybridEncryptBase64(pubKey, secretPayload);
+    var (hybridSuccess, hybridEnvelope) = Rsa2048.HybridEncryptBase64(
+        Aes256Gcm.Shared,
+        pubKey,
+        secretPayload
+    );
     if (hybridSuccess)
     {
         Console.WriteLine(
             $"  - Encrypted Hybrid Envelope (Base64):\n    {hybridEnvelope.Truncate(80)}"
         );
 
-        var (decHybridSuccess, decPayload) = Rsa2048.HybridDecryptBase64(privKey, hybridEnvelope);
+        var (decHybridSuccess, decPayload) = Rsa2048.HybridDecryptBase64(
+            Aes256Gcm.Shared,
+            privKey,
+            hybridEnvelope
+        );
         Console.WriteLine($"  - Decrypted Hybrid Payload: \"{decPayload}\"");
     }
 }

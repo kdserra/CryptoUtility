@@ -268,93 +268,6 @@ public static class AsymmetricCipherExtensions
     }
 
     /// <summary>
-    /// Encrypts the specified plaintext using a hybrid encryption scheme with the provided public key and symmetric
-    /// cipher.
-    /// </summary>
-    /// <remarks>If encryption fails, the method returns false and an empty byte array.</remarks>
-    /// <param name="asymmetricCipher">The asymmetric cipher used to encrypt the data encryption key. This parameter must not be null.</param>
-    /// <param name="publicKey">The public key used to encrypt the symmetric key. Must be a valid key compatible with the encryption algorithm.</param>
-    /// <param name="plaintext">The plaintext data to encrypt. Cannot be null.</param>
-    /// <param name="cipher">The symmetric cipher to use for encryption. Defaults to Aes256GcmImpl.Shared if
-    /// not specified.</param>
-    /// <returns>A tuple containing a value indicating whether the encryption was successful and a byte array with the encrypted
-    /// data. The byte array is empty if encryption fails.</returns>
-    public static (bool success, byte[] encrypted) HybridEncrypt(
-        this IAsymmetricCipher asymmetricCipher,
-        byte[] publicKey,
-        byte[] plaintext,
-        ISymmetricCipher? cipher = null
-    )
-    {
-        try
-        {
-            cipher ??= Aes256GcmImpl.Shared;
-
-            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, publicKey, plaintext))
-            {
-                return (false, Array.Empty<byte>());
-            }
-
-            (bool success, byte[] encrypted) result = asymmetricCipher.HybridEncrypt(
-                cipher,
-                publicKey,
-                plaintext
-            );
-
-            return result;
-        }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
-    }
-
-    /// <summary>
-    /// Decrypts the specified encrypted data using a hybrid cryptographic approach with the provided secret key and
-    /// symmetric cipher.
-    /// </summary>
-    /// <remarks>The method validates all input parameters and the integrity of the hybrid cipher envelope before attempting decryption.</remarks>
-    /// <param name="asymmetricCipher">The asymmetric cipher used to encrypt the data encryption key. This parameter must not be null.</param>
-    /// <param name="secretKey">The secret key to use for decryption. Must be compatible with the selected symmetric cipher.</param>
-    /// <param name="encrypted">The encrypted data to decrypt. This data must have been encrypted using the corresponding hybrid encryption
-    /// method.</param>
-    /// <param name="cipher">The symmetric cipher to use for decryption. Defaults to Aes256GcmImpl.Shared if
-    /// not specified.</param>
-    /// <returns>A tuple containing a value indicating whether decryption was successful and the resulting plaintext as a byte
-    /// array. The plaintext is empty if decryption fails.</returns>
-    public static (bool success, byte[] plaintext) HybridDecrypt(
-        this IAsymmetricCipher asymmetricCipher,
-        byte[] secretKey,
-        byte[] encrypted,
-        ISymmetricCipher? cipher = null
-    )
-
-    {
-        try
-        {
-            cipher ??= Aes256GcmImpl.Shared;
-
-            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, secretKey, encrypted))
-            {
-                return (false, Array.Empty<byte>());
-            }
-
-            (bool success, byte[] plaintext) result = HybridDecrypt(
-                asymmetricCipher,
-                cipher,
-                secretKey,
-                encrypted
-            );
-
-            return result;
-        }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
-    }
-
-    /// <summary>
     /// Encrypts the specified plaintext using hybrid encryption with the provided public key and returns the result as
     /// a Base64-encoded string.
     /// </summary>
@@ -367,15 +280,13 @@ public static class AsymmetricCipherExtensions
     /// string representing the encrypted data. If encryption fails, the encrypted string will be null or empty.</returns>
     public static (bool success, string encrypted) HybridEncryptBase64(
         this IAsymmetricCipher asymmetricCipher,
+        ISymmetricCipher cipher,
         string publicKey,
-        string plaintext,
-        ISymmetricCipher? cipher = null
+        string plaintext
     )
     {
         try
         {
-            cipher ??= Aes256GcmImpl.Shared;
-
             if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, publicKey, plaintext))
             {
                 return (false, string.Empty);
@@ -386,9 +297,9 @@ public static class AsymmetricCipherExtensions
 
             (bool success, byte[] encrypted) = HybridEncrypt(
                 asymmetricCipher,
+                cipher,
                 publicKeyBytes,
-                plaintextBytes,
-                cipher
+                plaintextBytes
             );
 
             string encryptedBase64 = Convert.ToBase64String(encrypted);
@@ -414,11 +325,10 @@ public static class AsymmetricCipherExtensions
     /// string. If decryption fails, the plaintext will be an empty string.</returns>
     public static (bool success, string plaintext) HybridDecryptBase64(
         this IAsymmetricCipher asymmetricCipher,
+        ISymmetricCipher cipher,
         string secretKey,
-        string encrypted,
-        ISymmetricCipher? cipher = null
+        string encrypted
     )
-
     {
         try
         {
@@ -434,9 +344,9 @@ public static class AsymmetricCipherExtensions
 
             (bool success, byte[] plaintext) result = HybridDecrypt(
                 asymmetricCipher,
+                cipher,
                 secretKeyBytes,
-                encryptedBytes,
-                cipher
+                encryptedBytes
             );
 
             string plaintext = Encoding.UTF8.GetString(result.plaintext);

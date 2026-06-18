@@ -89,10 +89,10 @@ var (publicKey, privateKey) = Rsa4096.GenerateKeyPairBase64();
 
 // Encrypt payload using the PUBLIC key
 string largePayload = "Highly confidential PDF database dump...";
-var (encSuccess, envelope) = Rsa4096.HybridEncryptBase64(publicKey, largePayload);
+var (encSuccess, envelope) = Rsa4096.HybridEncryptBase64(Aes256Gcm.Shared, publicKey, largePayload);
 
 // Decrypt payload using the PRIVATE key
-var (decSuccess, decryptedPayload) = Rsa4096.HybridDecryptBase64(privateKey, envelope);
+var (decSuccess, decryptedPayload) = Rsa4096.HybridDecryptBase64(Aes256Gcm.Shared, privateKey, envelope);
 ```
 
 ---
@@ -115,8 +115,8 @@ byte[] kdfSalt = "session-salt"u8.ToArray();
 byte[] kdfInfo = "session-context-info"u8.ToArray();
 
 // 4. Encrypt and Decrypt using derived secrets
-var (_, ciphertext) = Ecdh.Encrypt(aliceSecret, "Hi Bob!", kdfSalt, kdfInfo);
-var (_, decrypted) = Ecdh.Decrypt(bobSecret, ciphertext, kdfSalt, kdfInfo);
+var (_, ciphertext) = Ecdh.Encrypt(Aes256Gcm.Shared, Hkdf.Shared, aliceSecret, "Hi Bob!", kdfSalt, kdfInfo);
+var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciphertext, kdfSalt, kdfInfo);
 ```
 
 ---

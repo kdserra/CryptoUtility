@@ -1,4 +1,5 @@
 using System.Text;
+using CryptoUtility.BouncyCastle;
 
 namespace CryptoUtility.Tests;
 
@@ -136,12 +137,12 @@ public abstract class AsymmetricCipherTests
         var (pub, sec) = GenerateKeyPair();
         var plaintext = GeneratePlaintext();
 
-        var (okEnc, encrypted) = Cipher.HybridEncrypt(pub, plaintext);
+        var (okEnc, encrypted) = Cipher.HybridEncrypt(Aes256Gcm.Shared, pub, plaintext);
         Assert.True(okEnc);
         Assert.NotNull(encrypted);
         Assert.NotEmpty(encrypted);
 
-        var (okDec, decrypted) = Cipher.HybridDecrypt(sec, encrypted);
+        var (okDec, decrypted) = Cipher.HybridDecrypt(Aes256Gcm.Shared, sec, encrypted);
         Assert.True(okDec);
         Assert.Equal(plaintext, decrypted);
     }
@@ -152,11 +153,11 @@ public abstract class AsymmetricCipherTests
         var (pub, sec) = Cipher.GenerateKeyPairBase64();
         string message = "hello world";
 
-        var (okEnc, encrypted) = Cipher.HybridEncryptBase64(pub, message);
+        var (okEnc, encrypted) = Cipher.HybridEncryptBase64(Aes256Gcm.Shared, pub, message);
         Assert.True(okEnc);
         Assert.False(string.IsNullOrEmpty(encrypted));
 
-        var (okDec, decrypted) = Cipher.HybridDecryptBase64(sec, encrypted);
+        var (okDec, decrypted) = Cipher.HybridDecryptBase64(Aes256Gcm.Shared, sec, encrypted);
         Assert.True(okDec);
         Assert.Equal(message, decrypted);
     }
@@ -167,12 +168,12 @@ public abstract class AsymmetricCipherTests
         var (pub, sec) = GenerateKeyPair();
         var plaintext = GeneratePlaintext();
 
-        var (okEnc, encrypted) = Cipher.HybridEncrypt(pub, plaintext);
+        var (okEnc, encrypted) = Cipher.HybridEncrypt(Aes256Gcm.Shared, pub, plaintext);
         Assert.True(okEnc);
 
         encrypted[0] ^= 0xFF;
 
-        var (okDec, decrypted) = Cipher.HybridDecrypt(sec, encrypted);
+        var (okDec, decrypted) = Cipher.HybridDecrypt(Aes256Gcm.Shared, sec, encrypted);
         Assert.False(okDec);
         Assert.Empty(decrypted);
     }
@@ -185,10 +186,10 @@ public abstract class AsymmetricCipherTests
 
         var plaintext = GeneratePlaintext();
 
-        var (okEnc, encrypted) = Cipher.HybridEncrypt(pub, plaintext);
+        var (okEnc, encrypted) = Cipher.HybridEncrypt(Aes256Gcm.Shared, pub, plaintext);
         Assert.True(okEnc);
 
-        var (okDec, decrypted) = Cipher.HybridDecrypt(sec2, encrypted);
+        var (okDec, decrypted) = Cipher.HybridDecrypt(Aes256Gcm.Shared, sec2, encrypted);
         Assert.False(okDec);
         Assert.Empty(decrypted);
     }
@@ -199,27 +200,26 @@ public abstract class AsymmetricCipherTests
         var (pub, sec) = GenerateKeyPair();
         var plaintext = GeneratePlaintext();
 
-        var (okEnc, encrypted) = Cipher.HybridEncrypt(pub, plaintext, ChaCha20Poly1305Impl.Shared);
+        var (okEnc, encrypted) = Cipher.HybridEncrypt(ChaCha20Poly1305.Shared, pub, plaintext);
         Assert.True(okEnc);
 
-        var (okDec, decrypted) = Cipher.HybridDecrypt(sec, encrypted, Aes256GcmImpl.Shared);
+        var (okDec, decrypted) = Cipher.HybridDecrypt(Aes256Gcm.Shared, sec, encrypted);
         Assert.False(okDec);
         Assert.Empty(decrypted);
     }
-
 
     [Fact]
     public void HybridEncrypt_WithEmptyInputs_Fails()
     {
         var plaintext = GeneratePlaintext();
 
-        var (success1, enc1) = Cipher.HybridEncrypt([], plaintext);
+        var (success1, enc1) = Cipher.HybridEncrypt(Aes256Gcm.Shared, [], plaintext);
         Assert.False(success1);
         Assert.Empty(enc1);
 
         var (pub, _) = GenerateKeyPair();
 
-        var (success2, enc2) = Cipher.HybridEncrypt(pub, []);
+        var (success2, enc2) = Cipher.HybridEncrypt(Aes256Gcm.Shared, pub, []);
         Assert.False(success2);
         Assert.Empty(enc2);
     }
@@ -229,11 +229,11 @@ public abstract class AsymmetricCipherTests
     {
         var (_, sec) = GenerateKeyPair();
 
-        var (success1, pt1) = Cipher.HybridDecrypt([], new byte[] { 1 });
+        var (success1, pt1) = Cipher.HybridDecrypt(Aes256Gcm.Shared, [], new byte[] { 1 });
         Assert.False(success1);
         Assert.Empty(pt1);
 
-        var (success2, pt2) = Cipher.HybridDecrypt(sec, []);
+        var (success2, pt2) = Cipher.HybridDecrypt(Aes256Gcm.Shared, sec, []);
         Assert.False(success2);
         Assert.Empty(pt2);
     }
@@ -243,7 +243,7 @@ public abstract class AsymmetricCipherTests
     {
         var plaintext = GeneratePlaintext();
 
-        var (success, encrypted) = Cipher.HybridEncrypt(null!, plaintext);
+        var (success, encrypted) = Cipher.HybridEncrypt(Aes256Gcm.Shared, null!, plaintext);
         Assert.False(success);
         Assert.Empty(encrypted);
     }
@@ -251,7 +251,7 @@ public abstract class AsymmetricCipherTests
     [Fact]
     public void HybridDecrypt_WithNullInputs_Fails()
     {
-        var (success, plaintext) = Cipher.HybridDecrypt(null!, new byte[] { 1 });
+        var (success, plaintext) = Cipher.HybridDecrypt(Aes256Gcm.Shared, null!, new byte[] { 1 });
         Assert.False(success);
         Assert.Empty(plaintext);
     }
@@ -263,7 +263,7 @@ public abstract class AsymmetricCipherTests
 
         var garbage = new byte[] { 1, 2, 3, 4, 5 };
 
-        var (success, plaintext) = Cipher.HybridDecrypt(sec, garbage);
+        var (success, plaintext) = Cipher.HybridDecrypt(Aes256Gcm.Shared, sec, garbage);
         Assert.False(success);
         Assert.Empty(plaintext);
     }
@@ -274,14 +274,14 @@ public abstract class AsymmetricCipherTests
         var (pub, sec) = Cipher.GenerateKeyPairBase64();
         string message = "hello world";
 
-        var (okEnc, encrypted) = Cipher.HybridEncryptBase64(pub, message);
+        var (okEnc, encrypted) = Cipher.HybridEncryptBase64(Aes256Gcm.Shared, pub, message);
         Assert.True(okEnc);
 
         var bytes = Convert.FromBase64String(encrypted);
         bytes[0] ^= 0xFF;
         var tampered = Convert.ToBase64String(bytes);
 
-        var (okDec, decrypted) = Cipher.HybridDecryptBase64(sec, tampered);
+        var (okDec, decrypted) = Cipher.HybridDecryptBase64(Aes256Gcm.Shared, sec, tampered);
         Assert.False(okDec);
         Assert.True(string.IsNullOrEmpty(decrypted));
     }
@@ -289,7 +289,7 @@ public abstract class AsymmetricCipherTests
     [Fact]
     public void HybridDecryptBase64_InvalidInputs_Fails()
     {
-        var result = Cipher.HybridDecryptBase64("", "");
+        var result = Cipher.HybridDecryptBase64(Aes256Gcm.Shared, "", "");
         Assert.False(result.success);
         Assert.True(string.IsNullOrEmpty(result.plaintext));
     }
@@ -297,7 +297,7 @@ public abstract class AsymmetricCipherTests
     [Fact]
     public void HybridDecryptBase64_NullInputs_Fails()
     {
-        var result = Cipher.HybridDecryptBase64(null!, null!);
+        var result = Cipher.HybridDecryptBase64(null!, null!, null!);
         Assert.False(result.success);
         Assert.True(string.IsNullOrEmpty(result.plaintext));
     }
@@ -308,12 +308,12 @@ public abstract class AsymmetricCipherTests
         var (pub, sec) = GenerateKeyPair();
         var plaintext = GeneratePlaintext();
 
-        var (okEnc, encrypted) = Cipher.HybridEncrypt(pub, plaintext, ChaCha20Poly1305Impl.Shared);
+        var (okEnc, encrypted) = Cipher.HybridEncrypt(ChaCha20Poly1305Impl.Shared, pub, plaintext);
         Assert.True(okEnc);
         Assert.NotNull(encrypted);
         Assert.NotEmpty(encrypted);
 
-        var (okDec, decrypted) = Cipher.HybridDecrypt(sec, encrypted, ChaCha20Poly1305Impl.Shared);
+        var (okDec, decrypted) = Cipher.HybridDecrypt(ChaCha20Poly1305Impl.Shared, sec, encrypted);
         Assert.True(okDec);
         Assert.Equal(plaintext, decrypted);
     }
@@ -324,15 +324,22 @@ public abstract class AsymmetricCipherTests
         var (pub, sec) = Cipher.GenerateKeyPairBase64();
         string message = "hello world";
 
-        var (okEnc, encrypted) = Cipher.HybridEncryptBase64(pub, message, ChaCha20Poly1305Impl.Shared);
+        var (okEnc, encrypted) = Cipher.HybridEncryptBase64(
+            ChaCha20Poly1305Impl.Shared,
+            pub,
+            message
+        );
         Assert.True(okEnc);
         Assert.False(string.IsNullOrEmpty(encrypted));
 
-        var (okDec, decrypted) = Cipher.HybridDecryptBase64(sec, encrypted, ChaCha20Poly1305Impl.Shared);
+        var (okDec, decrypted) = Cipher.HybridDecryptBase64(
+            ChaCha20Poly1305Impl.Shared,
+            sec,
+            encrypted
+        );
         Assert.True(okDec);
         Assert.Equal(message, decrypted);
     }
-
 
     [Fact]
     public void AsymmetricCipherExtensions_NullHandling()
@@ -360,21 +367,32 @@ public abstract class AsymmetricCipherTests
         Assert.False(h1DecSuccess);
         Assert.Empty(h1Plaintext);
 
-        var (h2Success, h2Encrypted) = nullCipher!.HybridEncrypt([1, 2], [3, 4]);
+        var (h2Success, h2Encrypted) = nullCipher!.HybridEncrypt(Aes256Gcm.Shared, [1, 2], [3, 4]);
         Assert.False(h2Success);
         Assert.Empty(h2Encrypted);
 
-        var (h2DecSuccess, h2Plaintext) = nullCipher!.HybridDecrypt([1, 2], [3, 4]);
+        var (h2DecSuccess, h2Plaintext) = nullCipher!.HybridDecrypt(
+            Aes256Gcm.Shared,
+            [1, 2],
+            [3, 4]
+        );
         Assert.False(h2DecSuccess);
         Assert.Empty(h2Plaintext);
 
-        var (h3Success, h3Encrypted) = nullCipher!.HybridEncryptBase64("pubKey", "plain");
+        var (h3Success, h3Encrypted) = nullCipher!.HybridEncryptBase64(
+            Aes256Gcm.Shared,
+            "pubKey",
+            "plain"
+        );
         Assert.False(h3Success);
         Assert.Equal(string.Empty, h3Encrypted);
 
-        var (h3DecSuccess, h3Plaintext) = nullCipher!.HybridDecryptBase64("secKey", "enc");
+        var (h3DecSuccess, h3Plaintext) = nullCipher!.HybridDecryptBase64(
+            Aes256Gcm.Shared,
+            "secKey",
+            "enc"
+        );
         Assert.False(h3DecSuccess);
         Assert.Equal(string.Empty, h3Plaintext);
     }
 }
-
