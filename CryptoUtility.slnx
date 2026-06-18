@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="CryptoUtility.BouncyCastle/CryptoUtility.BouncyCastle.csproj" Id="ca7b2384-2ec1-448d-92a8-8e2fda063c9a" />
   <Project Path="CryptoUtility.CodeGenerator/CryptoUtility.CodeGenerator.csproj" Id="5be36a18-f5e9-4656-aa09-286878cfbe86" />
   <Project Path="CryptoUtility.Extras/CryptoUtility.Extras.csproj" Id="c3bbbd15-3bf1-4213-87ed-a1401404b989" />
   <Project Path="CryptoUtility.HkdfStandard/CryptoUtility.HkdfStandard.csproj" Id="3fdb1b4b-1767-4001-bd2e-e1b16e8ef4cc" />

@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CryptoUtility.BouncyCastle\CryptoUtility.BouncyCastle.csproj" />
     <ProjectReference Include="..\CryptoUtility.Extras\CryptoUtility.Extras.csproj" />
     <ProjectReference Include="..\CryptoUtility.HkdfStandard\CryptoUtility.HkdfStandard.csproj" />
     <ProjectReference Include="..\CryptoUtility.NaCl\CryptoUtility.NaCl.csproj" />
