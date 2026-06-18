@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace CryptoUtility;
+namespace CryptoUtility.Extras;
 
 [GenerateStaticApi]
 public sealed class XorCipherImpl : ISymmetricCipher
