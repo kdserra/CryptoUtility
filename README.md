@@ -46,12 +46,13 @@ Instead of learning a dozen distinct libraries, paradigms, and syntax patterns f
 # ✨ Features
 
 * **Unified API Design**: Identical syntax patterns for encryption, decryption, signatures, key agreement, and hashing.
-* **Built-in Utilities**: Out-of-the-box helper methods for seamless **Base64 string operations** and **easy key generation** using `Cipher.GenerateKey()`.
+* **Built-in Utilities**: Out-of-the-box helper methods for seamless **Base64 string operations**, **easy key generation** using `Cipher.GenerateKey()`, and backwards compatible cryptograhpic operations.
 * **Symmetric Encryption (AEAD)**: Modern standards including **AES-256-GCM**, **AES-192-GCM**, **AES-128-GCM**, **ChaCha20-Poly1305**, and more.
 * **Hybrid Encryption**: Encrypt large payloads easily using RSA public keys combined with the speed of AES-256-GCM under the hood.
 * **Asymmetric & Signatures**: Full support for **RSA-2048**, **RSA-4096**, and elliptic curve digital signatures (**ECDSA**).
 * **Key Agreement (ECDH)**: Establish secure session keys over open channels with Elliptic Curve Diffie-Hellman.
 * **Hashing & Checksums**: SHA-2/3, fast non-cryptographic hashes (xxHash32/64/128), and integrity checksums (CRC-32, CRC-64).
+** **MAC Providers**: Verify against message tampering by generating a Message Authentication Code (MAC) and verifying it against the incoming message.
 
 ---
 
