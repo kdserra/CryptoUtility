@@ -2,6 +2,9 @@
 
 namespace CryptoUtility.BouncyCastle;
 
+/// <summary>
+/// Bouncy Castle MD5 Implementation.
+/// </summary>
 [GenerateStaticApi]
 public sealed class Md5Impl : IHashProvider
 {
