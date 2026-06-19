@@ -296,8 +296,24 @@ void RunKdfShowcase()
     byte[] masterSecret = "transient-master-secret"u8.ToArray();
     byte[] hkdfSalt = "hkdf-salt-value"u8.ToArray();
 
-    byte[] encryptionSubKey = Hkdf.DeriveKey(masterSecret, 1, 32, hkdfSalt, []);
-    byte[] signatureSubKey = Hkdf.DeriveKey(masterSecret, 1, 32, hkdfSalt, []);
+    // Info parameter structure reccomendation:
+    // {applicationName}:{keyPurpose}:{sessionId}
+
+    byte[] encryptionSubKey = Hkdf.DeriveKey(
+        masterSecret,
+        1,
+        32,
+        hkdfSalt,
+        info: "CryptoUtility.Sample:DemoEncryptionKey:0"u8.ToArray()
+    );
+
+    byte[] signatureSubKey = Hkdf.DeriveKey(
+        masterSecret,
+        1,
+        32,
+        hkdfSalt,
+        info: "CryptoUtility.Sample:DemoMacSignature:0"u8.ToArray()
+    );
 
     Console.WriteLine($"  - Master Secret:      {masterSecret.ToHexString()}");
     Console.WriteLine($"  - Derived Enc SubKey: {encryptionSubKey.ToHexString()}");
