@@ -1,6 +1,6 @@
 # 🔐 CryptoUtility
 
-[![NuGet Version](https://img.shields.io/badge/nuget-v0.20.0-blue.svg)](https://www.nuget.org/packages/CryptoUtility)
+[![NuGet Version](https://img.shields.io/badge/nuget-v0.21.0-blue.svg)](https://www.nuget.org/packages/CryptoUtility)
 [![Target Framework](https://img.shields.io/badge/.NET-Standard%202.1%20|%208.0%20|%2010.0-green.svg)](https://dotnet.microsoft.com)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](https://github.com/kdserra/CryptoUtility/blob/master/LICENSE.md)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/kdserra/CryptoUtility/builder.yml?branch=master)](https://github.com/kdserra/CryptoUtility/actions/workflows/builder.yml)
