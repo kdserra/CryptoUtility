@@ -12,10 +12,7 @@ public sealed class Md5Impl : IHashProvider
 
     public byte[] Hash(byte[] message)
     {
-        if (message == null)
-        {
-            throw new ArgumentNullException(nameof(message));
-        }
+        LibraryHelper.ThrowIfAnyNull(message);
 
         MD5Digest digest = new();
         digest.BlockUpdate(message, 0, message.Length);
