@@ -5,6 +5,9 @@ using Org.BouncyCastle.Crypto.Parameters;
 
 namespace CryptoUtility.BouncyCastle;
 
+/// <summary>
+/// Bouncy Castle HKDF implementation.
+/// </summary>
 [GenerateStaticApi]
 public sealed class HkdfImpl : IKeyExpansionKdf
 {
