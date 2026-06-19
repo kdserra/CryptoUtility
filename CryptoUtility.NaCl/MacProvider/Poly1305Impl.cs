@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using NaClPoly1305 = NaCl.Core.Poly1305;
+﻿using NaClPoly1305 = NaCl.Core.Poly1305;
 
 namespace CryptoUtility.NaCl;
 
