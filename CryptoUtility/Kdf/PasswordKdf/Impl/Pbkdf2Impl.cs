@@ -6,9 +6,19 @@ namespace CryptoUtility;
 public sealed class Pbkdf2Impl : IPasswordKdf
 {
     public static readonly Pbkdf2Impl Shared = new();
-    private static readonly HashAlgorithmName DefaultHashAlgorithm = HashAlgorithmName.SHA256;
 
     public byte[] DeriveKey(string password, byte[] salt, int iterations, int outputLength)
+    {
+        return DeriveKey(password, salt, iterations, outputLength, HashAlgorithmName.SHA256);
+    }
+
+    public byte[] DeriveKey(
+        string password,
+        byte[] salt,
+        int iterations,
+        int outputLength,
+        HashAlgorithmName hashAlgorithm
+    )
     {
         LibraryHelper.ThrowIfAnyNull(password, salt);
 
@@ -22,13 +32,13 @@ public sealed class Pbkdf2Impl : IPasswordKdf
             password,
             salt,
             iterations,
-            DefaultHashAlgorithm,
+            hashAlgorithm,
             outputLength
         );
 
         return key;
 #else
-        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations, DefaultHashAlgorithm);
+        using var pbkdf2 = new Rfc2898DeriveBytes(password, salt, iterations, hashAlgorithm);
         byte[] key = pbkdf2.GetBytes(outputLength);
         return key;
 #endif
