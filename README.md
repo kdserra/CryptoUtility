@@ -200,7 +200,7 @@ var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciph
 
 | Algorithm | Implementation | Package | Notes |
 |------------|----------------|----------|------|
-| Pbkdf2 | .NET Built-in | CryptoUtility | Password-based key derivation |
+| Pbkdf2 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Password-based key derivation |
 
 ---
 
