@@ -52,7 +52,7 @@ Instead of learning a dozen distinct libraries, paradigms, and syntax patterns f
 * **Asymmetric & Signatures**: Full support for **RSA-2048**, **RSA-4096**, and elliptic curve digital signatures (**ECDSA**).
 * **Key Agreement (ECDH)**: Establish secure session keys over open channels with Elliptic Curve Diffie-Hellman.
 * **Hashing & Checksums**: SHA-2/3, fast non-cryptographic hashes (xxHash32/64/128), and integrity checksums (CRC-32, CRC-64).
-** **MAC Providers**: Verify against message tampering by generating a Message Authentication Code (MAC) and verifying it against the incoming message.
+* **MAC Providers**: Verify against message tampering by generating a Message Authentication Code (MAC) and verifying it against the incoming message.
 
 ---
 
