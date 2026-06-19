@@ -1,7 +1,9 @@
-#if NET8_0_OR_GREATER
-using System.Security.Cryptography;
+﻿using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto.Digests;
+using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Crypto.Parameters;
 
-namespace CryptoUtility;
+namespace CryptoUtility.BouncyCastle;
 
 [GenerateStaticApi]
 public sealed class HkdfImpl : IKeyExpansionKdf
@@ -16,14 +18,14 @@ public sealed class HkdfImpl : IKeyExpansionKdf
         byte[] info
     )
     {
-        LibraryHelper.ThrowIfAnyNull(inputKeyMaterial, salt);
-
-        if (iterations <= 0)
-            throw new ArgumentOutOfRangeException(nameof(iterations));
-        if (outputLength <= 0)
-            throw new ArgumentOutOfRangeException(nameof(outputLength));
-
-        return HKDF.DeriveKey(HashAlgorithmName.SHA256, inputKeyMaterial, outputLength, salt, info);
+        return DeriveKey(
+            inputKeyMaterial,
+            iterations,
+            outputLength,
+            salt,
+            info,
+            new Sha256Digest()
+        );
     }
 
     public byte[] DeriveKey(
@@ -32,7 +34,7 @@ public sealed class HkdfImpl : IKeyExpansionKdf
         int outputLength,
         byte[] salt,
         byte[] info,
-        HashAlgorithmName hashAlgorithm
+        IDigest digest
     )
     {
         LibraryHelper.ThrowIfAnyNull(inputKeyMaterial, salt);
@@ -42,8 +44,12 @@ public sealed class HkdfImpl : IKeyExpansionKdf
         if (outputLength <= 0)
             throw new ArgumentOutOfRangeException(nameof(outputLength));
 
-        byte[] key = HKDF.DeriveKey(hashAlgorithm, inputKeyMaterial, outputLength, salt, info);
-        return key;
+        HkdfBytesGenerator hkdf = new(digest);
+        hkdf.Init(new HkdfParameters(inputKeyMaterial, salt, info));
+
+        byte[] result = new byte[outputLength];
+        hkdf.GenerateBytes(result, 0, outputLength);
+
+        return result;
     }
 }
-#endif

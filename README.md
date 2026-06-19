@@ -198,7 +198,7 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm | Implementation | Package | Notes |
 |------------|----------------|----------|------|
-| Hkdf | .NET Built-in / HKDF.Standard | CryptoUtility / CryptoUtility.HkdfStandard | Standard key expansion. |
+| Hkdf | .NET Built-in / BouncyCastle / HKDF.Standard | CryptoUtility / CryptoUtility.BouncyCastle / CryptoUtility.HkdfStandard | Standard key expansion. |
 
 ---
 
