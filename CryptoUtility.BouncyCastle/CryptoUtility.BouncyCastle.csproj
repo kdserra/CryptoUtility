@@ -7,7 +7,7 @@
     <WarningsAsErrors>Nullable</WarningsAsErrors>
     <PackageId>CryptoUtility.BouncyCastle</PackageId>
     <Product>CryptoUtility.BouncyCastle</Product>
-    <Version>0.22.0</Version>
+    <Version>0.23.0</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
