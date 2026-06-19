@@ -210,13 +210,13 @@ var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciph
 
 | Algorithm | Implementation | Package | Notes |
 |------------|----------------|----------|------|
-| Sha256 | .NET Built-in | CryptoUtility | Secure hash function |
-| Sha384 | .NET Built-in | CryptoUtility | Secure hash function |
-| Sha512 | .NET Built-in | CryptoUtility | Secure hash function |
+| Sha256 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
+| Sha384 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
+| Sha512 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
 | Sha3_256 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
 | Sha3_384 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
 | Sha3_512 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
-| Sha1 | .NET Built-in | CryptoUtility | Insecure |
+| Sha1 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
 | MD5 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
 
 ---
