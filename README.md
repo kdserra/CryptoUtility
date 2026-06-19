@@ -146,67 +146,67 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 ## Symmetric Encryption (AEAD — Recommended)
 
-| Algorithm | Implementation | Package | Notes |
-|------------|----------------|----------|------|
-| Aes256Gcm | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Industry standard. |
-| Aes192Gcm | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Lower key size variant. |
-| Aes128Gcm | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Fast, widely supported. |
-| ChaCha20Poly1305 | .NET Built-in / BouncyCastle / NaCl.Core | CryptoUtility / CryptoUtility.BouncyCastle / CryptoUtility.NaCl | Strong, efficient on software-only systems |
-| XChaCha20Poly1305 | NaCl.Core | CryptoUtility.NaCl | Extended nonce variant, safer nonce handling |
+| Algorithm | Package | Notes |
+|------------|----------|------|
+| Aes256Gcm | CryptoUtility / CryptoUtility.BouncyCastle | Industry standard. |
+| Aes192Gcm | CryptoUtility / CryptoUtility.BouncyCastle | Lower key size variant. |
+| Aes128Gcm | CryptoUtility / CryptoUtility.BouncyCastle | Fast, widely supported. |
+| ChaCha20Poly1305 | CryptoUtility / CryptoUtility.BouncyCastle / CryptoUtility.NaCl | Strong, efficient on software-only systems |
+| XChaCha20Poly1305 | CryptoUtility.NaCl | Extended nonce variant, safer nonce handling |
 
 ---
 
 ## Symmetric Encryption (Non-AEAD)
 
-| Algorithm | Implementation | Package | Notes |
-|------------|----------------|----------|----------------|
-| Salsa20 | NaCl.Core | CryptoUtility.NaCl | No authentication |
-| ChaCha20 | NaCl.Core | CryptoUtility.NaCl | No authentication |
-| XChaCha20 | NaCl.Core | CryptoUtility.NaCl | No authentication |
-| XorCipher | Custom | CryptoUtility.Extras | Obfuscation only, not secure |
+| Algorithm | Package | Notes |
+|------------|----------|----------------|
+| Salsa20 | CryptoUtility.NaCl | No authentication |
+| ChaCha20 | CryptoUtility.NaCl | No authentication |
+| XChaCha20 | CryptoUtility.NaCl | No authentication |
+| XorCipher | CryptoUtility.Extras | Obfuscation only, not secure |
 
 ---
 
 ## Asymmetric Encryption
 
-| Algorithm  | Implementation | Package |  Notes |
-|------------|----------------|----------|----------|
-| Rsa1024 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Not secure |
-| Rsa2048 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Minimum acceptable |
-| Rsa3072 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Recommended |
-| Rsa4096 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | High cost, high security margin |
+| Algorithm  | Package |  Notes |
+|------------|----------|----------|
+| Rsa1024 | CryptoUtility / CryptoUtility.BouncyCastle | Not secure |
+| Rsa2048 | CryptoUtility / CryptoUtility.BouncyCastle | Minimum acceptable |
+| Rsa3072 | CryptoUtility / CryptoUtility.BouncyCastle | Recommended |
+| Rsa4096 | CryptoUtility / CryptoUtility.BouncyCastle | High cost, high security margin |
 
 ---
 
 ## Digital Signatures
 
-| Algorithm | Implementation | Package | Notes |
-|------------|----------------|----------|------|
-| Ecdsa | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Message integrity & authentication |
+| Algorithm | Package | Notes |
+|------------|----------|------|
+| Ecdsa | CryptoUtility / CryptoUtility.BouncyCastle | Message integrity & authentication |
 
 ---
 
 ## Key Agreement
 
-| Algorithm | Implementation | Package | Notes |
-|------------|----------------|----------|--------|
-| Ecdh | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Shared secret derivation |
+| Algorithm | Package | Notes |
+|------------|----------|--------|
+| Ecdh | CryptoUtility / CryptoUtility.BouncyCastle | Shared secret derivation |
 
 ---
 
 ## Key Derivation Functions
 
-| Algorithm | Implementation | Package | Notes |
-|------------|----------------|----------|------|
-| Hkdf | .NET Built-in / BouncyCastle / HKDF.Standard | CryptoUtility / CryptoUtility.BouncyCastle / CryptoUtility.HkdfStandard | Standard key expansion. |
+| Algorithm | Package | Notes |
+|------------|----------|------|
+| Hkdf | CryptoUtility / CryptoUtility.BouncyCastle / CryptoUtility.HkdfStandard | Standard key expansion. |
 
 ---
 
 ## Password Based Key Derivation Functions
 
-| Algorithm | Implementation | Package | Notes |
-|------------|----------------|----------|------|
-| Pbkdf2 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Password-based key derivation |
+| Algorithm | Package | Notes |
+|------------|----------|------|
+| Pbkdf2 | CryptoUtility / CryptoUtility.BouncyCastle | Password-based key derivation |
 
 ---
 
@@ -214,44 +214,44 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 ### Cryptographic Hashes
 
-| Algorithm | Implementation | Package | Notes |
-|------------|----------------|----------|------|
-| Sha256 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| Sha384 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| Sha512 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| Sha3_256 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| Sha3_384 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| Sha3_512 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| Sha1 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
-| Md5 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
+| Algorithm | Package | Notes |
+|------------|----------|------|
+| Sha256 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
+| Sha384 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
+| Sha512 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
+| Sha3_256 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| Sha3_384 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| Sha3_512 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| Sha1 | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
+| Md5 | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
 
 ---
 
 ### Non-Cryptographic Hashes / Checksums
 
-| Algorithm | Implementation | Package | Notes |
-|------------|----------------|----------|------|
-| Crc32 | System.IO.Hashing | CryptoUtility.Extras | Integrity check only |
-| Crc64 | System.IO.Hashing | CryptoUtility.Extras | Integrity check only |
-| XxHash32 | System.IO.Hashing | CryptoUtility.Extras | High-speed hashing |
-| XxHash64 | System.IO.Hashing | CryptoUtility.Extras | High-speed hashing |
-| XxHash128 | System.IO.Hashing | CryptoUtility.Extras | High-speed hashing |
+| Algorithm | Package | Notes |
+|------------|----------|------|
+| Crc32 | CryptoUtility.Extras | Integrity check only |
+| Crc64 | CryptoUtility.Extras | Integrity check only |
+| XxHash32 | CryptoUtility.Extras | High-speed hashing |
+| XxHash64 | CryptoUtility.Extras | High-speed hashing |
+| XxHash128 | CryptoUtility.Extras | High-speed hashing |
 
 ---
 
 ### Message Authentication Code
 
-| Algorithm | Implementation | Package | Notes |
-|------------|----------------|----------|------|
-| HmacSha256 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| HmacSha384 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| HmacSha512 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| HmacSha3_256 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| HmacSha3_384 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| HmacSha3_512 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| HmacSha1 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Legacy |
-| Poly1305 | BouncyCastle / NaCl.Core | CryptoUtility.BouncyCastle / CryptoUtility.NaCl | Fast, secure one-time MAC *(requires a unique key/nonce per message; often paired with ChaCha20)* |
-| HmacMd5 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
+| Algorithm | Package | Notes |
+|------------|----------|------|
+| HmacSha256 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
+| HmacSha384 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
+| HmacSha512 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
+| HmacSha3_256 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| HmacSha3_384 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| HmacSha3_512 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| HmacSha1 | CryptoUtility / CryptoUtility.BouncyCastle | Legacy |
+| Poly1305 | CryptoUtility.BouncyCastle / CryptoUtility.NaCl | Fast, secure one-time MAC *(requires a unique key/nonce per message; often paired with ChaCha20)* |
+| HmacMd5 | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
 
 ## 📝 API Notes
 
