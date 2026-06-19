@@ -190,7 +190,7 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm | Implementation | Package | Notes |
 |------------|----------------|----------|--------|
-| Ecdh | .NET Built-in | CryptoUtility | Shared secret derivation |
+| Ecdh | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Shared secret derivation |
 
 ---
 
