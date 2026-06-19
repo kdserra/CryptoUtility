@@ -2,5 +2,5 @@
 
 public class EcdsaTests : DigitalSignatureTests
 {
-    internal override IDigitalSignature Cipher { get; } = EcdsaImpl.Shared;
+    internal override IDigitalSignature Signer { get; } = EcdsaImpl.Shared;
 }

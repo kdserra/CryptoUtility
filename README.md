@@ -182,7 +182,7 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm | Implementation | Package | Notes |
 |------------|----------------|----------|------|
-| Ecdsa | .NET Built-in | CryptoUtility | Message integrity & authentication |
+| Ecdsa | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Message integrity & authentication |
 
 ---
 

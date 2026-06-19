@@ -2,6 +2,10 @@ using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
+/// <summary>
+/// Provides an Elliptic Curve Digital Signature Algorithm (ECDSA) implementation using the built-in .NET cryptography
+/// library using the NIST P-256 curve and SHA-256.
+/// </summary>
 [GenerateStaticApi]
 public sealed class EcdsaImpl : IDigitalSignature
 {
