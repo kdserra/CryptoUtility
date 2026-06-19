@@ -10,15 +10,12 @@ public abstract class MacProviderTests
 
     private byte[] CreateValidKey()
     {
-        int size = (Mac.RequiredKeySizeInBytes < 1) ? 32 : Mac.RequiredKeySizeInBytes;
-        byte[] key = new byte[size];
-        Array.Fill(key, (byte)0x41); // 'A'
-        return key;
+        return Mac.GenerateKey();
     }
 
     private string CreateValidKeyBase64()
     {
-        return Convert.ToBase64String(CreateValidKey());
+        return Mac.GenerateKeyBase64();
     }
 
     private string CreateValidMessageBase64()

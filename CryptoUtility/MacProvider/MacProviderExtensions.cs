@@ -5,6 +5,30 @@ namespace CryptoUtility;
 
 public static class MacProviderExtensions
 {
+    public static int GetRecommendedKeySizeInBytes(this IMacProvider macProvider)
+    {
+        if (macProvider.RequiredKeySizeInBytes > 0)
+        {
+            return macProvider.RequiredKeySizeInBytes;
+        }
+
+        return Math.Max(32, macProvider.MacSizeInBytes);
+    }
+
+    public static byte[] GenerateKey(this IMacProvider macProvider)
+    {
+        int keySize = macProvider.GetRecommendedKeySizeInBytes();
+        byte[] key = CryptoHelper.GetBytes(keySize);
+        return key;
+    }
+
+    public static string GenerateKeyBase64(this IMacProvider macProvider)
+    {
+        byte[] key = macProvider.GenerateKey();
+        string keyBase64 = Convert.ToBase64String(key);
+        return keyBase64;
+    }
+
     public static string ComputeMacBase64(this IMacProvider macProvider, string key, string message)
     {
         if (!LibraryHelper.NotNull(macProvider, key, message))
