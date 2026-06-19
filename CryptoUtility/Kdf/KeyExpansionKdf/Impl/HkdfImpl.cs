@@ -20,12 +20,6 @@ public sealed class HkdfImpl : IKeyExpansionKdf
         return HKDF.DeriveKey(DefaultHashAlgorithm, inputKeyMaterial, outputLength, salt, info);
     }
 
-    public byte[] DeriveKey(byte[] inputKeyMaterial, byte[] salt, int iterations, int outputLength)
-    {
-        byte[] key = HKDF.DeriveKey(DefaultHashAlgorithm, inputKeyMaterial, outputLength, salt);
-        return key;
-    }
-
     public byte[] DeriveKey(
         byte[] inputKeyMaterial,
         byte[] salt,
