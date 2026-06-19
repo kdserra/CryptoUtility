@@ -216,6 +216,7 @@ var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciph
 | Sha3_384 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
 | Sha3_512 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
 | Sha1 | .NET Built-in | CryptoUtility | Deprecated, insecure |
+| MD5 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Deprecated, insecure |
 
 ---
 
