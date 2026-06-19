@@ -237,8 +237,8 @@ var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciph
 | Algorithm | Implementation | Package | Notes |
 |------------|----------------|----------|------|
 | HmacSha256 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| HmacSha384 | .NET Built-in | CryptoUtility | Secure hash function |
-| HmacSha512 | .NET Built-in | CryptoUtility | Secure hash function |
+| HmacSha384 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
+| HmacSha512 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
 | HmacSha3_256 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
 | HmacSha3_384 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
 | HmacSha3_512 | .NET Built-in | CryptoUtility | Modern SHA-3 variant |
