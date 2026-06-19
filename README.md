@@ -142,9 +142,9 @@ var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciph
 | Algorithm | Implementation | Package | Notes |
 |------------|----------------|----------|------|
 | Aes256Gcm | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Industry standard. |
-| Aes192Gcm | .NET Built-in / BouncyCastle| CryptoUtility / CryptoUtility.BouncyCastle | Lower key size variant. |
+| Aes192Gcm | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Lower key size variant. |
 | Aes128Gcm | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Fast, widely supported. |
-| ChaCha20Poly1305 | .NET Built-in / NaCl.Core | CryptoUtility / CryptoUtility.NaCl | Strong, efficient on software-only systems |
+| ChaCha20Poly1305 | .NET Built-in / BouncyCastle / NaCl.Core | CryptoUtility / CryptoUtility.BouncyCastle / CryptoUtility.NaCl | Strong, efficient on software-only systems |
 | XChaCha20Poly1305 | NaCl.Core | CryptoUtility.NaCl | Extended nonce variant, safer nonce handling |
 
 ---
