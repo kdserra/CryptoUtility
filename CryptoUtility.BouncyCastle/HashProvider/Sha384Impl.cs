@@ -2,6 +2,9 @@
 
 namespace CryptoUtility.BouncyCastle;
 
+/// <summary>
+/// Bouncy Castle SHA384 Implementation.
+/// </summary>
 [GenerateStaticApi]
 public sealed class Sha384Impl : IHashProvider
 {

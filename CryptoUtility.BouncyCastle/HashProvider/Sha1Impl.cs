@@ -2,6 +2,9 @@
 
 namespace CryptoUtility.BouncyCastle;
 
+/// <summary>
+/// Bouncy Castle SHA1 Implementation.
+/// </summary>
 [GenerateStaticApi]
 public sealed class Sha1Impl : IHashProvider
 {
