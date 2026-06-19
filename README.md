@@ -217,7 +217,7 @@ var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciph
 | Sha3_384 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
 | Sha3_512 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
 | Sha1 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
-| MD5 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
+| Md5 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
 
 ---
 
@@ -245,7 +245,7 @@ var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciph
 | HmacSha3_512 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
 | HmacSha1 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Legacy |
 | Poly1305 | BouncyCastle / NaCl.Core | CryptoUtility.BouncyCastle / CryptoUtility.NaCl | Fast, secure one-time MAC *(requires a unique key/nonce per message; often paired with ChaCha20)* |
-| HmacMD5 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
+| HmacMd5 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
 
 ## 📝 API Notes
 
