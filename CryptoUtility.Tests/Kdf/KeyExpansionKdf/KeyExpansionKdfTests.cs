@@ -65,8 +65,11 @@ public abstract class KeyExpansionKdfTests
     {
         byte[] ikm = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         byte[] salt = [1, 2, 3, 4, 5, 6, 7, 8];
+        byte[] info = [1, 2, 3, 4, 5, 6, 7, 8];
 
         Assert.ThrowsAny<Exception>(() => Kdf.DeriveKey(ikm, 1000, -5, salt, info: []));
         Assert.ThrowsAny<Exception>(() => Kdf.DeriveKey(ikm, 1000, 0, salt, info: []));
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKey(ikm, 1000, -5, salt, info));
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKey(ikm, 1000, 0, salt, info));
     }
 }
