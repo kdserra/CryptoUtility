@@ -8,6 +8,8 @@ namespace CryptoUtility.BouncyCastle;
 [GenerateStaticApi]
 public sealed class Md5Impl : IHashProvider
 {
+    public static readonly Md5Impl Shared = new();
+
     public byte[] Hash(byte[] message)
     {
         if (message == null)
