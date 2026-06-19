@@ -136,6 +136,12 @@ var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciph
 
 ---
 
+## 🧪 Sample
+
+View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUtility.Sample/Program.cs) to see all the features in use, you can also run the [pre-compiled sample binary](https://github.com/kdserra/CryptoUtility/releases) to see the execution results.
+
+---
+
 # 📚 Cryptography API Reference
 
 ## Symmetric Encryption (AEAD — Recommended)
