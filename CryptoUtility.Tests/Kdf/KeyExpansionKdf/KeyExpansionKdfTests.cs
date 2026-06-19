@@ -1,5 +1,5 @@
-using Xunit;
 using CryptoUtility;
+using Xunit;
 
 namespace CryptoUtility.Tests;
 
@@ -58,5 +58,15 @@ public abstract class KeyExpansionKdfTests
 
         string derived7 = Kdf.DeriveKeyBase64([1, 2], 1, -5, [1, 2], [3, 4]);
         Assert.Equal(string.Empty, derived7);
+    }
+
+    [Fact]
+    public void DeriveKey_WithZeroOrNegativeOutputLength_Throws()
+    {
+        byte[] ikm = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+        byte[] salt = [1, 2, 3, 4, 5, 6, 7, 8];
+
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKey(ikm, 1000, -5, salt, info: []));
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKey(ikm, 1000, 0, salt, info: []));
     }
 }

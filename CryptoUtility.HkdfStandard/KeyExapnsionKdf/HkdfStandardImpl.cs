@@ -21,6 +21,13 @@ public class HkdfStandardImpl : IKeyExpansionKdf
         byte[] info
     )
     {
+        LibraryHelper.ThrowIfAnyNull(inputKeyMaterial, salt);
+
+        if (iterations <= 0)
+            throw new ArgumentOutOfRangeException(nameof(iterations));
+        if (outputLength <= 0)
+            throw new ArgumentOutOfRangeException(nameof(outputLength));
+
         return global::HkdfStandard.Hkdf.DeriveKey(
             DefaultHashAlgorithm,
             inputKeyMaterial,
@@ -39,6 +46,13 @@ public class HkdfStandardImpl : IKeyExpansionKdf
         HashAlgorithmName hashAlgorithm
     )
     {
+        LibraryHelper.ThrowIfAnyNull(inputKeyMaterial, salt);
+
+        if (iterations <= 0)
+            throw new ArgumentOutOfRangeException(nameof(iterations));
+        if (outputLength <= 0)
+            throw new ArgumentOutOfRangeException(nameof(outputLength));
+
         return global::HkdfStandard.Hkdf.DeriveKey(
             hashAlgorithm,
             inputKeyMaterial,

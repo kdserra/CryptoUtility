@@ -1,5 +1,5 @@
-using Xunit;
 using CryptoUtility;
+using Xunit;
 
 namespace CryptoUtility.Tests;
 
@@ -26,7 +26,7 @@ public abstract class PasswordKdfTests
     }
 
     [Fact]
-    public void DeriveKey_WithZeroOrNegativeIterations_ThrowsOrFails()
+    public void DeriveKey_WithZeroOrNegativeIterations_Throws()
     {
         string password = "TestPassword123";
         byte[] salt = [1, 2, 3, 4, 5, 6, 7, 8];
@@ -36,15 +36,13 @@ public abstract class PasswordKdfTests
     }
 
     [Fact]
-    public void DeriveKey_WithZeroOrNegativeOutputLength_ThrowsOrFails()
+    public void DeriveKey_WithZeroOrNegativeOutputLength_Throws()
     {
         string password = "TestPassword123";
         byte[] salt = [1, 2, 3, 4, 5, 6, 7, 8];
 
-        byte[] zeroResult = Kdf.DeriveKey(password, salt, 1000, 0);
-        Assert.Empty(zeroResult);
-
         Assert.ThrowsAny<Exception>(() => Kdf.DeriveKey(password, salt, 1000, -5));
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKey(password, salt, 1000, 0));
     }
 
     [Fact]
