@@ -328,12 +328,12 @@ void RunHashAndHmacShowcase()
     Console.WriteLine($"  - CRC-32 Checksum:   {crcBytes.ToHexString()}");
 
     Console.WriteLine("\n[HMAC Hashing Signatures]");
-    string hmacKey = "secret-hmac-authentication-key";
+    string hmacKey = HmacSha256.GenerateKeyBase64();
 
-    string hmac = HmacSha256.ComputeMacBase64(message, hmacKey);
+    string hmac = HmacSha256.ComputeMacBase64(hmacKey, message);
     Console.WriteLine($"  - HMAC:    {hmac}");
 
-    bool isHmacValid = HmacSha256.VerifyBase64(message, hmac, hmacKey);
+    bool isHmacValid = HmacSha256.VerifyBase64(hmacKey, message, hmac);
     Console.WriteLine($"  - HMAC is valid?     {isHmacValid}");
 }
 
