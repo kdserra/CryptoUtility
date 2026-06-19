@@ -3,6 +3,10 @@ using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
+/// <summary>
+/// .NET implementation for RSA operations, handling key pair generation, OAEP-SHA256 encryption/decryption,
+/// and SHA256-PKCS1 signing/verification.
+/// </summary>
 public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
 {
     /// <inheritdoc cref="IAsymmetricCipher.KeySizeBytes"/>

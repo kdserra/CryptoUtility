@@ -171,10 +171,10 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm  | Implementation | Package |  Notes |
 |------------|----------------|----------|----------|
-| Rsa1024 | .NET Built-in | CryptoUtility | Not secure |
-| Rsa2048 | .NET Built-in | CryptoUtility | Minimum acceptable |
-| Rsa3072 | .NET Built-in | CryptoUtility | Recommended |
-| Rsa4096 | .NET Built-in | CryptoUtility | High cost, high security margin |
+| Rsa1024 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Not secure |
+| Rsa2048 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Minimum acceptable |
+| Rsa3072 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | Recommended |
+| Rsa4096 | .NET Built-in / BouncyCastle | CryptoUtility / CryptoUtility.BouncyCastle | High cost, high security margin |
 
 ---
 

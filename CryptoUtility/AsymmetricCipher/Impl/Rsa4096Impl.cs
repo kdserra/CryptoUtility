@@ -1,6 +1,7 @@
 #if NET8_0_OR_GREATER
 namespace CryptoUtility;
 
+/// <inheritdoc cref="RsaBase"/>
 [GenerateStaticApi]
 public sealed class Rsa4096Impl : RsaBase
 {
