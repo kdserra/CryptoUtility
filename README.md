@@ -8,8 +8,6 @@
 > **Cryptography, Simplified & Unified.**  
 > A developer-first cryptography abstraction library for .NET. Secure your data with state-of-the-art ciphers using a single, unified interface.
 
----
-
 # ❓ Why CryptoUtility?
 CryptoUtility makes it quick, simple, and easy to work with cryptography.
 
@@ -41,8 +39,6 @@ All of our instance APIs are also wrapped with a static API, allowing direct usa
 ## 🗺️ One API, Every Implementation
 Instead of learning a dozen distinct libraries, paradigms, and syntax patterns for different cryptographic requirements, you only need to learn CryptoUtility. As the project grows, it will continue to expand into a rich ecosystem of supported algorithms and third-party wrappers, giving you a singular, unified gateway to the entire modern cryptographic landscape.
 
----
-
 # ✨ Features
 
 * **Unified API Design**: Identical syntax patterns for encryption, decryption, signatures, key agreement, and hashing.
@@ -53,8 +49,6 @@ Instead of learning a dozen distinct libraries, paradigms, and syntax patterns f
 * **Key Agreement (ECDH)**: Establish secure session keys over open channels with Elliptic Curve Diffie-Hellman.
 * **Hashing & Checksums**: SHA-2/3, fast non-cryptographic hashes (xxHash32/64/128), and integrity checksums (CRC-32, CRC-64).
 * **MAC Providers**: Verify against message tampering by generating a Message Authentication Code (MAC) and verifying it against the incoming message.
-
----
 
 # 🚀 Getting Started
 
@@ -92,8 +86,6 @@ var (encSuccess, ciphertext) = Aes256Gcm.Encrypt(key, plaintext);
 var (decSuccess, decrypted) = Aes256Gcm.Decrypt(key, ciphertext);
 ```
 
----
-
 ## 2️⃣ Hybrid Asymmetric Encryption (RSA-4096 + AES)
 
 ```csharp
@@ -109,8 +101,6 @@ var (encSuccess, envelope) = Rsa4096.HybridEncryptBase64(Aes256Gcm.Shared, publi
 // Decrypt payload using the PRIVATE key
 var (decSuccess, decryptedPayload) = Rsa4096.HybridDecryptBase64(Aes256Gcm.Shared, privateKey, envelope);
 ```
-
----
 
 ## 3️⃣ Key Agreement & Hybrid ECDH
 
@@ -134,13 +124,9 @@ var (_, ciphertext) = Ecdh.Encrypt(Aes256Gcm.Shared, Hkdf.Shared, aliceSecret, "
 var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciphertext, kdfSalt, kdfInfo);
 ```
 
----
-
 ## 🧪 Sample
 
 View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUtility.Sample/Program.cs) to see all the features in use, you can also run the [pre-compiled sample binary](https://github.com/kdserra/CryptoUtility/releases) to see the execution results.
-
----
 
 # 📚 Cryptography API Reference
 
@@ -154,8 +140,6 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 | ChaCha20Poly1305 | CryptoUtility.System / CryptoUtility.BouncyCastle / CryptoUtility.NaCl | Strong, efficient on software-only systems |
 | XChaCha20Poly1305 | CryptoUtility.NaCl | Extended nonce variant, safer nonce handling |
 
----
-
 ## Symmetric Encryption (Non-AEAD)
 
 | Algorithm | Package | Notes |
@@ -164,8 +148,6 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 | ChaCha20 | CryptoUtility.NaCl | No authentication |
 | XChaCha20 | CryptoUtility.NaCl | No authentication |
 | XorCipher | CryptoUtility.Extras | Obfuscation only, not secure |
-
----
 
 ## Asymmetric Encryption
 
@@ -176,15 +158,11 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 | Rsa3072 | CryptoUtility.System / CryptoUtility.BouncyCastle | Recommended |
 | Rsa4096 | CryptoUtility.System / CryptoUtility.BouncyCastle | High cost, high security margin |
 
----
-
 ## Digital Signatures
 
 | Algorithm | Package | Notes |
 |------------|----------|------|
 | Ecdsa | CryptoUtility.System / CryptoUtility.BouncyCastle | Message integrity & authentication |
-
----
 
 ## Key Agreement
 
@@ -192,23 +170,17 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 |------------|----------|--------|
 | Ecdh | CryptoUtility.System / CryptoUtility.BouncyCastle | Shared secret derivation |
 
----
-
 ## Key Derivation Functions
 
 | Algorithm | Package | Notes |
 |------------|----------|------|
 | Hkdf | CryptoUtility.System / CryptoUtility.BouncyCastle / CryptoUtility.HkdfStandard | Standard key expansion. |
 
----
-
 ## Password Based Key Derivation Functions
 
 | Algorithm | Package | Notes |
 |------------|----------|------|
 | Pbkdf2 | CryptoUtility.System / CryptoUtility.BouncyCastle | Password-based key derivation |
-
----
 
 ## Hashing & Checksums
 
@@ -225,8 +197,6 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 | Sha1 | CryptoUtility.System / CryptoUtility.BouncyCastle | Insecure |
 | Md5 | CryptoUtility.System / CryptoUtility.BouncyCastle | Insecure |
 
----
-
 ### Non-Cryptographic Hashes / Checksums
 
 | Algorithm | Package | Notes |
@@ -236,8 +206,6 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 | XxHash32 | CryptoUtility.System.Extras | High-speed hashing |
 | XxHash64 | CryptoUtility.System.Extras | High-speed hashing |
 | XxHash128 | CryptoUtility.System.Extras | High-speed hashing |
-
----
 
 ### Message Authentication Code
 
@@ -261,13 +229,9 @@ Official .NET implementations are recommended, as they are usually hardware acce
 
 Over time the goal of this library is to support and unify all the popular cryptographic concepts and implementations.
 
----
-
 ## 🎭 Disambiguation
 
 To maintain API brevity, this library has opted for all algorithm classes to use the same name, and are intended to be disambiguated through namespaces, and namespace aliases.
-
----
 
 # 🛡️ Security Best Practices
 
@@ -275,8 +239,6 @@ To maintain API brevity, this library has opted for all algorithm classes to use
 * **Authentication-First**: We default to AEAD (Authenticated Encryption with Associated Data) ciphers to prevent bit-flipping and padding oracle attacks.
 * **Memory Sanitation**: Sensitive derived keys are zeroed out of system memory immediately after use.
 * **Standard Implementations**: We do not roll custom cryptographic algorithms. We wrap standard, industry-vetted implementations, except where one is not available.
-
----
 
 # 📦 Installation
 
@@ -286,7 +248,15 @@ Add the NuGet package to your project:
 dotnet add package CryptoUtility
 ```
 
----
+## 📜 Full package list:
+
+[CryptoUtility](https://www.nuget.org/packages/CryptoUtility)
+[CryptoUtility.System](https://www.nuget.org/packages/CryptoUtility.System)
+[CryptoUtility.System.Extras](https://www.nuget.org/packages/CryptoUtility.System.Extras)
+[CryptoUtility.BouncyCastle](https://www.nuget.org/packages/CryptoUtility.BouncyCastle)
+[CryptoUtility.HkdfStandard](https://www.nuget.org/packages/CryptoUtility.HkdfStandard)
+[CryptoUtility.NaCl](https://www.nuget.org/packages/CryptoUtility.NaCl)
+[CryptoUtility.Extras](https://www.nuget.org/packages/CryptoUtility.Extras)
 
 # 📄 License
 
