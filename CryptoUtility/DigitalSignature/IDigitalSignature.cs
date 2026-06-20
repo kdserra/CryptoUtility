@@ -6,5 +6,5 @@ public interface IDigitalSignature
 
     public bool Verify(byte[] message, byte[] signature, byte[] publicKey);
 
-    public (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair();
+    public (byte[] publicKey, byte[] secretKey) GenerateKeyPair();
 }
