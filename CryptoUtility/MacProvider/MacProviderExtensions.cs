@@ -53,12 +53,19 @@ public static class MacProviderExtensions
         byte[] mac
     )
     {
-        byte[] computedMac = macProvider.ComputeMac(key, message);
-        bool result = CryptoHelper.FixedTimeEquals(computedMac, mac);
+        try
+        {
+            byte[] computedMac = macProvider.ComputeMac(key, message);
+            bool isValid = CryptoHelper.FixedTimeEquals(computedMac, mac);
 
-        CryptographicOperations.ZeroMemory(computedMac);
+            CryptographicOperations.ZeroMemory(computedMac);
 
-        return result;
+            return isValid;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public static bool VerifyBase64(
@@ -68,15 +75,60 @@ public static class MacProviderExtensions
         string mac
     )
     {
-        byte[] keyBytes = Convert.FromBase64String(key);
-        byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-        byte[] macBytes = Convert.FromBase64String(mac);
-        bool isValid = macProvider.VerifyMac(keyBytes, messageBytes, macBytes);
+        try
+        {
+            byte[] keyBytes = Convert.FromBase64String(key);
+            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+            byte[] macBytes = Convert.FromBase64String(mac);
+            bool isValid = macProvider.VerifyMac(keyBytes, messageBytes, macBytes);
 
-        CryptographicOperations.ZeroMemory(keyBytes);
-        CryptographicOperations.ZeroMemory(messageBytes);
-        CryptographicOperations.ZeroMemory(macBytes);
+            CryptographicOperations.ZeroMemory(keyBytes);
+            CryptographicOperations.ZeroMemory(messageBytes);
+            CryptographicOperations.ZeroMemory(macBytes);
 
-        return isValid;
+            return isValid;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public static bool TryComputeMac(
+        this IMacProvider macProvider,
+        byte[] key,
+        byte[] message,
+        out byte[] mac
+    )
+    {
+        try
+        {
+            mac = macProvider.ComputeMac(key, message);
+            return true;
+        }
+        catch
+        {
+            mac = Array.Empty<byte>();
+            return false;
+        }
+    }
+
+    public static bool TryComputeMacBase64(
+        this IMacProvider macProvider,
+        string key,
+        string message,
+        out string mac
+    )
+    {
+        try
+        {
+            mac = macProvider.ComputeMacBase64(key, message);
+            return true;
+        }
+        catch
+        {
+            mac = string.Empty;
+            return false;
+        }
     }
 }
