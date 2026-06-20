@@ -55,7 +55,12 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         INamedTypeSymbol targetType
     )
     {
-        return GetAllTypes(compilation.Assembly.GlobalNamespace)
+        var assemblies = new List<IAssemblySymbol> { compilation.Assembly }.Concat(
+            compilation.SourceModule.ReferencedAssemblySymbols
+        );
+
+        return assemblies
+            .SelectMany(a => GetAllTypes(a.GlobalNamespace))
             .SelectMany(t => t.GetMembers())
             .OfType<IMethodSymbol>()
             .Where(m =>
