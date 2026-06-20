@@ -250,13 +250,13 @@ dotnet add package CryptoUtility
 
 ## 📜 Full package list:
 
-[CryptoUtility](https://www.nuget.org/packages/CryptoUtility)
-[CryptoUtility.System](https://www.nuget.org/packages/CryptoUtility.System)
-[CryptoUtility.System.Extras](https://www.nuget.org/packages/CryptoUtility.System.Extras)
-[CryptoUtility.BouncyCastle](https://www.nuget.org/packages/CryptoUtility.BouncyCastle)
-[CryptoUtility.HkdfStandard](https://www.nuget.org/packages/CryptoUtility.HkdfStandard)
-[CryptoUtility.NaCl](https://www.nuget.org/packages/CryptoUtility.NaCl)
-[CryptoUtility.Extras](https://www.nuget.org/packages/CryptoUtility.Extras)
+- [CryptoUtility](https://www.nuget.org/packages/CryptoUtility)
+- [CryptoUtility.System](https://www.nuget.org/packages/CryptoUtility.System)
+- [CryptoUtility.System.Extras](https://www.nuget.org/packages/CryptoUtility.System.Extras)
+- [CryptoUtility.BouncyCastle](https://www.nuget.org/packages/CryptoUtility.BouncyCastle)
+- [CryptoUtility.HkdfStandard](https://www.nuget.org/packages/CryptoUtility.HkdfStandard)
+- [CryptoUtility.NaCl](https://www.nuget.org/packages/CryptoUtility.NaCl)
+- [CryptoUtility.Extras](https://www.nuget.org/packages/CryptoUtility.Extras)
 
 # 📄 License
 
