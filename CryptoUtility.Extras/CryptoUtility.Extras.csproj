@@ -7,7 +7,7 @@
     <WarningsAsErrors>Nullable</WarningsAsErrors>
     <PackageId>CryptoUtility.Extras</PackageId>
     <Product>CryptoUtility.Extras</Product>
-    <Version>0.24.2</Version>
+    <Version>0.24.3</Version>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
