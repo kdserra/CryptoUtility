@@ -4,58 +4,36 @@ namespace CryptoUtility;
 
 public static class KeyAgreementExtensions
 {
-    public static (bool success, string sharedSecret) DeriveSharedSecretBase64(
+    public static string DeriveSharedSecretBase64(
         this IKeyAgreement keyAgreement,
         string secretKey,
         string peerPublicKey
     )
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(keyAgreement, secretKey, peerPublicKey))
-            {
-                return (false, string.Empty);
-            }
+        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
+        byte[] peerPublicKeyBytes = Convert.FromBase64String(peerPublicKey);
 
-            byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
-            byte[] peerPublicKeyBytes = Convert.FromBase64String(peerPublicKey);
+        byte[] sharedSecretBytes = keyAgreement.DeriveSharedSecret(
+            secretKeyBytes,
+            peerPublicKeyBytes
+        );
 
-            (bool success, byte[] sharedSecret) derivationResult = keyAgreement.DeriveSharedSecret(
-                secretKeyBytes,
-                peerPublicKeyBytes
-            );
+        string sharedSecretBase64 = Convert.ToBase64String(sharedSecretBytes);
 
-            if (!derivationResult.success)
-            {
-                return (false, string.Empty);
-            }
-
-            string derivedSharedSecret = Convert.ToBase64String(derivationResult.sharedSecret);
-
-            return (true, derivedSharedSecret);
-        }
-        catch
-        {
-            return (false, string.Empty);
-        }
+        return sharedSecretBase64;
     }
 
-    public static (string PublicKey, string SecretKey) GenerateKeyPairBase64(
+    public static (string publicKey, string secretKey) GenerateKeyPairBase64(
         this IKeyAgreement keyAgreement
     )
     {
-        if (!LibraryHelper.NotNull(keyAgreement))
-        {
-            return (string.Empty, string.Empty);
-        }
-
-        (byte[] PublicKeyBytes, byte[] SecretKeyBytes) keyPair = keyAgreement.GenerateKeyPair();
-        string publicKeyBase64 = Convert.ToBase64String(keyPair.PublicKeyBytes);
-        string secretKeyBase64 = Convert.ToBase64String(keyPair.SecretKeyBytes);
+        (byte[] publicKeyBytes, byte[] secretKeyBytes) = keyAgreement.GenerateKeyPair();
+        string publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
+        string secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
         return (publicKeyBase64, secretKeyBase64);
     }
 
-    public static (bool success, byte[] encrypted) Encrypt(
+    public static byte[] Encrypt(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
         IKeyExpansionKdf kdf,
@@ -65,21 +43,6 @@ public static class KeyAgreementExtensions
         byte[] kdfInfo
     )
     {
-        if (
-            !LibraryHelper.NotNull(
-                keyAgreement,
-                cipher,
-                kdf,
-                sharedSecret,
-                plaintext,
-                kdfSalt,
-                kdfInfo
-            )
-        )
-        {
-            return (false, Array.Empty<byte>());
-        }
-
         byte[] key = kdf.DeriveKey(
             inputKeyMaterial: sharedSecret,
             iterations: 1,
@@ -88,14 +51,14 @@ public static class KeyAgreementExtensions
             kdfInfo
         );
 
-        (bool success, byte[] encrypted) = cipher.Encrypt(key, plaintext);
+        byte[] encrypted = cipher.Encrypt(key, plaintext);
 
         CryptographicOperations.ZeroMemory(key);
 
-        return (success, encrypted);
+        return encrypted;
     }
 
-    public static (bool success, byte[] decrypted) Decrypt(
+    public static byte[] Decrypt(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
         IKeyExpansionKdf kdf,
@@ -105,21 +68,6 @@ public static class KeyAgreementExtensions
         byte[] kdfInfo
     )
     {
-        if (
-            !LibraryHelper.NotNull(
-                keyAgreement,
-                cipher,
-                kdf,
-                sharedSecret,
-                encrypted,
-                kdfSalt,
-                kdfInfo
-            )
-        )
-        {
-            return (false, Array.Empty<byte>());
-        }
-
         byte[] key = kdf.DeriveKey(
             inputKeyMaterial: sharedSecret,
             iterations: 1,
@@ -128,10 +76,10 @@ public static class KeyAgreementExtensions
             kdfInfo
         );
 
-        (bool success, byte[] decrypted) = cipher.Decrypt(key, encrypted);
+        byte[] decrypted = cipher.Decrypt(key, encrypted);
 
         CryptographicOperations.ZeroMemory(key);
 
-        return (success, decrypted);
+        return decrypted;
     }
 }

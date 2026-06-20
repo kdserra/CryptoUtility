@@ -113,7 +113,7 @@ public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
     }
 
     /// <inheritdoc cref="IAsymmetricCipher.GenerateKeyPair()"/>
-    public (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
+    public (byte[] publicKey, byte[] secretKey) GenerateKeyPair()
     {
         using RSA rsa = RSA.Create(KeySizeBytes * 8);
         byte[] publicKeyBytes = rsa.ExportSubjectPublicKeyInfo();

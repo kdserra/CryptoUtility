@@ -2,10 +2,5 @@
 
 public interface ISymmetricCipherAEAD : ISymmetricCipherAE
 {
-    public (bool success, byte[] encrypted) Encrypt(
-        byte[] key,
-        byte[] plaintext,
-        byte[] nonce,
-        byte[] aad
-    );
+    public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce, byte[] aad);
 }

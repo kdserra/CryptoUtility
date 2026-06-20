@@ -10,20 +10,8 @@ public static class PasswordKdfExtensions
         byte[] salt
     )
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(kdf, password, salt))
-            {
-                return string.Empty;
-            }
-
-            byte[] keyBytes = kdf.DeriveKey(password, salt, iterations, outputLength);
-            string keyBase64 = Convert.ToBase64String(keyBytes);
-            return keyBase64;
-        }
-        catch
-        {
-            return string.Empty;
-        }
+        byte[] keyBytes = kdf.DeriveKey(password, salt, iterations, outputLength);
+        string keyBase64 = Convert.ToBase64String(keyBytes);
+        return keyBase64;
     }
 }

@@ -4,264 +4,139 @@ namespace CryptoUtility;
 
 public static class AsymmetricCipherExtensions
 {
-    public static (bool success, string encrypted) EncryptBase64(
+    public static string EncryptBase64(
         this IAsymmetricCipher cipher,
         string publicKey,
         string plaintext
     )
     {
-        try
-        {
-            if (!LibraryHelper.NotNull(cipher, publicKey, plaintext))
-            {
-                return (false, string.Empty);
-            }
+        byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
+        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
+        byte[] encryptedBytes = cipher.Encrypt(publicKeyBytes, plaintextBytes);
+        string encryptedBase64 = Convert.ToBase64String(encryptedBytes);
 
-            byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
-            byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
-            (bool success, byte[] encrypted) encryptedResult = cipher.Encrypt(
-                publicKeyBytes,
-                plaintextBytes
-            );
-
-            if (!encryptedResult.success)
-            {
-                return (false, string.Empty);
-            }
-
-            string encryptedBase64 = Convert.ToBase64String(encryptedResult.encrypted);
-
-            return (true, encryptedBase64);
-        }
-        catch
-        {
-            return (false, string.Empty);
-        }
+        return encryptedBase64;
     }
 
-    public static (bool success, string plaintext) DecryptBase64(
+    public static string DecryptBase64(
         this IAsymmetricCipher cipher,
         string secretKey,
         string encrypted
     )
     {
-        try
-        {
-            if (!LibraryHelper.NotNull(cipher, secretKey, encrypted))
-            {
-                return (false, string.Empty);
-            }
+        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
+        byte[] encryptedBytes = Convert.FromBase64String(encrypted);
+        byte[] decryptedBytes = cipher.Decrypt(secretKeyBytes, encryptedBytes);
+        string plaintext = Encoding.UTF8.GetString(decryptedBytes);
 
-            byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
-            byte[] encryptedBytes = Convert.FromBase64String(encrypted);
-
-            (bool success, byte[] plaintext) decryptedResult = cipher.Decrypt(
-                secretKeyBytes,
-                encryptedBytes
-            );
-
-            if (!decryptedResult.success)
-            {
-                return (false, string.Empty);
-            }
-
-            string plaintext = Encoding.UTF8.GetString(decryptedResult.plaintext);
-
-            return (true, plaintext);
-        }
-        catch
-        {
-            return (false, string.Empty);
-        }
+        return plaintext;
     }
 
-    public static (string PublicKey, string SecretKey) GenerateKeyPairBase64(
+    public static (string publicKey, string secretKey) GenerateKeyPairBase64(
         this IAsymmetricCipher cipher
     )
     {
-        if (!LibraryHelper.NotNull(cipher))
-        {
-            return (string.Empty, string.Empty);
-        }
-
-        (byte[] PublicKeyBytes, byte[] SecretKeyBytes) keyPair = cipher.GenerateKeyPair();
-        string publicKeyBase64 = Convert.ToBase64String(keyPair.PublicKeyBytes);
-        string secretKeyBase64 = Convert.ToBase64String(keyPair.SecretKeyBytes);
+        (byte[] publicKeyBytes, byte[] secretKeyBytes) = cipher.GenerateKeyPair();
+        string publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
+        string secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
         return (publicKeyBase64, secretKeyBase64);
     }
 
-    public static (bool success, byte[] encrypted) HybridEncrypt(
+    public static byte[] HybridEncrypt(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
         byte[] publicKey,
         byte[] plaintext
     )
     {
-        try
-        {
-            if (
-                !LibraryHelper.NotNullOrEmpty(
-                    asymmetricCipher,
-                    symmetricCipher,
-                    publicKey,
-                    plaintext
-                )
-            )
-            {
-                return (false, Array.Empty<byte>());
-            }
+        byte[] asymmetricPlaintextDataEncryptionKey = symmetricCipher.GenerateKey();
 
-            byte[] asymmetricPlaintextDataEncryptionKey = symmetricCipher.GenerateKey();
-            (bool asymmetricSuccess, byte[] asymmetricEncrypted) = asymmetricCipher.Encrypt(
-                publicKey,
-                asymmetricPlaintextDataEncryptionKey
-            );
+        byte[] asymmetricEncrypted = asymmetricCipher.Encrypt(
+            publicKey,
+            asymmetricPlaintextDataEncryptionKey
+        );
 
-            if (!asymmetricSuccess)
-            {
-                return (false, Array.Empty<byte>());
-            }
+        byte[] symmetricEncrypted = symmetricCipher.Encrypt(
+            asymmetricPlaintextDataEncryptionKey,
+            plaintext
+        );
 
-            (bool symmetricSuccess, byte[] symmetricEncrypted) = symmetricCipher.Encrypt(
-                asymmetricPlaintextDataEncryptionKey,
-                plaintext
-            );
-            if (!symmetricSuccess)
-            {
-                return (false, Array.Empty<byte>());
-            }
+        HybridCipherEnvelope envelope = new(
+            HybridCipherEnvelope.LatestVersion,
+            asymmetricEncrypted,
+            symmetricEncrypted
+        );
 
-            HybridCipherEnvelope envelope = new(
-                HybridCipherEnvelope.LatestVersion,
-                asymmetricEncrypted,
-                symmetricEncrypted
-            );
-
-            return (true, envelope.ToBytes());
-        }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
+        return envelope.ToBytes();
     }
 
-    public static (bool success, byte[] plaintext) HybridDecrypt(
+    public static byte[] HybridDecrypt(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
         byte[] secretKey,
         byte[] encrypted
     )
     {
-        try
+        HybridCipherEnvelope? envelope = HybridCipherEnvelope.FromBytes(encrypted);
+
+        if (envelope == null)
         {
-            if (
-                !LibraryHelper.NotNullOrEmpty(
-                    asymmetricCipher,
-                    symmetricCipher,
-                    secretKey,
-                    encrypted
-                )
-            )
-            {
-                return (false, Array.Empty<byte>());
-            }
-
-            HybridCipherEnvelope? envelope = HybridCipherEnvelope.FromBytes(encrypted);
-            if (envelope == null)
-            {
-                return (false, Array.Empty<byte>());
-            }
-
-            (bool asymmetricSuccess, byte[] asymmetricPlaintextDataEncryptionKey) =
-                asymmetricCipher.Decrypt(secretKey, envelope.AsymmetricEncrypted);
-
-            if (!asymmetricSuccess || asymmetricPlaintextDataEncryptionKey.IsNullOrEmpty())
-            {
-                return (false, Array.Empty<byte>());
-            }
-
-            (bool symmetricSuccess, byte[] symmetricPlaintext) = symmetricCipher.Decrypt(
-                asymmetricPlaintextDataEncryptionKey,
-                envelope.SymmetricEncrypted
-            );
-
-            if (!symmetricSuccess || symmetricPlaintext.IsNullOrEmpty())
-            {
-                return (false, Array.Empty<byte>());
-            }
-
-            return (true, symmetricPlaintext);
+            throw new InvalidOperationException("Failed to parse Hybrid Cipher Envelope.");
         }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
+
+        byte[] asymmetricPlaintextDataEncryptionKey = asymmetricCipher.Decrypt(
+            secretKey,
+            envelope.AsymmetricEncrypted
+        );
+
+        byte[] symmetricPlaintext = symmetricCipher.Decrypt(
+            asymmetricPlaintextDataEncryptionKey,
+            envelope.SymmetricEncrypted
+        );
+
+        return symmetricPlaintext;
     }
 
-    public static (bool success, string encrypted) HybridEncryptBase64(
+    public static string HybridEncryptBase64(
         this IAsymmetricCipher asymmetricCipher,
-        ISymmetricCipher cipher,
+        ISymmetricCipher symmetricCipher,
         string publicKey,
         string plaintext
     )
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, publicKey, plaintext))
-            {
-                return (false, string.Empty);
-            }
+        byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
+        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
 
-            byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
-            byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
+        byte[] encryptedBytes = HybridEncrypt(
+            asymmetricCipher,
+            symmetricCipher,
+            publicKeyBytes,
+            plaintextBytes
+        );
 
-            (bool success, byte[] encrypted) = HybridEncrypt(
-                asymmetricCipher,
-                cipher,
-                publicKeyBytes,
-                plaintextBytes
-            );
+        string encryptedBase64 = Convert.ToBase64String(encryptedBytes);
 
-            string encryptedBase64 = Convert.ToBase64String(encrypted);
-
-            return (success, encryptedBase64);
-        }
-        catch
-        {
-            return (false, string.Empty);
-        }
+        return encryptedBase64;
     }
 
-    public static (bool success, string plaintext) HybridDecryptBase64(
+    public static string HybridDecryptBase64(
         this IAsymmetricCipher asymmetricCipher,
-        ISymmetricCipher cipher,
+        ISymmetricCipher symmetricCipher,
         string secretKey,
         string encrypted
     )
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, secretKey, encrypted))
-            {
-                return (false, string.Empty);
-            }
+        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
+        byte[] encryptedBytes = Convert.FromBase64String(encrypted);
 
-            byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
-            byte[] encryptedBytes = Convert.FromBase64String(encrypted);
+        byte[] plaintextBytes = HybridDecrypt(
+            asymmetricCipher,
+            symmetricCipher,
+            secretKeyBytes,
+            encryptedBytes
+        );
 
-            (bool success, byte[] plaintext) result = HybridDecrypt(
-                asymmetricCipher,
-                cipher,
-                secretKeyBytes,
-                encryptedBytes
-            );
-
-            string plaintext = Encoding.UTF8.GetString(result.plaintext);
-            return (result.success, plaintext);
-        }
-        catch
-        {
-            return (false, string.Empty);
-        }
+        string plaintext = Encoding.UTF8.GetString(plaintextBytes);
+        return plaintext;
     }
 }

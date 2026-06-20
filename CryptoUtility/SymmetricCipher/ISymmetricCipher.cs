@@ -6,7 +6,7 @@ public interface ISymmetricCipher
 
     public int NonceSizeBytes { get; }
 
-    public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce);
+    public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce);
 
-    public (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted);
+    public byte[] Decrypt(byte[] key, byte[] encrypted);
 }

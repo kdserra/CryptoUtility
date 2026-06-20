@@ -113,7 +113,7 @@ public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
         }
     }
 
-    public (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
+    public (byte[] publicKey, byte[] secretKey) GenerateKeyPair()
     {
         var keyGenerationParameters = new KeyGenerationParameters(
             new SecureRandom(),

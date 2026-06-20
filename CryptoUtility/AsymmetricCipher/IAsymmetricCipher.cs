@@ -6,9 +6,9 @@ public interface IAsymmetricCipher
 
     public int SaltSizeBytes { get; }
 
-    public (bool success, byte[] encrypted) Encrypt(byte[] publicKey, byte[] plaintext);
+    public byte[] Encrypt(byte[] publicKey, byte[] plaintext);
 
-    public (bool success, byte[] plaintext) Decrypt(byte[] secretKey, byte[] encrypted);
+    public byte[] Decrypt(byte[] secretKey, byte[] encrypted);
 
-    public (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair();
+    public (byte[] publicKey, byte[] secretKey) GenerateKeyPair();
 }

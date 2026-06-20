@@ -13,23 +13,11 @@ public static class KeyExpansionKdfExtensions
         byte[] info
     )
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(kdf, inputKeyMaterial, salt, info))
-            {
-                return string.Empty;
-            }
+        byte[] keyBytes = kdf.DeriveKey(inputKeyMaterial, iterations, outputLength, salt, info);
+        string keyBase64 = Convert.ToBase64String(keyBytes);
 
-            byte[] keyBytes = kdf.DeriveKey(inputKeyMaterial, iterations, outputLength, salt, info);
-            string keyBase64 = Convert.ToBase64String(keyBytes);
+        CryptographicOperations.ZeroMemory(keyBytes);
 
-            CryptographicOperations.ZeroMemory(keyBytes);
-
-            return keyBase64;
-        }
-        catch
-        {
-            return string.Empty;
-        }
+        return keyBase64;
     }
 }
