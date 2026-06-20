@@ -12,4 +12,36 @@ public static class HashProviderExtensions
 
         return hashBase64;
     }
+
+    public static bool TryHash(this IHashProvider hashProvider, byte[] message, out byte[] hash)
+    {
+        try
+        {
+            hash = hashProvider.Hash(message);
+            return true;
+        }
+        catch
+        {
+            hash = Array.Empty<byte>();
+            return false;
+        }
+    }
+
+    public static bool TryHashBase64(
+        this IHashProvider hashProvider,
+        string message,
+        out string hash
+    )
+    {
+        try
+        {
+            hash = hashProvider.HashBase64(message);
+            return true;
+        }
+        catch
+        {
+            hash = string.Empty;
+            return false;
+        }
+    }
 }
