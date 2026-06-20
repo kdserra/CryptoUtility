@@ -5,6 +5,8 @@
   <Project Path="CryptoUtility.HkdfStandard/CryptoUtility.HkdfStandard.csproj" Id="3fdb1b4b-1767-4001-bd2e-e1b16e8ef4cc" />
   <Project Path="CryptoUtility.NaCl/CryptoUtility.NaCl.csproj" Id="fa985b49-6919-4b0b-b8c6-99359e378f5b" />
   <Project Path="CryptoUtility.Sample/CryptoUtility.Sample.csproj" Id="17c67e0f-ecf0-4492-b956-935a016083cc" />
+  <Project Path="CryptoUtility.System.Extras/CryptoUtility.System.Extras.csproj" Id="d937fd21-cc6b-4832-9e97-91b4b7e94a29" />
+  <Project Path="CryptoUtility.System/CryptoUtility.System.csproj" Id="d3464e21-e0ec-48b7-98d9-5242429f8830" />
   <Project Path="CryptoUtility.Tests/CryptoUtility.Tests.csproj" />
   <Project Path="CryptoUtility/CryptoUtility.csproj" />
 </Solution>

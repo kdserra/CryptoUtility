@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.1;net8.0;net10.0</TargetFrameworks>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <WarningsAsErrors>Nullable</WarningsAsErrors>
+    <PackageId>CryptoUtility.System.Extras</PackageId>
+    <Product>CryptoUtility.System.Extras</Product>
+    <Version>0.23.1</Version>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageIconUrl>https://raw.githubusercontent.com/kdserra/CryptoUtility/master/icon.png</PackageIconUrl>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Authors>Kevin Serra</Authors>
+
+    <Description>
+		Cryptography, Simplified and Unified.  A developer-first cryptography abstraction library for .NET.  Secure your data with state-of-the-art ciphers using a single, unified interface.
+	</Description>
+
+    <PackageTags>
+		cryptography;crypto;security;encryption;dotnet
+	</PackageTags>
+
+    <PackageProjectUrl>
+		https://github.com/kdserra/CryptoUtility
+	</PackageProjectUrl>
+
+    <RepositoryType>git</RepositoryType>
+
+    <RepositoryUrl>
+		https://github.com/kdserra/CryptoUtility.git
+	</RepositoryUrl>
+
+    <PackageReleaseNotes>
+		View the release notes here: https://github.com/kdserra/CryptoUtility/releases
+	</PackageReleaseNotes>
+
+    <Copyright>
+		Copyright © Kevin Serra
+	</Copyright>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="../README.md" Pack="true" PackagePath="\" />
+    <None Include="../icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+  <PropertyGroup>
+    <!-- Enable viewing of generated files. -->
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <CompilerGeneratedFilesOutputPath>$(BaseIntermediateOutputPath)Generated</CompilerGeneratedFilesOutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="CryptoUtility.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.IO.Hashing" Version="10.0.9" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference
+      Include="..\CryptoUtility.CodeGenerator\CryptoUtility.CodeGenerator.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false"
+    />
+    <ProjectReference Include="..\CryptoUtility\CryptoUtility.csproj" />
+  </ItemGroup>
+</Project>

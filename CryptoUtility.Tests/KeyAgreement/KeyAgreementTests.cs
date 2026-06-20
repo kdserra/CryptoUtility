@@ -1,3 +1,6 @@
+using System.Text;
+using CryptoUtility.System;
+
 namespace CryptoUtility.Tests;
 
 public abstract class KeyAgreementTests
@@ -13,7 +16,7 @@ public abstract class KeyAgreementTests
 
     protected byte[] GeneratePlaintext()
     {
-        return System.Text.Encoding.UTF8.GetBytes("Hello, world!");
+        return Encoding.UTF8.GetBytes("Hello, world!");
     }
 
     [Fact]
@@ -285,9 +288,9 @@ public abstract class KeyAgreementTests
         Assert.True(okA);
         Assert.True(okB);
 
-        var plaintext = System.Text.Encoding.UTF8.GetBytes("Super secret message");
-        var salt = System.Text.Encoding.UTF8.GetBytes("TestSalt");
-        var info = System.Text.Encoding.UTF8.GetBytes("ApplicationInfo");
+        var plaintext = Encoding.UTF8.GetBytes("Super secret message");
+        var salt = Encoding.UTF8.GetBytes("TestSalt");
+        var info = Encoding.UTF8.GetBytes("ApplicationInfo");
 
         var (encSuccess, ciphertext) = a.Encrypt(
             Aes256Gcm.Shared,
@@ -325,9 +328,9 @@ public abstract class KeyAgreementTests
         var (okA, secretA) = a.DeriveSharedSecret(aSec, bPub);
         var (okB, secretB) = b.DeriveSharedSecret(bSec, aPub);
 
-        var plaintext = System.Text.Encoding.UTF8.GetBytes("Super secret message");
-        var salt = System.Text.Encoding.UTF8.GetBytes("TestSalt");
-        var info = System.Text.Encoding.UTF8.GetBytes("ApplicationInfo");
+        var plaintext = Encoding.UTF8.GetBytes("Super secret message");
+        var salt = Encoding.UTF8.GetBytes("TestSalt");
+        var info = Encoding.UTF8.GetBytes("ApplicationInfo");
 
         var (encSuccess, ciphertext) = a.Encrypt(
             Aes256Gcm.Shared,
@@ -366,10 +369,10 @@ public abstract class KeyAgreementTests
         var (okA, secretA) = a.DeriveSharedSecret(aSec, bPub);
         var (okB, secretB) = b.DeriveSharedSecret(bSec, aPub);
 
-        var plaintext = System.Text.Encoding.UTF8.GetBytes("Super secret message");
-        var salt = System.Text.Encoding.UTF8.GetBytes("TestSalt");
-        var info = System.Text.Encoding.UTF8.GetBytes("ApplicationInfo");
-        var wrongInfo = System.Text.Encoding.UTF8.GetBytes("WrongApplicationInfo");
+        var plaintext = Encoding.UTF8.GetBytes("Super secret message");
+        var salt = Encoding.UTF8.GetBytes("TestSalt");
+        var info = Encoding.UTF8.GetBytes("ApplicationInfo");
+        var wrongInfo = Encoding.UTF8.GetBytes("WrongApplicationInfo");
 
         var (encSuccess, ciphertext) = a.Encrypt(
             Aes256Gcm.Shared,

@@ -1,5 +1,11 @@
+Console.WriteLine("Sample is temporarily disabled during refactor.");
+Console.ReadLine();
+
+/*
 using System.Text;
 using CryptoUtility;
+using CryptoUtility.System;
+using CryptoUtility.System.Extras;
 
 Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine(
@@ -397,3 +403,4 @@ public static class Extensions
         return text.Substring(0, maxLength) + "...";
     }
 }
+*/

@@ -53,6 +53,8 @@
   </PropertyGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="CryptoUtility.Tests" />
+    <InternalsVisibleTo Include="CryptoUtility.System" />
+    <InternalsVisibleTo Include="CryptoUtility.System.Extras" />
     <InternalsVisibleTo Include="CryptoUtility.BouncyCastle" />
     <InternalsVisibleTo Include="CryptoUtility.Extras" />
     <InternalsVisibleTo Include="CryptoUtility.HkdfStandard" />
@@ -62,10 +64,6 @@
     <PackageReference Include="MemoryPack" Version="1.21.4" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference
-      Include="..\CryptoUtility.CodeGenerator\CryptoUtility.CodeGenerator.csproj"
-      OutputItemType="Analyzer"
-      ReferenceOutputAssembly="false"
-    />
+    <ProjectReference Include="..\CryptoUtility.CodeGenerator\CryptoUtility.CodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 </Project>

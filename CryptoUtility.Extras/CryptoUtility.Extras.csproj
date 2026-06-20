@@ -55,9 +55,6 @@
     <InternalsVisibleTo Include="CryptoUtility.Tests" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="System.IO.Hashing" Version="10.0.6" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference
       Include="..\CryptoUtility.CodeGenerator\CryptoUtility.CodeGenerator.csproj"
       OutputItemType="Analyzer"

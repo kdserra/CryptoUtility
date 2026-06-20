@@ -148,10 +148,10 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm | Package | Notes |
 |------------|----------|------|
-| Aes256Gcm | CryptoUtility / CryptoUtility.BouncyCastle | Industry standard. |
-| Aes192Gcm | CryptoUtility / CryptoUtility.BouncyCastle | Lower key size variant. |
-| Aes128Gcm | CryptoUtility / CryptoUtility.BouncyCastle | Fast, widely supported. |
-| ChaCha20Poly1305 | CryptoUtility / CryptoUtility.BouncyCastle / CryptoUtility.NaCl | Strong, efficient on software-only systems |
+| Aes256Gcm | CryptoUtility.System / CryptoUtility.BouncyCastle | Industry standard. |
+| Aes192Gcm | CryptoUtility.System / CryptoUtility.BouncyCastle | Lower key size variant. |
+| Aes128Gcm | CryptoUtility.System / CryptoUtility.BouncyCastle | Fast, widely supported. |
+| ChaCha20Poly1305 | CryptoUtility.System / CryptoUtility.BouncyCastle / CryptoUtility.NaCl | Strong, efficient on software-only systems |
 | XChaCha20Poly1305 | CryptoUtility.NaCl | Extended nonce variant, safer nonce handling |
 
 ---
@@ -171,10 +171,10 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm  | Package |  Notes |
 |------------|----------|----------|
-| Rsa1024 | CryptoUtility / CryptoUtility.BouncyCastle | Not secure |
-| Rsa2048 | CryptoUtility / CryptoUtility.BouncyCastle | Minimum acceptable |
-| Rsa3072 | CryptoUtility / CryptoUtility.BouncyCastle | Recommended |
-| Rsa4096 | CryptoUtility / CryptoUtility.BouncyCastle | High cost, high security margin |
+| Rsa1024 | CryptoUtility.System / CryptoUtility.BouncyCastle | Not secure |
+| Rsa2048 | CryptoUtility.System / CryptoUtility.BouncyCastle | Minimum acceptable |
+| Rsa3072 | CryptoUtility.System / CryptoUtility.BouncyCastle | Recommended |
+| Rsa4096 | CryptoUtility.System / CryptoUtility.BouncyCastle | High cost, high security margin |
 
 ---
 
@@ -182,7 +182,7 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm | Package | Notes |
 |------------|----------|------|
-| Ecdsa | CryptoUtility / CryptoUtility.BouncyCastle | Message integrity & authentication |
+| Ecdsa | CryptoUtility.System / CryptoUtility.BouncyCastle | Message integrity & authentication |
 
 ---
 
@@ -190,7 +190,7 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm | Package | Notes |
 |------------|----------|--------|
-| Ecdh | CryptoUtility / CryptoUtility.BouncyCastle | Shared secret derivation |
+| Ecdh | CryptoUtility.System / CryptoUtility.BouncyCastle | Shared secret derivation |
 
 ---
 
@@ -198,7 +198,7 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm | Package | Notes |
 |------------|----------|------|
-| Hkdf | CryptoUtility / CryptoUtility.BouncyCastle / CryptoUtility.HkdfStandard | Standard key expansion. |
+| Hkdf | CryptoUtility.System / CryptoUtility.BouncyCastle / CryptoUtility.HkdfStandard | Standard key expansion. |
 
 ---
 
@@ -206,7 +206,7 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm | Package | Notes |
 |------------|----------|------|
-| Pbkdf2 | CryptoUtility / CryptoUtility.BouncyCastle | Password-based key derivation |
+| Pbkdf2 | CryptoUtility.System / CryptoUtility.BouncyCastle | Password-based key derivation |
 
 ---
 
@@ -216,14 +216,14 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm | Package | Notes |
 |------------|----------|------|
-| Sha256 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| Sha384 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| Sha512 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| Sha3_256 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| Sha3_384 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| Sha3_512 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| Sha1 | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
-| Md5 | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
+| Sha256 | CryptoUtility.System / CryptoUtility.BouncyCastle | Secure hash function |
+| Sha384 | CryptoUtility.System / CryptoUtility.BouncyCastle | Secure hash function |
+| Sha512 | CryptoUtility.System / CryptoUtility.BouncyCastle | Secure hash function |
+| Sha3_256 | CryptoUtility.System / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| Sha3_384 | CryptoUtility.System / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| Sha3_512 | CryptoUtility.System / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| Sha1 | CryptoUtility.System / CryptoUtility.BouncyCastle | Insecure |
+| Md5 | CryptoUtility.System / CryptoUtility.BouncyCastle | Insecure |
 
 ---
 
@@ -231,11 +231,11 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm | Package | Notes |
 |------------|----------|------|
-| Crc32 | CryptoUtility.Extras | Integrity check only |
-| Crc64 | CryptoUtility.Extras | Integrity check only |
-| XxHash32 | CryptoUtility.Extras | High-speed hashing |
-| XxHash64 | CryptoUtility.Extras | High-speed hashing |
-| XxHash128 | CryptoUtility.Extras | High-speed hashing |
+| Crc32 | CryptoUtility.System.Extras | Integrity check only |
+| Crc64 | CryptoUtility.System.Extras | Integrity check only |
+| XxHash32 | CryptoUtility.System.Extras | High-speed hashing |
+| XxHash64 | CryptoUtility.System.Extras | High-speed hashing |
+| XxHash128 | CryptoUtility.System.Extras | High-speed hashing |
 
 ---
 
@@ -243,17 +243,19 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 | Algorithm | Package | Notes |
 |------------|----------|------|
-| HmacSha256 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| HmacSha384 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| HmacSha512 | CryptoUtility / CryptoUtility.BouncyCastle | Secure hash function |
-| HmacSha3_256 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| HmacSha3_384 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| HmacSha3_512 | CryptoUtility / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
-| HmacSha1 | CryptoUtility / CryptoUtility.BouncyCastle | Legacy |
+| HmacSha256 | CryptoUtility.System / CryptoUtility.BouncyCastle | Secure hash function |
+| HmacSha384 | CryptoUtility.System / CryptoUtility.BouncyCastle | Secure hash function |
+| HmacSha512 | CryptoUtility.System / CryptoUtility.BouncyCastle | Secure hash function |
+| HmacSha3_256 | CryptoUtility.System / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| HmacSha3_384 | CryptoUtility.System / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| HmacSha3_512 | CryptoUtility.System / CryptoUtility.BouncyCastle | Modern SHA-3 variant |
+| HmacSha1 | CryptoUtility.System / CryptoUtility.BouncyCastle | Legacy |
 | Poly1305 | CryptoUtility.BouncyCastle / CryptoUtility.NaCl | Fast, secure one-time MAC *(requires a unique key/nonce per message; often paired with ChaCha20)* |
-| HmacMd5 | CryptoUtility / CryptoUtility.BouncyCastle | Insecure |
+| HmacMd5 | CryptoUtility.System / CryptoUtility.BouncyCastle | Insecure |
 
 ## 📝 API Notes
+
+The core CryptoUtility package contains only the contracts, envelopes, and utilities.  The individual extension packages contain implementations built upon the core contracts.
 
 Official .NET implementations are recommended, as they are usually hardware accelerated, and have the best support, but they typically have less platform support, which is important if your on an older version of .NET; such as Unity developers, in those cases consider BouncyCastle or a purpose specific library that offers the implementation you need.
 

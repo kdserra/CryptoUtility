@@ -332,8 +332,6 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
-            cipher ??= Aes256GcmImpl.Shared;
-
             if (!LibraryHelper.NotNullOrEmpty(asymmetricCipher, secretKey, encrypted))
             {
                 return (false, string.Empty);

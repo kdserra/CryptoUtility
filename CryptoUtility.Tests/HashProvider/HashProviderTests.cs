@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace CryptoUtility.Tests;
 
 public abstract class HashProviderTests
@@ -28,7 +30,7 @@ public abstract class HashProviderTests
     [Fact]
     public void HashBase64_ShouldMatch_ByteHash()
     {
-        var expectedBytes = HashProvider.Hash(System.Text.Encoding.UTF8.GetBytes(MessageString));
+        var expectedBytes = HashProvider.Hash(Encoding.UTF8.GetBytes(MessageString));
         var expectedBase64 = Convert.ToBase64String(expectedBytes);
 
         var actual = HashProvider.HashBase64(MessageString);

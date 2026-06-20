@@ -7,7 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CryptoUtility.HkdfStandard\CryptoUtility.HkdfStandard.csproj" />
+    <ProjectReference Include="..\CryptoUtility.System.Extras\CryptoUtility.System.Extras.csproj" />
+    <ProjectReference Include="..\CryptoUtility.System\CryptoUtility.System.csproj" />
     <ProjectReference Include="..\CryptoUtility\CryptoUtility.csproj" />
     <ProjectReference Include="..\CryptoUtility.Extras\CryptoUtility.Extras.csproj" />
   </ItemGroup>
