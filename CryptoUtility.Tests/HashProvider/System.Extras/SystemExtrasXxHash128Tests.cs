@@ -4,5 +4,5 @@ namespace CryptoUtility.Tests;
 
 public sealed class SystemExtrasXxHash128Tests : HashProviderTests
 {
-    internal override IHashProvider HashProvider => new XxHash128Impl();
+    internal override IHashProvider HashProvider => XxHash128Impl.Shared;
 }

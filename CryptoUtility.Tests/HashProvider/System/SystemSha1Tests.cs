@@ -4,5 +4,5 @@ namespace CryptoUtility.Tests;
 
 public sealed class SystemSha1Tests : HashProviderTests
 {
-    internal override IHashProvider HashProvider => new Sha1Impl();
+    internal override IHashProvider HashProvider => Sha1Impl.Shared;
 }

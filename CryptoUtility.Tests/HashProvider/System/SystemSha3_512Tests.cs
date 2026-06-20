@@ -4,5 +4,5 @@ namespace CryptoUtility.Tests;
 
 public sealed class SystemSha3_512Tests : HashProviderTests
 {
-    internal override IHashProvider HashProvider => new Sha3_512Impl();
+    internal override IHashProvider HashProvider => Sha3_512Impl.Shared;
 }
