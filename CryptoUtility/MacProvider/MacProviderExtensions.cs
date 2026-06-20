@@ -5,11 +5,6 @@ namespace CryptoUtility;
 
 public static class MacProviderExtensions
 {
-    /// <summary>
-    /// Calculates the recommended key size in bytes for the specified MAC provider.
-    /// </summary>
-    /// <param name="macProvider">The MAC provider instance.</param>
-    /// <returns>The required key size if specified; otherwise, the larger value between 32 bytes and the MAC output size.</returns>
     public static int GetRecommendedKeySizeInBytes(this IMacProvider macProvider)
     {
         if (macProvider.RequiredKeySizeInBytes > 0)
@@ -20,11 +15,6 @@ public static class MacProviderExtensions
         return Math.Max(32, macProvider.MacSizeInBytes);
     }
 
-    /// <summary>
-    /// Generates a cryptographically secure random key tailored to the recommended size of the MAC provider.
-    /// </summary>
-    /// <param name="macProvider">The MAC provider instance.</param>
-    /// <returns>A byte array containing the generated key.</returns>
     public static byte[] GenerateKey(this IMacProvider macProvider)
     {
         int keySize = macProvider.GetRecommendedKeySizeInBytes();
@@ -32,11 +22,6 @@ public static class MacProviderExtensions
         return key;
     }
 
-    /// <summary>
-    /// Generates a cryptographically secure random key and encodes it as a Base64 string.
-    /// </summary>
-    /// <param name="macProvider">The MAC provider instance.</param>
-    /// <returns>A Base64-encoded string representing the generated key.</returns>
     public static string GenerateKeyBase64(this IMacProvider macProvider)
     {
         byte[] key = macProvider.GenerateKey();
@@ -44,14 +29,6 @@ public static class MacProviderExtensions
         return keyBase64;
     }
 
-    /// <summary>
-    /// Computes the Message Authentication Code (MAC) for a string message using a Base64-encoded key,
-    /// returning the result as a Base64 string. Safely clears sensitive byte arrays from memory before returning.
-    /// </summary>
-    /// <param name="macProvider">The MAC provider instance.</param>
-    /// <param name="key">The Base64-encoded secret key.</param>
-    /// <param name="message">The plain text message to authenticate.</param>
-    /// <returns>The Base64-encoded MAC tag, or an empty string if validation fails.</returns>
     public static string ComputeMacBase64(this IMacProvider macProvider, string key, string message)
     {
         if (!LibraryHelper.NotNull(macProvider, key, message))
@@ -71,15 +48,6 @@ public static class MacProviderExtensions
         return macBase64;
     }
 
-    /// <summary>
-    /// Verifies the authenticity and integrity of a message by comparing a provided MAC tag against a computed MAC tag
-    /// using a constant-time comparison to prevent timing attacks.
-    /// </summary>
-    /// <param name="macProvider">The MAC provider instance.</param>
-    /// <param name="key">The secret key byte array.</param>
-    /// <param name="message">The message byte array.</param>
-    /// <param name="mac">The expected MAC tag byte array to verify against.</param>
-    /// <returns><see langword="true"/> if the MAC tag matches the computed MAC; otherwise, <see langword="false"/>.</returns>
     public static bool VerifyMac(
         this IMacProvider macProvider,
         byte[] key,
@@ -106,15 +74,6 @@ public static class MacProviderExtensions
         }
     }
 
-    /// <summary>
-    /// Verifies the authenticity and integrity of a string message using Base64-encoded inputs.
-    /// Performs operations using constant-time verification.
-    /// </summary>
-    /// <param name="macProvider">The MAC provider instance.</param>
-    /// <param name="key">The Base64-encoded secret key.</param>
-    /// <param name="message">The plain text message to verify.</param>
-    /// <param name="mac">The Base64-encoded expected MAC tag to verify against.</param>
-    /// <returns><see langword="true"/> if the MAC tag matches the computed MAC; otherwise, <see langword="false"/>.</returns>
     public static bool VerifyBase64(
         this IMacProvider macProvider,
         string key,

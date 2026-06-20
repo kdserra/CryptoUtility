@@ -4,15 +4,6 @@ namespace CryptoUtility;
 
 public static class DigitalSignatureExtensions
 {
-    /// <summary>
-    /// Signs a Base64-encoded message using the specified secret key and returns the result as a Base64-encoded
-    /// signature.
-    /// </summary>
-    /// <param name="digitalSignature">The digital signature instance used to perform the signing.</param>
-    /// <param name="message">The Base64-encoded message to sign. Cannot be null.</param>
-    /// <param name="secretKey">The Base64-encoded secret key used to sign the message. Cannot be null.</param>
-    /// <returns>A tuple containing a value indicating whether the signing operation was successful and the Base64-encoded
-    /// signature. The signature is an empty string if the operation fails.</returns>
     public static (bool success, string signature) SignBase64(
         this IDigitalSignature digitalSignature,
         string message,
@@ -42,14 +33,6 @@ public static class DigitalSignatureExtensions
         }
     }
 
-    /// <summary>
-    /// Verifies the authenticity of a message using its Base64-encoded signature and public key.
-    /// </summary>
-    /// <param name="digitalSignature">The digital signature instance used to perform the verification.</param>
-    /// <param name="message">The message to verify. This parameter must not be null.</param>
-    /// <param name="signature">The Base64-encoded digital signature associated with the message. This parameter must not be null.</param>
-    /// <param name="publicKey">The Base64-encoded public key to use for signature verification. This parameter must not be null.</param>
-    /// <returns>true if the signature is valid for the specified message and public key; otherwise, false.</returns>
     public static bool VerifyBase64(
         this IDigitalSignature digitalSignature,
         string message,
@@ -77,11 +60,6 @@ public static class DigitalSignatureExtensions
         }
     }
 
-    /// <summary>
-    /// Generates a new cryptographic key and returns it as a Base64 encoded string.
-    /// </summary>
-    /// <param name="digitalSignature">The digital signature instance.</param>
-    /// <returns>The generated key as a Base64 string.</returns>
     public static (string PublicKey, string SecretKey) GenerateKeyPairBase64(
         this IDigitalSignature digitalSignature
     )

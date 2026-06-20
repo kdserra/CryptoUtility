@@ -1,8 +1,5 @@
 ﻿namespace CryptoUtility;
 
-/// <summary>
-/// Provides utility methods.
-/// </summary>
 internal static class LibraryHelper
 {
     internal static bool NotNull(params object?[] objects)

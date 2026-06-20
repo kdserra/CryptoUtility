@@ -4,13 +4,6 @@ namespace CryptoUtility;
 
 public static class KeyAgreementExtensions
 {
-    /// <summary>
-    /// Derives a shared secret in Base64 using the specified secret key and peer public key.
-    /// </summary>
-    /// <param name="keyAgreement">The key agreement instance.</param>
-    /// <param name="secretKey">The secret key in Base64 format.</param>
-    /// <param name="peerPublicKey">The peer's public key in Base64 format.</param>
-    /// <returns>A tuple indicating success and the derived shared secret in Base64 format.</returns>
     public static (bool success, string sharedSecret) DeriveSharedSecretBase64(
         this IKeyAgreement keyAgreement,
         string secretKey,
@@ -47,11 +40,6 @@ public static class KeyAgreementExtensions
         }
     }
 
-    /// <summary>
-    /// Generates a new cryptographic key and returns it as a Base64 encoded string.
-    /// </summary>
-    /// <param name="keyAgreement">The key agreement instance.</param>
-    /// <returns>The generated key as a Base64 string.</returns>
     public static (string PublicKey, string SecretKey) GenerateKeyPairBase64(
         this IKeyAgreement keyAgreement
     )
@@ -67,16 +55,6 @@ public static class KeyAgreementExtensions
         return (publicKeyBase64, secretKeyBase64);
     }
 
-    /// <summary>
-    /// Encrypts plaintext using a key derived from a shared secret via key agreement.
-    /// </summary>
-    /// <param name="keyAgreement">The key agreement instance.</param>
-    /// <param name="sharedSecret">The derived shared secret bytes.</param>
-    /// <param name="plaintext">The plaintext bytes to encrypt.</param>
-    /// <param name="kdfInfo">Context/application specific information bytes for KDF derivation.</param>
-    /// <param name="cipher">The symmetric cipher to use. If null, defaults to AES-256 GCM.</param>
-    /// <param name="kdf">The key derivation function to use. If null, defaults to HKDF.</param>
-    /// <returns>A tuple indicating success and the encrypted bytes.</returns>
     public static (bool success, byte[] encrypted) Encrypt(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
@@ -117,16 +95,6 @@ public static class KeyAgreementExtensions
         return (success, encrypted);
     }
 
-    /// <summary>
-    /// Decrypts ciphertext using a key derived from a shared secret via key agreement.
-    /// </summary>
-    /// <param name="keyAgreement">The key agreement instance.</param>
-    /// <param name="sharedSecret">The derived shared secret bytes.</param>
-    /// <param name="encrypted">The encrypted bytes to decrypt.</param>
-    /// <param name="kdfInfo">Context/application specific information bytes for KDF derivation.</param>
-    /// <param name="cipher">The symmetric cipher to use. If null, defaults to AES-256 GCM.</param>
-    /// <param name="kdf">The key derivation function to use. If null, defaults to HKDF.</param>
-    /// <returns>A tuple indicating success and the decrypted bytes.</returns>
     public static (bool success, byte[] decrypted) Decrypt(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
