@@ -62,7 +62,7 @@ Instead of learning a dozen distinct libraries, paradigms, and syntax patterns f
 
 ### 🔤 Base64 String Workflow
 ```csharp
-using CryptoUtility;
+using CryptoUtility.System;
 
 // 1. Generate a secure, random key as a Base64 string
 string base64Key = Aes256Gcm.GenerateKeyBase64();
@@ -81,7 +81,7 @@ if (encSuccess)
 
 ### 📦 Byte Array Workflow
 ```csharp
-using CryptoUtility;
+using CryptoUtility.System;
 
 // 1. Generate key and plaintext bytes
 byte[] key = Aes256Gcm.GenerateKey();
@@ -97,7 +97,7 @@ var (decSuccess, decrypted) = Aes256Gcm.Decrypt(key, ciphertext);
 ## 2️⃣ Hybrid Asymmetric Encryption (RSA-4096 + AES)
 
 ```csharp
-using CryptoUtility;
+using CryptoUtility.System;
 
 // Generate public/private keypair
 var (publicKey, privateKey) = Rsa4096.GenerateKeyPairBase64();
@@ -115,7 +115,7 @@ var (decSuccess, decryptedPayload) = Rsa4096.HybridDecryptBase64(Aes256Gcm.Share
 ## 3️⃣ Key Agreement & Hybrid ECDH
 
 ```csharp
-using CryptoUtility;
+using CryptoUtility.System;
 
 // 1. Establish KeyPairs for Alice and Bob
 var (alicePub, alicePriv) = Ecdh.GenerateKeyPair();
