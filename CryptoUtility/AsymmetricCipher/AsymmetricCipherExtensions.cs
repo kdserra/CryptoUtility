@@ -197,6 +197,25 @@ public static class AsymmetricCipherExtensions
         }
     }
 
+    public static bool TryDecryptBase64(
+        this IAsymmetricCipher cipher,
+        string publicKey,
+        string encrypted,
+        out string plaintext
+    )
+    {
+        try
+        {
+            plaintext = cipher.DecryptBase64(publicKey, encrypted);
+            return true;
+        }
+        catch
+        {
+            plaintext = string.Empty;
+            return false;
+        }
+    }
+
     public static bool TryGenerateKeyPair(
         this IAsymmetricCipher cipher,
         out byte[] publicKey,
