@@ -10,97 +10,7 @@ public static class SymmetricCipherExtensions
         return cipher.Encrypt(key, plaintext, nonce: cipher.GenerateNonce());
     }
 
-    public static byte[] Encrypt(
-        this ISymmetricCipher cipher,
-        string keyBase64,
-        string plaintextUtf8,
-        string nonceBase64
-    )
-    {
-        byte[] key = Convert.FromBase64String(keyBase64);
-        byte[] plaintext = Encoding.UTF8.GetBytes(plaintextUtf8);
-        byte[] nonce = Convert.FromBase64String(nonceBase64);
-
-        byte[] encrypted = cipher.Encrypt(key, plaintext, nonce);
-
-        CryptographicOperations.ZeroMemory(key);
-        CryptographicOperations.ZeroMemory(plaintext);
-        CryptographicOperations.ZeroMemory(nonce);
-
-        return encrypted;
-    }
-
-    public static byte[] Encrypt(
-        this ISymmetricCipherAEAD cipher,
-        string keyBase64,
-        string plaintextUtf8,
-        string nonceBase64,
-        string aadBase64
-    )
-    {
-        byte[] key = Convert.FromBase64String(keyBase64);
-        byte[] plaintext = Encoding.UTF8.GetBytes(plaintextUtf8);
-        byte[] nonce = Convert.FromBase64String(nonceBase64);
-        byte[] aad = Convert.FromBase64String(aadBase64);
-
-        byte[] encrypted = cipher.Encrypt(key, plaintext, nonce, aad);
-
-        CryptographicOperations.ZeroMemory(key);
-        CryptographicOperations.ZeroMemory(plaintext);
-        CryptographicOperations.ZeroMemory(nonce);
-        CryptographicOperations.ZeroMemory(aad);
-
-        return encrypted;
-    }
-
-    public static string EncryptBase64(
-        this ISymmetricCipher cipher,
-        string keyBase64,
-        string plaintextUtf8,
-        string nonceBase64
-    )
-    {
-        byte[] key = Convert.FromBase64String(keyBase64);
-        byte[] plaintext = Encoding.UTF8.GetBytes(plaintextUtf8);
-        byte[] nonce = Convert.FromBase64String(nonceBase64);
-
-        byte[] encrypted = cipher.Encrypt(key, plaintext, nonce);
-        string encryptedBase64 = Convert.ToBase64String(encrypted);
-
-        CryptographicOperations.ZeroMemory(key);
-        CryptographicOperations.ZeroMemory(plaintext);
-        CryptographicOperations.ZeroMemory(nonce);
-        CryptographicOperations.ZeroMemory(encrypted);
-
-        return encryptedBase64;
-    }
-
-    public static string EncryptBase64(
-        this ISymmetricCipherAEAD cipher,
-        string keyBase64,
-        string plaintextUtf8,
-        string nonceBase64,
-        string aadBase64
-    )
-    {
-        byte[] key = Convert.FromBase64String(keyBase64);
-        byte[] plaintext = Encoding.UTF8.GetBytes(plaintextUtf8);
-        byte[] nonce = Convert.FromBase64String(nonceBase64);
-        byte[] aad = Convert.FromBase64String(aadBase64);
-
-        byte[] encrypted = cipher.Encrypt(key, plaintext, nonce, aad);
-        string encryptedBase64 = Convert.ToBase64String(encrypted);
-
-        CryptographicOperations.ZeroMemory(key);
-        CryptographicOperations.ZeroMemory(plaintext);
-        CryptographicOperations.ZeroMemory(nonce);
-        CryptographicOperations.ZeroMemory(aad);
-        CryptographicOperations.ZeroMemory(encrypted);
-
-        return encryptedBase64;
-    }
-
-    public static string EncryptBase64(
+    public static string Encrypt(
         this ISymmetricCipher cipher,
         string keyBase64,
         string plaintextUtf8
@@ -118,7 +28,7 @@ public static class SymmetricCipherExtensions
         return encryptedBase64;
     }
 
-    public static string DecryptBase64(
+    public static string Decrypt(
         this ISymmetricCipher cipher,
         string keyBase64,
         string encryptedBase64
@@ -152,26 +62,6 @@ public static class SymmetricCipherExtensions
         byte[] plaintext = cipher.Decrypt(keyBytes, encrypted);
 
         CryptographicOperations.ZeroMemory(keyBytes);
-
-        return plaintext;
-    }
-
-    public static byte[] Encrypt(this ISymmetricCipher cipher, byte[] key, string plaintextUtf8)
-    {
-        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintextUtf8);
-        byte[] encrypted = cipher.Encrypt(key, plaintextBytes);
-
-        CryptographicOperations.ZeroMemory(plaintextBytes);
-
-        return encrypted;
-    }
-
-    public static byte[] Decrypt(this ISymmetricCipher cipher, byte[] key, string encryptedBase64)
-    {
-        byte[] encryptedBytes = Convert.FromBase64String(encryptedBase64);
-        byte[] plaintext = cipher.Decrypt(key, encryptedBytes);
-
-        CryptographicOperations.ZeroMemory(encryptedBytes);
 
         return plaintext;
     }
@@ -212,11 +102,12 @@ public static class SymmetricCipherExtensions
         {
             encrypted = cipher.Encrypt(key, plaintext);
 
-            return false;
+            return true;
         }
         catch
         {
             encrypted = Array.Empty<byte>();
+
             return false;
         }
     }
@@ -232,11 +123,12 @@ public static class SymmetricCipherExtensions
         {
             plaintext = cipher.Decrypt(key, encrypted);
 
-            return false;
+            return true;
         }
         catch
         {
             plaintext = Array.Empty<byte>();
+
             return false;
         }
     }
@@ -252,11 +144,12 @@ public static class SymmetricCipherExtensions
         {
             encrypted = cipher.Encrypt(keyBase64, plaintext);
 
-            return false;
+            return true;
         }
         catch
         {
             encrypted = Array.Empty<byte>();
+
             return false;
         }
     }
@@ -272,7 +165,7 @@ public static class SymmetricCipherExtensions
         {
             plaintext = cipher.Encrypt(keyBase64, encrypted);
 
-            return false;
+            return true;
         }
         catch
         {
@@ -284,20 +177,20 @@ public static class SymmetricCipherExtensions
 
     public static bool TryEncrypt(
         this ISymmetricCipher cipher,
-        byte[] key,
+        string keyBase64,
         string plaintextBase64,
-        out byte[] encrypted
+        out string encryptedBase64
     )
     {
         try
         {
-            encrypted = cipher.Encrypt(key, plaintextBase64);
+            encryptedBase64 = cipher.Encrypt(keyBase64, plaintextBase64);
 
-            return false;
+            return true;
         }
         catch
         {
-            encrypted = Array.Empty<byte>();
+            encryptedBase64 = string.Empty;
 
             return false;
         }
@@ -305,20 +198,20 @@ public static class SymmetricCipherExtensions
 
     public static bool TryDecrypt(
         this ISymmetricCipher cipher,
-        byte[] key,
+        string keyBase64,
         string encryptedBase64,
-        out byte[] plaintext
+        out string plaintextBase64
     )
     {
         try
         {
-            plaintext = cipher.Decrypt(key, encryptedBase64);
+            plaintextBase64 = cipher.Encrypt(keyBase64, encryptedBase64);
 
-            return false;
+            return true;
         }
         catch
         {
-            plaintext = Array.Empty<byte>();
+            plaintextBase64 = string.Empty;
 
             return false;
         }
