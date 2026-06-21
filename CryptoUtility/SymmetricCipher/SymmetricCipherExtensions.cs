@@ -10,7 +10,7 @@ public static class SymmetricCipherExtensions
         return cipher.Encrypt(key, plaintext, nonce: cipher.GenerateNonce());
     }
 
-    public static string Encrypt(
+    public static string EncryptBase64(
         this ISymmetricCipher cipher,
         string keyBase64,
         string plaintextUtf8
@@ -28,7 +28,7 @@ public static class SymmetricCipherExtensions
         return encryptedBase64;
     }
 
-    public static string Decrypt(
+    public static string DecryptBase64(
         this ISymmetricCipher cipher,
         string keyBase64,
         string encryptedBase64
@@ -64,31 +64,6 @@ public static class SymmetricCipherExtensions
         CryptographicOperations.ZeroMemory(keyBytes);
 
         return plaintext;
-    }
-
-    public static byte[] GenerateKey(this ISymmetricCipher cipher)
-    {
-        return CryptoHelper.GetBytes(cipher.KeySizeBytes);
-    }
-
-    public static byte[] GenerateNonce(this ISymmetricCipher cipher)
-    {
-        return CryptoHelper.GetBytes(cipher.NonceSizeBytes);
-    }
-
-    public static string GenerateNonceBase64(this ISymmetricCipher cipher)
-    {
-        return Convert.ToBase64String(cipher.GenerateNonce());
-    }
-
-    public static string GenerateKeyBase64(this ISymmetricCipher cipher)
-    {
-        byte[] key = cipher.GenerateKey();
-        string result = Convert.ToBase64String(key);
-
-        CryptographicOperations.ZeroMemory(key);
-
-        return result;
     }
 
     public static bool TryEncrypt(
@@ -163,7 +138,7 @@ public static class SymmetricCipherExtensions
     {
         try
         {
-            plaintext = cipher.Encrypt(keyBase64, encrypted);
+            plaintext = cipher.Decrypt(keyBase64, encrypted);
 
             return true;
         }
@@ -175,7 +150,7 @@ public static class SymmetricCipherExtensions
         }
     }
 
-    public static bool TryEncrypt(
+    public static bool TryEncryptBase64(
         this ISymmetricCipher cipher,
         string keyBase64,
         string plaintextBase64,
@@ -184,7 +159,7 @@ public static class SymmetricCipherExtensions
     {
         try
         {
-            encryptedBase64 = cipher.Encrypt(keyBase64, plaintextBase64);
+            encryptedBase64 = cipher.EncryptBase64(keyBase64, plaintextBase64);
 
             return true;
         }
@@ -196,7 +171,7 @@ public static class SymmetricCipherExtensions
         }
     }
 
-    public static bool TryDecrypt(
+    public static bool TryDecryptBase64(
         this ISymmetricCipher cipher,
         string keyBase64,
         string encryptedBase64,
@@ -205,7 +180,7 @@ public static class SymmetricCipherExtensions
     {
         try
         {
-            plaintextBase64 = cipher.Encrypt(keyBase64, encryptedBase64);
+            plaintextBase64 = cipher.DecryptBase64(keyBase64, encryptedBase64);
 
             return true;
         }
@@ -215,5 +190,30 @@ public static class SymmetricCipherExtensions
 
             return false;
         }
+    }
+
+    public static byte[] GenerateKey(this ISymmetricCipher cipher)
+    {
+        return CryptoHelper.GetBytes(cipher.KeySizeBytes);
+    }
+
+    public static string GenerateKeyBase64(this ISymmetricCipher cipher)
+    {
+        byte[] key = cipher.GenerateKey();
+        string result = Convert.ToBase64String(key);
+
+        CryptographicOperations.ZeroMemory(key);
+
+        return result;
+    }
+
+    public static byte[] GenerateNonce(this ISymmetricCipher cipher)
+    {
+        return CryptoHelper.GetBytes(cipher.NonceSizeBytes);
+    }
+
+    public static string GenerateNonceBase64(this ISymmetricCipher cipher)
+    {
+        return Convert.ToBase64String(cipher.GenerateNonce());
     }
 }
