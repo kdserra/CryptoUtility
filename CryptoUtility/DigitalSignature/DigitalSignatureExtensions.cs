@@ -11,15 +11,25 @@ public static class DigitalSignatureExtensions
         string secretKeyBase64
     )
     {
-        byte[] messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
-        byte[] signatureBytes = digitalSignature.Sign(messageBytes, secretKeyBytes);
+        byte[] messageBytes = Array.Empty<byte>();
+        byte[] secretKeyBytes = Array.Empty<byte>();
+        byte[] signatureBytes = Array.Empty<byte>();
+        string signatureBase64 = string.Empty;
 
-        string signatureBase64 = Convert.ToBase64String(signatureBytes);
+        try
+        {
+            messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
+            secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
+            signatureBytes = digitalSignature.Sign(messageBytes, secretKeyBytes);
 
-        CryptographicOperations.ZeroMemory(messageBytes);
-        CryptographicOperations.ZeroMemory(secretKeyBytes);
-        CryptographicOperations.ZeroMemory(signatureBytes);
+            signatureBase64 = Convert.ToBase64String(signatureBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(messageBytes);
+            CryptographicOperations.ZeroMemory(secretKeyBytes);
+            CryptographicOperations.ZeroMemory(signatureBytes);
+        }
 
         return signatureBase64;
     }
@@ -31,37 +41,50 @@ public static class DigitalSignatureExtensions
         string publicKeyBase64
     )
     {
+        byte[] messageBytes = Array.Empty<byte>();
+        byte[] signatureBytes = Array.Empty<byte>();
+        byte[] publicKeyBytes = Array.Empty<byte>();
+        bool isValid = false;
+
         try
         {
-            byte[] messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
-            byte[] signatureBytes = Convert.FromBase64String(signatureBase64);
-            byte[] publicKeyBytes = Convert.FromBase64String(publicKeyBase64);
+            messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
+            signatureBytes = Convert.FromBase64String(signatureBase64);
+            publicKeyBytes = Convert.FromBase64String(publicKeyBase64);
 
-            bool isValid = digitalSignature.Verify(messageBytes, signatureBytes, publicKeyBytes);
-
+            isValid = digitalSignature.Verify(messageBytes, signatureBytes, publicKeyBytes);
+        }
+        finally
+        {
             CryptographicOperations.ZeroMemory(messageBytes);
             CryptographicOperations.ZeroMemory(signatureBytes);
             CryptographicOperations.ZeroMemory(publicKeyBytes);
+        }
 
-            return isValid;
-        }
-        catch
-        {
-            return false;
-        }
+        return isValid;
     }
 
     public static (string publicKeyBase64, string secretKeyBase64) GenerateKeyPairBase64(
         this IDigitalSignature digitalSignature
     )
     {
-        (byte[] publicKeyBytes, byte[] secretKeyBytes) = digitalSignature.GenerateKeyPair();
+        byte[] publicKeyBytes = Array.Empty<byte>();
+        byte[] secretKeyBytes = Array.Empty<byte>();
+        string publicKeyBase64 = string.Empty;
+        string secretKeyBase64 = string.Empty;
 
-        string publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
-        string secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
+        try
+        {
+            (publicKeyBytes, secretKeyBytes) = digitalSignature.GenerateKeyPair();
 
-        CryptographicOperations.ZeroMemory(publicKeyBytes);
-        CryptographicOperations.ZeroMemory(secretKeyBytes);
+            publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
+            secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(publicKeyBytes);
+            CryptographicOperations.ZeroMemory(secretKeyBytes);
+        }
 
         return (publicKeyBase64, secretKeyBase64);
     }

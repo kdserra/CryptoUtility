@@ -12,13 +12,22 @@ public static class PasswordKdfExtensions
         int outputLength
     )
     {
-        byte[] saltBytes = Convert.FromBase64String(saltBase64);
-        byte[] keyBytes = kdf.DeriveKey(passwordUtf8, saltBytes, iterations, outputLength);
+        byte[] saltBytes = Array.Empty<byte>();
+        byte[] keyBytes = Array.Empty<byte>();
+        string keyBase64 = string.Empty;
 
-        string keyBase64 = Convert.ToBase64String(keyBytes);
+        try
+        {
+            saltBytes = Convert.FromBase64String(saltBase64);
+            keyBytes = kdf.DeriveKey(passwordUtf8, saltBytes, iterations, outputLength);
 
-        CryptographicOperations.ZeroMemory(saltBytes);
-        CryptographicOperations.ZeroMemory(keyBytes);
+            keyBase64 = Convert.ToBase64String(keyBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(saltBytes);
+            CryptographicOperations.ZeroMemory(keyBytes);
+        }
 
         return keyBase64;
     }

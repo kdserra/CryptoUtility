@@ -75,10 +75,19 @@ public partial class HybridCipherEnvelope
     /// <returns>A Base64-encoded string that represents the serialized form of the envelope.</returns>
     public static string ToBase64(HybridCipherEnvelope envelope)
     {
-        byte[] envelopeBytes = ToBytes(envelope);
-        string envelopeBase64 = Convert.ToBase64String(envelopeBytes);
+        byte[] envelopeBytes = Array.Empty<byte>();
+        string envelopeBase64 = string.Empty;
 
-        CryptographicOperations.ZeroMemory(envelopeBytes);
+        try
+        {
+            envelopeBytes = ToBytes(envelope);
+
+            envelopeBase64 = Convert.ToBase64String(envelopeBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(envelopeBytes);
+        }
 
         return envelopeBase64;
     }
@@ -91,11 +100,19 @@ public partial class HybridCipherEnvelope
     /// <returns>A HybridCipherEnvelope object if the input string is valid and conversion succeeds; otherwise, null.</returns>
     public static HybridCipherEnvelope? FromBase64(string envelopeBase64)
     {
-        byte[] envelopeBytes = Convert.FromBase64String(envelopeBase64);
+        byte[] envelopeBytes = Array.Empty<byte>();
+        HybridCipherEnvelope? envelope = null;
 
-        HybridCipherEnvelope? envelope = FromBytes(envelopeBytes);
+        try
+        {
+            envelopeBytes = Convert.FromBase64String(envelopeBase64);
 
-        CryptographicOperations.ZeroMemory(envelopeBytes);
+            envelope = FromBytes(envelopeBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(envelopeBytes);
+        }
 
         return envelope;
     }

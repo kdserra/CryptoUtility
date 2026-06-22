@@ -7,13 +7,22 @@ public static class HashProviderExtensions
 {
     public static string HashBase64(this IHashProvider hashProvider, string messageUtf8)
     {
-        byte[] messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
-        byte[] hashBytes = hashProvider.Hash(messageBytes);
+        byte[] messageBytes = Array.Empty<byte>();
+        byte[] hashBytes = Array.Empty<byte>();
+        string hashBase64 = string.Empty;
 
-        string hashBase64 = Convert.ToBase64String(hashBytes);
+        try
+        {
+            messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
+            hashBytes = hashProvider.Hash(messageBytes);
 
-        CryptographicOperations.ZeroMemory(messageBytes);
-        CryptographicOperations.ZeroMemory(hashBytes);
+            hashBase64 = Convert.ToBase64String(hashBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(messageBytes);
+            CryptographicOperations.ZeroMemory(hashBytes);
+        }
 
         return hashBase64;
     }

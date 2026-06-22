@@ -11,15 +11,25 @@ public static class AsymmetricCipherExtensions
         string plaintextUtf8
     )
     {
-        byte[] publicKeyBytes = Convert.FromBase64String(publicKeyBase64);
-        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintextUtf8);
-        byte[] encryptedBytes = cipher.Encrypt(publicKeyBytes, plaintextBytes);
+        byte[] publicKeyBytes = Array.Empty<byte>();
+        byte[] plaintextBytes = Array.Empty<byte>();
+        byte[] encryptedBytes = Array.Empty<byte>();
+        string encryptedBase64 = string.Empty;
 
-        string encryptedBase64 = Convert.ToBase64String(encryptedBytes);
+        try
+        {
+            publicKeyBytes = Convert.FromBase64String(publicKeyBase64);
+            plaintextBytes = Encoding.UTF8.GetBytes(plaintextUtf8);
+            encryptedBytes = cipher.Encrypt(publicKeyBytes, plaintextBytes);
 
-        CryptographicOperations.ZeroMemory(publicKeyBytes);
-        CryptographicOperations.ZeroMemory(plaintextBytes);
-        CryptographicOperations.ZeroMemory(encryptedBytes);
+            encryptedBase64 = Convert.ToBase64String(encryptedBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(publicKeyBytes);
+            CryptographicOperations.ZeroMemory(plaintextBytes);
+            CryptographicOperations.ZeroMemory(encryptedBytes);
+        }
 
         return encryptedBase64;
     }
@@ -30,15 +40,25 @@ public static class AsymmetricCipherExtensions
         string encryptedBase64
     )
     {
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
-        byte[] encryptedBytes = Convert.FromBase64String(encryptedBase64);
-        byte[] decryptedBytes = cipher.Decrypt(secretKeyBytes, encryptedBytes);
+        byte[] secretKeyBytes = Array.Empty<byte>();
+        byte[] encryptedBytes = Array.Empty<byte>();
+        byte[] decryptedBytes = Array.Empty<byte>();
+        string plaintext = string.Empty;
 
-        string plaintext = Encoding.UTF8.GetString(decryptedBytes);
+        try
+        {
+            secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
+            encryptedBytes = Convert.FromBase64String(encryptedBase64);
+            decryptedBytes = cipher.Decrypt(secretKeyBytes, encryptedBytes);
 
-        CryptographicOperations.ZeroMemory(secretKeyBytes);
-        CryptographicOperations.ZeroMemory(encryptedBytes);
-        CryptographicOperations.ZeroMemory(decryptedBytes);
+            plaintext = Encoding.UTF8.GetString(decryptedBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(secretKeyBytes);
+            CryptographicOperations.ZeroMemory(encryptedBytes);
+            CryptographicOperations.ZeroMemory(decryptedBytes);
+        }
 
         return plaintext;
     }
@@ -47,13 +67,23 @@ public static class AsymmetricCipherExtensions
         this IAsymmetricCipher cipher
     )
     {
-        (byte[] publicKeyBytes, byte[] secretKeyBytes) = cipher.GenerateKeyPair();
+        byte[] publicKeyBytes = Array.Empty<byte>();
+        byte[] secretKeyBytes = Array.Empty<byte>();
+        string publicKeyBase64 = string.Empty;
+        string secretKeyBase64 = string.Empty;
 
-        string publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
-        string secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
+        try
+        {
+            (publicKeyBytes, secretKeyBytes) = cipher.GenerateKeyPair();
 
-        CryptographicOperations.ZeroMemory(publicKeyBytes);
-        CryptographicOperations.ZeroMemory(secretKeyBytes);
+            publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
+            secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(publicKeyBytes);
+            CryptographicOperations.ZeroMemory(secretKeyBytes);
+        }
 
         return (publicKeyBase64, secretKeyBase64);
     }
@@ -65,29 +95,39 @@ public static class AsymmetricCipherExtensions
         byte[] plaintext
     )
     {
-        byte[] asymmetricPlaintextDataEncryptionKey = symmetricCipher.GenerateKey();
+        byte[] asymmetricPlaintextDataEncryptionKey = Array.Empty<byte>();
+        byte[] asymmetricEncrypted = Array.Empty<byte>();
+        byte[] symmetricEncrypted = Array.Empty<byte>();
+        byte[] envelopeBytes = Array.Empty<byte>();
 
-        byte[] asymmetricEncrypted = asymmetricCipher.Encrypt(
-            publicKey,
-            asymmetricPlaintextDataEncryptionKey
-        );
+        try
+        {
+            asymmetricPlaintextDataEncryptionKey = symmetricCipher.GenerateKey();
 
-        byte[] symmetricEncrypted = symmetricCipher.Encrypt(
-            asymmetricPlaintextDataEncryptionKey,
-            plaintext
-        );
+            asymmetricEncrypted = asymmetricCipher.Encrypt(
+                publicKey,
+                asymmetricPlaintextDataEncryptionKey
+            );
 
-        HybridCipherEnvelope envelope = new(
-            HybridCipherEnvelope.LatestVersion,
-            asymmetricEncrypted,
-            symmetricEncrypted
-        );
+            symmetricEncrypted = symmetricCipher.Encrypt(
+                asymmetricPlaintextDataEncryptionKey,
+                plaintext
+            );
 
-        byte[] envelopeBytes = envelope.ToBytes();
+            HybridCipherEnvelope envelope = new(
+                HybridCipherEnvelope.LatestVersion,
+                asymmetricEncrypted,
+                symmetricEncrypted
+            );
 
-        CryptographicOperations.ZeroMemory(asymmetricPlaintextDataEncryptionKey);
-        CryptographicOperations.ZeroMemory(asymmetricEncrypted);
-        CryptographicOperations.ZeroMemory(symmetricEncrypted);
+            envelopeBytes = envelope.ToBytes();
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(asymmetricPlaintextDataEncryptionKey);
+            CryptographicOperations.ZeroMemory(asymmetricEncrypted);
+            CryptographicOperations.ZeroMemory(symmetricEncrypted);
+        }
 
         return envelopeBytes;
     }
@@ -106,17 +146,25 @@ public static class AsymmetricCipherExtensions
             throw new InvalidOperationException("Failed to parse Hybrid Cipher Envelope.");
         }
 
-        byte[] asymmetricPlaintextDataEncryptionKey = asymmetricCipher.Decrypt(
-            secretKey,
-            envelope.AsymmetricEncrypted
-        );
+        byte[] asymmetricPlaintextDataEncryptionKey = Array.Empty<byte>();
+        byte[] symmetricPlaintext = Array.Empty<byte>();
 
-        byte[] symmetricPlaintext = symmetricCipher.Decrypt(
-            asymmetricPlaintextDataEncryptionKey,
-            envelope.SymmetricEncrypted
-        );
+        try
+        {
+            asymmetricPlaintextDataEncryptionKey = asymmetricCipher.Decrypt(
+                secretKey,
+                envelope.AsymmetricEncrypted
+            );
 
-        CryptographicOperations.ZeroMemory(asymmetricPlaintextDataEncryptionKey);
+            symmetricPlaintext = symmetricCipher.Decrypt(
+                asymmetricPlaintextDataEncryptionKey,
+                envelope.SymmetricEncrypted
+            );
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(asymmetricPlaintextDataEncryptionKey);
+        }
 
         return symmetricPlaintext;
     }
@@ -128,21 +176,31 @@ public static class AsymmetricCipherExtensions
         string plaintextUtf8
     )
     {
-        byte[] publicKeyBytes = Convert.FromBase64String(publicKeyBase64);
-        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintextUtf8);
+        byte[] publicKeyBytes = Array.Empty<byte>();
+        byte[] plaintextBytes = Array.Empty<byte>();
+        byte[] encryptedBytes = Array.Empty<byte>();
+        string encryptedBase64 = string.Empty;
 
-        byte[] encryptedBytes = HybridEncrypt(
-            asymmetricCipher,
-            symmetricCipher,
-            publicKeyBytes,
-            plaintextBytes
-        );
+        try
+        {
+            publicKeyBytes = Convert.FromBase64String(publicKeyBase64);
+            plaintextBytes = Encoding.UTF8.GetBytes(plaintextUtf8);
 
-        string encryptedBase64 = Convert.ToBase64String(encryptedBytes);
+            encryptedBytes = HybridEncrypt(
+                asymmetricCipher,
+                symmetricCipher,
+                publicKeyBytes,
+                plaintextBytes
+            );
 
-        CryptographicOperations.ZeroMemory(publicKeyBytes);
-        CryptographicOperations.ZeroMemory(plaintextBytes);
-        CryptographicOperations.ZeroMemory(encryptedBytes);
+            encryptedBase64 = Convert.ToBase64String(encryptedBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(publicKeyBytes);
+            CryptographicOperations.ZeroMemory(plaintextBytes);
+            CryptographicOperations.ZeroMemory(encryptedBytes);
+        }
 
         return encryptedBase64;
     }
@@ -154,21 +212,31 @@ public static class AsymmetricCipherExtensions
         string encryptedBase64
     )
     {
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
-        byte[] encryptedBytes = Convert.FromBase64String(encryptedBase64);
+        byte[] secretKeyBytes = Array.Empty<byte>();
+        byte[] encryptedBytes = Array.Empty<byte>();
+        byte[] plaintextBytes = Array.Empty<byte>();
+        string plaintext = string.Empty;
 
-        byte[] plaintextBytes = HybridDecrypt(
-            asymmetricCipher,
-            symmetricCipher,
-            secretKeyBytes,
-            encryptedBytes
-        );
+        try
+        {
+            secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
+            encryptedBytes = Convert.FromBase64String(encryptedBase64);
 
-        string plaintext = Encoding.UTF8.GetString(plaintextBytes);
+            plaintextBytes = HybridDecrypt(
+                asymmetricCipher,
+                symmetricCipher,
+                secretKeyBytes,
+                encryptedBytes
+            );
 
-        CryptographicOperations.ZeroMemory(secretKeyBytes);
-        CryptographicOperations.ZeroMemory(encryptedBytes);
-        CryptographicOperations.ZeroMemory(plaintextBytes);
+            plaintext = Encoding.UTF8.GetString(plaintextBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(secretKeyBytes);
+            CryptographicOperations.ZeroMemory(encryptedBytes);
+            CryptographicOperations.ZeroMemory(plaintextBytes);
+        }
 
         return plaintext;
     }

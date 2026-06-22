@@ -13,24 +13,35 @@ public static class KeyExpansionKdfExtensions
         string infoBase64
     )
     {
-        byte[] inputKeyMaterialBytes = Convert.FromBase64String(inputKeyMaterialBase64);
-        byte[] saltBytes = Convert.FromBase64String(saltBase64);
-        byte[] infoBytes = Convert.FromBase64String(infoBase64);
+        byte[] inputKeyMaterialBytes = Array.Empty<byte>();
+        byte[] saltBytes = Array.Empty<byte>();
+        byte[] infoBytes = Array.Empty<byte>();
+        byte[] keyBytes = Array.Empty<byte>();
+        string keyBase64 = string.Empty;
 
-        byte[] keyBytes = kdf.DeriveKey(
-            inputKeyMaterialBytes,
-            iterations,
-            outputLength,
-            saltBytes,
-            infoBytes
-        );
+        try
+        {
+            inputKeyMaterialBytes = Convert.FromBase64String(inputKeyMaterialBase64);
+            saltBytes = Convert.FromBase64String(saltBase64);
+            infoBytes = Convert.FromBase64String(infoBase64);
 
-        string keyBase64 = Convert.ToBase64String(keyBytes);
+            keyBytes = kdf.DeriveKey(
+                inputKeyMaterialBytes,
+                iterations,
+                outputLength,
+                saltBytes,
+                infoBytes
+            );
 
-        CryptographicOperations.ZeroMemory(inputKeyMaterialBytes);
-        CryptographicOperations.ZeroMemory(saltBytes);
-        CryptographicOperations.ZeroMemory(infoBytes);
-        CryptographicOperations.ZeroMemory(keyBytes);
+            keyBase64 = Convert.ToBase64String(keyBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(inputKeyMaterialBytes);
+            CryptographicOperations.ZeroMemory(saltBytes);
+            CryptographicOperations.ZeroMemory(infoBytes);
+            CryptographicOperations.ZeroMemory(keyBytes);
+        }
 
         return keyBase64;
     }
@@ -44,11 +55,19 @@ public static class KeyExpansionKdfExtensions
         byte[] info
     )
     {
-        byte[] keyBytes = kdf.DeriveKey(inputKeyMaterial, iterations, outputLength, salt, info);
+        byte[] keyBytes = Array.Empty<byte>();
+        string keyBase64 = string.Empty;
 
-        string keyBase64 = Convert.ToBase64String(keyBytes);
+        try
+        {
+            keyBytes = kdf.DeriveKey(inputKeyMaterial, iterations, outputLength, salt, info);
 
-        CryptographicOperations.ZeroMemory(keyBytes);
+            keyBase64 = Convert.ToBase64String(keyBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(keyBytes);
+        }
 
         return keyBase64;
     }

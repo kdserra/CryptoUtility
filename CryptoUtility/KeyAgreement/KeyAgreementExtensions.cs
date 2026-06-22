@@ -11,19 +11,29 @@ public static class KeyAgreementExtensions
         string peerPublicKeyBase64
     )
     {
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
-        byte[] peerPublicKeyBytes = Convert.FromBase64String(peerPublicKeyBase64);
+        byte[] secretKeyBytes = Array.Empty<byte>();
+        byte[] peerPublicKeyBytes = Array.Empty<byte>();
+        byte[] sharedSecretBytes = Array.Empty<byte>();
+        string sharedSecretBase64 = string.Empty;
 
-        byte[] sharedSecretBytes = keyAgreement.DeriveSharedSecret(
-            secretKeyBytes,
-            peerPublicKeyBytes
-        );
+        try
+        {
+            secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
+            peerPublicKeyBytes = Convert.FromBase64String(peerPublicKeyBase64);
 
-        string sharedSecretBase64 = Convert.ToBase64String(sharedSecretBytes);
+            sharedSecretBytes = keyAgreement.DeriveSharedSecret(
+                secretKeyBytes,
+                peerPublicKeyBytes
+            );
 
-        CryptographicOperations.ZeroMemory(secretKeyBytes);
-        CryptographicOperations.ZeroMemory(peerPublicKeyBytes);
-        CryptographicOperations.ZeroMemory(sharedSecretBytes);
+            sharedSecretBase64 = Convert.ToBase64String(sharedSecretBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(secretKeyBytes);
+            CryptographicOperations.ZeroMemory(peerPublicKeyBytes);
+            CryptographicOperations.ZeroMemory(sharedSecretBytes);
+        }
 
         return sharedSecretBase64;
     }
@@ -32,13 +42,23 @@ public static class KeyAgreementExtensions
         this IKeyAgreement keyAgreement
     )
     {
-        (byte[] publicKeyBytes, byte[] secretKeyBytes) = keyAgreement.GenerateKeyPair();
+        byte[] publicKeyBytes = Array.Empty<byte>();
+        byte[] secretKeyBytes = Array.Empty<byte>();
+        string publicKeyBase64 = string.Empty;
+        string secretKeyBase64 = string.Empty;
 
-        string publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
-        string secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
+        try
+        {
+            (publicKeyBytes, secretKeyBytes) = keyAgreement.GenerateKeyPair();
 
-        CryptographicOperations.ZeroMemory(publicKeyBytes);
-        CryptographicOperations.ZeroMemory(secretKeyBytes);
+            publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
+            secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(publicKeyBytes);
+            CryptographicOperations.ZeroMemory(secretKeyBytes);
+        }
 
         return (publicKeyBase64, secretKeyBase64);
     }
@@ -53,17 +73,25 @@ public static class KeyAgreementExtensions
         byte[] kdfInfo
     )
     {
-        byte[] key = kdf.DeriveKey(
-            inputKeyMaterial: sharedSecret,
-            iterations: 1,
-            cipher.KeySizeBytes,
-            kdfSalt,
-            kdfInfo
-        );
+        byte[] key = Array.Empty<byte>();
+        byte[] encrypted = Array.Empty<byte>();
 
-        byte[] encrypted = cipher.Encrypt(key, plaintext);
+        try
+        {
+            key = kdf.DeriveKey(
+                inputKeyMaterial: sharedSecret,
+                iterations: 1,
+                cipher.KeySizeBytes,
+                kdfSalt,
+                kdfInfo
+            );
 
-        CryptographicOperations.ZeroMemory(key);
+            encrypted = cipher.Encrypt(key, plaintext);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(key);
+        }
 
         return encrypted;
     }
@@ -78,17 +106,25 @@ public static class KeyAgreementExtensions
         byte[] kdfInfo
     )
     {
-        byte[] key = kdf.DeriveKey(
-            inputKeyMaterial: sharedSecret,
-            iterations: 1,
-            cipher.KeySizeBytes,
-            kdfSalt,
-            kdfInfo
-        );
+        byte[] key = Array.Empty<byte>();
+        byte[] decrypted = Array.Empty<byte>();
 
-        byte[] decrypted = cipher.Decrypt(key, encrypted);
+        try
+        {
+            key = kdf.DeriveKey(
+                inputKeyMaterial: sharedSecret,
+                iterations: 1,
+                cipher.KeySizeBytes,
+                kdfSalt,
+                kdfInfo
+            );
 
-        CryptographicOperations.ZeroMemory(key);
+            decrypted = cipher.Decrypt(key, encrypted);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(key);
+        }
 
         return decrypted;
     }
@@ -103,28 +139,40 @@ public static class KeyAgreementExtensions
         string kdfInfoBase64
     )
     {
-        byte[] sharedSecretBytes = Convert.FromBase64String(sharedSecretBase64);
-        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintextUtf8);
-        byte[] kdfSaltBytes = Convert.FromBase64String(kdfSaltBase64);
-        byte[] kdfInfoBytes = Convert.FromBase64String(kdfInfoBase64);
+        byte[] sharedSecretBytes = Array.Empty<byte>();
+        byte[] plaintextBytes = Array.Empty<byte>();
+        byte[] kdfSaltBytes = Array.Empty<byte>();
+        byte[] kdfInfoBytes = Array.Empty<byte>();
+        byte[] encryptedBytes = Array.Empty<byte>();
+        string encryptedBase64 = string.Empty;
 
-        byte[] encryptedBytes = Encrypt(
-            keyAgreement,
-            cipher,
-            kdf,
-            sharedSecretBytes,
-            plaintextBytes,
-            kdfSaltBytes,
-            kdfInfoBytes
-        );
+        try
+        {
+            sharedSecretBytes = Convert.FromBase64String(sharedSecretBase64);
+            plaintextBytes = Encoding.UTF8.GetBytes(plaintextUtf8);
+            kdfSaltBytes = Convert.FromBase64String(kdfSaltBase64);
+            kdfInfoBytes = Convert.FromBase64String(kdfInfoBase64);
 
-        string encryptedBase64 = Convert.ToBase64String(encryptedBytes);
+            encryptedBytes = Encrypt(
+                keyAgreement,
+                cipher,
+                kdf,
+                sharedSecretBytes,
+                plaintextBytes,
+                kdfSaltBytes,
+                kdfInfoBytes
+            );
 
-        CryptographicOperations.ZeroMemory(sharedSecretBytes);
-        CryptographicOperations.ZeroMemory(plaintextBytes);
-        CryptographicOperations.ZeroMemory(kdfSaltBytes);
-        CryptographicOperations.ZeroMemory(kdfInfoBytes);
-        CryptographicOperations.ZeroMemory(encryptedBytes);
+            encryptedBase64 = Convert.ToBase64String(encryptedBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(sharedSecretBytes);
+            CryptographicOperations.ZeroMemory(plaintextBytes);
+            CryptographicOperations.ZeroMemory(kdfSaltBytes);
+            CryptographicOperations.ZeroMemory(kdfInfoBytes);
+            CryptographicOperations.ZeroMemory(encryptedBytes);
+        }
 
         return encryptedBase64;
     }
@@ -139,28 +187,40 @@ public static class KeyAgreementExtensions
         string kdfInfoBase64
     )
     {
-        byte[] sharedSecretBytes = Convert.FromBase64String(sharedSecretBase64);
-        byte[] encryptedBytes = Convert.FromBase64String(encryptedBase64);
-        byte[] kdfSaltBytes = Convert.FromBase64String(kdfSaltBase64);
-        byte[] kdfInfoBytes = Convert.FromBase64String(kdfInfoBase64);
+        byte[] sharedSecretBytes = Array.Empty<byte>();
+        byte[] encryptedBytes = Array.Empty<byte>();
+        byte[] kdfSaltBytes = Array.Empty<byte>();
+        byte[] kdfInfoBytes = Array.Empty<byte>();
+        byte[] plaintextBytes = Array.Empty<byte>();
+        string plaintextUtf8 = string.Empty;
 
-        byte[] plaintextBytes = Decrypt(
-            keyAgreement,
-            cipher,
-            kdf,
-            sharedSecretBytes,
-            encryptedBytes,
-            kdfSaltBytes,
-            kdfInfoBytes
-        );
+        try
+        {
+            sharedSecretBytes = Convert.FromBase64String(sharedSecretBase64);
+            encryptedBytes = Convert.FromBase64String(encryptedBase64);
+            kdfSaltBytes = Convert.FromBase64String(kdfSaltBase64);
+            kdfInfoBytes = Convert.FromBase64String(kdfInfoBase64);
 
-        string plaintextUtf8 = Encoding.UTF8.GetString(plaintextBytes);
+            plaintextBytes = Decrypt(
+                keyAgreement,
+                cipher,
+                kdf,
+                sharedSecretBytes,
+                encryptedBytes,
+                kdfSaltBytes,
+                kdfInfoBytes
+            );
 
-        CryptographicOperations.ZeroMemory(sharedSecretBytes);
-        CryptographicOperations.ZeroMemory(encryptedBytes);
-        CryptographicOperations.ZeroMemory(kdfSaltBytes);
-        CryptographicOperations.ZeroMemory(kdfInfoBytes);
-        CryptographicOperations.ZeroMemory(plaintextBytes);
+            plaintextUtf8 = Encoding.UTF8.GetString(plaintextBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(sharedSecretBytes);
+            CryptographicOperations.ZeroMemory(encryptedBytes);
+            CryptographicOperations.ZeroMemory(kdfSaltBytes);
+            CryptographicOperations.ZeroMemory(kdfInfoBytes);
+            CryptographicOperations.ZeroMemory(plaintextBytes);
+        }
 
         return plaintextUtf8;
     }
