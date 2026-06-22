@@ -7,10 +7,7 @@ public static class HashProviderExtensions
 {
     public static string HashBase64(this IHashProvider hashProvider, string messageUtf8)
     {
-        if (hashProvider == null)
-            throw new ArgumentNullException(nameof(hashProvider));
-        if (messageUtf8 == null)
-            throw new ArgumentNullException(nameof(messageUtf8));
+        LibraryHelper.ThrowIfAnyNull(hashProvider, messageUtf8);
 
         byte[] messageBytes = Array.Empty<byte>();
         byte[] hashBytes = Array.Empty<byte>();

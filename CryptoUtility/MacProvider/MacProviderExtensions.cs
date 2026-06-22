@@ -78,9 +78,7 @@ public static class MacProviderExtensions
         byte[] mac
     )
     {
-        if (key == null) throw new ArgumentNullException(nameof(key));
-        if (message == null) throw new ArgumentNullException(nameof(message));
-        if (mac == null) throw new ArgumentNullException(nameof(mac));
+        LibraryHelper.ThrowIfAnyNull(key, message, mac);
 
         byte[] computedMac = Array.Empty<byte>();
         bool isValid = false;
