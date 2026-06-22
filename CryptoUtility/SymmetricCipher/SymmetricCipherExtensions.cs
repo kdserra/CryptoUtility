@@ -243,6 +243,7 @@ public static class SymmetricCipherExtensions
     public static string GenerateKeyBase64(this ISymmetricCipher cipher)
     {
         byte[] key = cipher.GenerateKey();
+
         string result = Convert.ToBase64String(key);
 
         CryptographicOperations.ZeroMemory(key);

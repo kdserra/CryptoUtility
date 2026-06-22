@@ -21,6 +21,10 @@ public static class KeyAgreementExtensions
 
         string sharedSecretBase64 = Convert.ToBase64String(sharedSecretBytes);
 
+        CryptographicOperations.ZeroMemory(secretKeyBytes);
+        CryptographicOperations.ZeroMemory(peerPublicKeyBytes);
+        CryptographicOperations.ZeroMemory(sharedSecretBytes);
+
         return sharedSecretBase64;
     }
 
@@ -29,6 +33,7 @@ public static class KeyAgreementExtensions
     )
     {
         (byte[] publicKeyBytes, byte[] secretKeyBytes) = keyAgreement.GenerateKeyPair();
+
         string publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
         string secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
 

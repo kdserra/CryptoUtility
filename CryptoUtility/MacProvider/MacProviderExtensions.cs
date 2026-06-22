@@ -26,6 +26,7 @@ public static class MacProviderExtensions
     public static string GenerateKeyBase64(this IMacProvider macProvider)
     {
         byte[] keyBytes = macProvider.GenerateKey();
+
         string keyBase64 = Convert.ToBase64String(keyBytes);
 
         CryptographicOperations.ZeroMemory(keyBytes);

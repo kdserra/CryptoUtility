@@ -83,9 +83,13 @@ public static class AsymmetricCipherExtensions
             symmetricEncrypted
         );
 
-        CryptographicOperations.ZeroMemory(asymmetricPlaintextDataEncryptionKey);
+        byte[] envelopeBytes = envelope.ToBytes();
 
-        return envelope.ToBytes();
+        CryptographicOperations.ZeroMemory(asymmetricPlaintextDataEncryptionKey);
+        CryptographicOperations.ZeroMemory(asymmetricEncrypted);
+        CryptographicOperations.ZeroMemory(symmetricEncrypted);
+
+        return envelopeBytes;
     }
 
     public static byte[] HybridDecrypt(
@@ -284,9 +288,11 @@ public static class AsymmetricCipherExtensions
     {
         try
         {
-            (string publicKey, string secretKey) keyPair = cipher.GenerateKeyPairBase64();
-            publicKeyBase64 = keyPair.publicKey;
-            secretKeyBase64 = keyPair.secretKey;
+            (string publicKeyBase64, string secretKeyBase64) keyPair =
+                cipher.GenerateKeyPairBase64();
+
+            publicKeyBase64 = keyPair.publicKeyBase64;
+            secretKeyBase64 = keyPair.secretKeyBase64;
 
             return true;
         }

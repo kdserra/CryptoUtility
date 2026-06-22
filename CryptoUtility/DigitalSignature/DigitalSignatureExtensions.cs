@@ -51,7 +51,7 @@ public static class DigitalSignatureExtensions
         }
     }
 
-    public static (string publicKey, string secretKey) GenerateKeyPairBase64(
+    public static (string publicKeyBase64, string secretKeyBase64) GenerateKeyPairBase64(
         this IDigitalSignature digitalSignature
     )
     {
