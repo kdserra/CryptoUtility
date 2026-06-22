@@ -6,16 +6,16 @@ public static class KeyExpansionKdfExtensions
 {
     public static string DeriveKeyBase64(
         this IKeyExpansionKdf kdf,
-        string inputKeyMaterial,
+        string inputKeyMaterialBase64,
         int iterations,
         int outputLength,
-        string salt,
-        string info
+        string saltBase64,
+        string infoBase64
     )
     {
-        byte[] inputKeyMaterialBytes = Convert.FromBase64String(inputKeyMaterial);
-        byte[] saltBytes = Convert.FromBase64String(salt);
-        byte[] infoBytes = Convert.FromBase64String(info);
+        byte[] inputKeyMaterialBytes = Convert.FromBase64String(inputKeyMaterialBase64);
+        byte[] saltBytes = Convert.FromBase64String(saltBase64);
+        byte[] infoBytes = Convert.FromBase64String(infoBase64);
 
         byte[] keyBytes = kdf.DeriveKey(
             inputKeyMaterialBytes,
@@ -78,29 +78,29 @@ public static class KeyExpansionKdfExtensions
 
     public static bool TryDeriveKeyBase64(
         this IKeyExpansionKdf kdf,
-        string inputKeyMaterial,
+        string inputKeyMaterialBase64,
         int iterations,
         int outputLength,
-        string salt,
-        string info,
-        out string derivedKey
+        string saltBase64,
+        string infoBase64,
+        out string derivedKeyBase64
     )
     {
         try
         {
-            derivedKey = kdf.DeriveKeyBase64(
-                inputKeyMaterial,
+            derivedKeyBase64 = kdf.DeriveKeyBase64(
+                inputKeyMaterialBase64,
                 iterations,
                 outputLength,
-                salt,
-                info
+                saltBase64,
+                infoBase64
             );
 
             return true;
         }
         catch
         {
-            derivedKey = string.Empty;
+            derivedKeyBase64 = string.Empty;
 
             return false;
         }
@@ -113,12 +113,12 @@ public static class KeyExpansionKdfExtensions
         int outputLength,
         byte[] salt,
         byte[] info,
-        out string derivedKey
+        out string derivedKeyBase64
     )
     {
         try
         {
-            derivedKey = kdf.DeriveKeyBase64(
+            derivedKeyBase64 = kdf.DeriveKeyBase64(
                 inputKeyMaterial,
                 iterations,
                 outputLength,
@@ -130,7 +130,7 @@ public static class KeyExpansionKdfExtensions
         }
         catch
         {
-            derivedKey = string.Empty;
+            derivedKeyBase64 = string.Empty;
 
             return false;
         }

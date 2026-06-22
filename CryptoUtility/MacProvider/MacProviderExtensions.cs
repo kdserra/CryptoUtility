@@ -19,6 +19,7 @@ public static class MacProviderExtensions
     {
         int keySize = macProvider.GetRecommendedKeySizeInBytes();
         byte[] key = CryptoHelper.GetBytes(keySize);
+
         return key;
     }
 
@@ -32,11 +33,16 @@ public static class MacProviderExtensions
         return keyBase64;
     }
 
-    public static string ComputeMacBase64(this IMacProvider macProvider, string key, string message)
+    public static string ComputeMacBase64(
+        this IMacProvider macProvider,
+        string keyBase64,
+        string messageUtf8
+    )
     {
-        byte[] keyBytes = Convert.FromBase64String(key);
-        byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+        byte[] keyBytes = Convert.FromBase64String(keyBase64);
+        byte[] messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
         byte[] macBytes = macProvider.ComputeMac(keyBytes, messageBytes);
+
         string macBase64 = Convert.ToBase64String(macBytes);
 
         CryptographicOperations.ZeroMemory(keyBytes);
@@ -56,6 +62,7 @@ public static class MacProviderExtensions
         try
         {
             byte[] computedMac = macProvider.ComputeMac(key, message);
+
             bool isValid = CryptoHelper.FixedTimeEquals(computedMac, mac);
 
             CryptographicOperations.ZeroMemory(computedMac);
@@ -70,16 +77,17 @@ public static class MacProviderExtensions
 
     public static bool VerifyBase64(
         this IMacProvider macProvider,
-        string key,
-        string message,
-        string mac
+        string keyBase64,
+        string messageUtf8,
+        string macBase64
     )
     {
         try
         {
-            byte[] keyBytes = Convert.FromBase64String(key);
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-            byte[] macBytes = Convert.FromBase64String(mac);
+            byte[] keyBytes = Convert.FromBase64String(keyBase64);
+            byte[] messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
+            byte[] macBytes = Convert.FromBase64String(macBase64);
+
             bool isValid = macProvider.VerifyMac(keyBytes, messageBytes, macBytes);
 
             CryptographicOperations.ZeroMemory(keyBytes);
@@ -104,30 +112,34 @@ public static class MacProviderExtensions
         try
         {
             mac = macProvider.ComputeMac(key, message);
+
             return true;
         }
         catch
         {
             mac = Array.Empty<byte>();
+
             return false;
         }
     }
 
     public static bool TryComputeMacBase64(
         this IMacProvider macProvider,
-        string key,
-        string message,
-        out string mac
+        string keyBase64,
+        string messageUtf8,
+        out string macBase64
     )
     {
         try
         {
-            mac = macProvider.ComputeMacBase64(key, message);
+            macBase64 = macProvider.ComputeMacBase64(keyBase64, messageUtf8);
+
             return true;
         }
         catch
         {
-            mac = string.Empty;
+            macBase64 = string.Empty;
+
             return false;
         }
     }

@@ -4,9 +4,9 @@ namespace CryptoUtility;
 
 public static class HashProviderExtensions
 {
-    public static string HashBase64(this IHashProvider hashProvider, string message)
+    public static string HashBase64(this IHashProvider hashProvider, string messageUtf8)
     {
-        byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+        byte[] messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
         byte[] hashBytes = hashProvider.Hash(messageBytes);
         string hashBase64 = Convert.ToBase64String(hashBytes);
 
@@ -18,29 +18,33 @@ public static class HashProviderExtensions
         try
         {
             hash = hashProvider.Hash(message);
+
             return true;
         }
         catch
         {
             hash = Array.Empty<byte>();
+
             return false;
         }
     }
 
     public static bool TryHashBase64(
         this IHashProvider hashProvider,
-        string message,
-        out string hash
+        string messageUtf8,
+        out string hashBase64
     )
     {
         try
         {
-            hash = hashProvider.HashBase64(message);
+            hashBase64 = hashProvider.HashBase64(messageUtf8);
+
             return true;
         }
         catch
         {
-            hash = string.Empty;
+            hashBase64 = string.Empty;
+
             return false;
         }
     }

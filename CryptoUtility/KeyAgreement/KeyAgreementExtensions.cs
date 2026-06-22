@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text;
 
 namespace CryptoUtility;
 
@@ -6,12 +7,12 @@ public static class KeyAgreementExtensions
 {
     public static string DeriveSharedSecretBase64(
         this IKeyAgreement keyAgreement,
-        string secretKey,
-        string peerPublicKey
+        string secretKeyBase64,
+        string peerPublicKeyBase64
     )
     {
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
-        byte[] peerPublicKeyBytes = Convert.FromBase64String(peerPublicKey);
+        byte[] secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
+        byte[] peerPublicKeyBytes = Convert.FromBase64String(peerPublicKeyBase64);
 
         byte[] sharedSecretBytes = keyAgreement.DeriveSharedSecret(
             secretKeyBytes,
@@ -23,13 +24,17 @@ public static class KeyAgreementExtensions
         return sharedSecretBase64;
     }
 
-    public static (string publicKey, string secretKey) GenerateKeyPairBase64(
+    public static (string publicKeyBase64, string secretKeyBase64) GenerateKeyPairBase64(
         this IKeyAgreement keyAgreement
     )
     {
         (byte[] publicKeyBytes, byte[] secretKeyBytes) = keyAgreement.GenerateKeyPair();
         string publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
         string secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
+
+        CryptographicOperations.ZeroMemory(publicKeyBytes);
+        CryptographicOperations.ZeroMemory(secretKeyBytes);
+
         return (publicKeyBase64, secretKeyBase64);
     }
 
@@ -87,16 +92,16 @@ public static class KeyAgreementExtensions
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
         IKeyExpansionKdf kdf,
-        string sharedSecret,
-        string plaintext,
-        string kdfSalt,
-        string kdfInfo
+        string sharedSecretBase64,
+        string plaintextUtf8,
+        string kdfSaltBase64,
+        string kdfInfoBase64
     )
     {
-        byte[] sharedSecretBytes = Convert.FromBase64String(sharedSecret);
-        byte[] plaintextBytes = Convert.FromBase64String(plaintext);
-        byte[] kdfSaltBytes = Convert.FromBase64String(kdfSalt);
-        byte[] kdfInfoBytes = Convert.FromBase64String(kdfInfo);
+        byte[] sharedSecretBytes = Convert.FromBase64String(sharedSecretBase64);
+        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintextUtf8);
+        byte[] kdfSaltBytes = Convert.FromBase64String(kdfSaltBase64);
+        byte[] kdfInfoBytes = Convert.FromBase64String(kdfInfoBase64);
 
         byte[] encryptedBytes = Encrypt(
             keyAgreement,
@@ -123,16 +128,16 @@ public static class KeyAgreementExtensions
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
         IKeyExpansionKdf kdf,
-        string sharedSecret,
-        string encrypted,
-        string kdfSalt,
-        string kdfInfo
+        string sharedSecretBase64,
+        string encryptedBase64,
+        string kdfSaltBase64,
+        string kdfInfoBase64
     )
     {
-        byte[] sharedSecretBytes = Convert.FromBase64String(sharedSecret);
-        byte[] encryptedBytes = Convert.FromBase64String(encrypted);
-        byte[] kdfSaltBytes = Convert.FromBase64String(kdfSalt);
-        byte[] kdfInfoBytes = Convert.FromBase64String(kdfInfo);
+        byte[] sharedSecretBytes = Convert.FromBase64String(sharedSecretBase64);
+        byte[] encryptedBytes = Convert.FromBase64String(encryptedBase64);
+        byte[] kdfSaltBytes = Convert.FromBase64String(kdfSaltBase64);
+        byte[] kdfInfoBytes = Convert.FromBase64String(kdfInfoBase64);
 
         byte[] plaintextBytes = Decrypt(
             keyAgreement,
@@ -144,7 +149,7 @@ public static class KeyAgreementExtensions
             kdfInfoBytes
         );
 
-        string plaintextBase64 = Convert.ToBase64String(plaintextBytes);
+        string plaintextUtf8 = Encoding.UTF8.GetString(plaintextBytes);
 
         CryptographicOperations.ZeroMemory(sharedSecretBytes);
         CryptographicOperations.ZeroMemory(encryptedBytes);
@@ -152,7 +157,7 @@ public static class KeyAgreementExtensions
         CryptographicOperations.ZeroMemory(kdfInfoBytes);
         CryptographicOperations.ZeroMemory(plaintextBytes);
 
-        return plaintextBase64;
+        return plaintextUtf8;
     }
 
     public static bool TryDeriveSharedSecret(
@@ -178,20 +183,23 @@ public static class KeyAgreementExtensions
 
     public static bool TryDeriveSharedSecretBase64(
         IKeyAgreement keyAgreement,
-        string secretKey,
-        string peerPublicKey,
-        out string derivedSharedSecret
+        string secretKeyBase64,
+        string peerPublicKeyBase64,
+        out string derivedSharedSecretBase64
     )
     {
         try
         {
-            derivedSharedSecret = keyAgreement.DeriveSharedSecretBase64(secretKey, peerPublicKey);
+            derivedSharedSecretBase64 = keyAgreement.DeriveSharedSecretBase64(
+                secretKeyBase64,
+                peerPublicKeyBase64
+            );
 
             return true;
         }
         catch
         {
-            derivedSharedSecret = string.Empty;
+            derivedSharedSecretBase64 = string.Empty;
 
             return false;
         }
@@ -222,22 +230,24 @@ public static class KeyAgreementExtensions
 
     public static bool TryGenerateKeyPairBase64(
         IKeyAgreement keyAgreement,
-        out string publicKey,
-        out string secretKey
+        out string publicKeyBase64,
+        out string secretKeyBase64
     )
     {
         try
         {
-            (string publicKey, string secretKey) keyPair = keyAgreement.GenerateKeyPairBase64();
-            publicKey = keyPair.publicKey;
-            secretKey = keyPair.secretKey;
+            (string publicKeyBase64, string secretKeyBase64) keyPair =
+                keyAgreement.GenerateKeyPairBase64();
+
+            publicKeyBase64 = keyPair.publicKeyBase64;
+            secretKeyBase64 = keyPair.secretKeyBase64;
 
             return true;
         }
         catch
         {
-            publicKey = string.Empty;
-            secretKey = string.Empty;
+            publicKeyBase64 = string.Empty;
+            secretKeyBase64 = string.Empty;
 
             return false;
         }
@@ -311,29 +321,29 @@ public static class KeyAgreementExtensions
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
         IKeyExpansionKdf kdf,
-        string sharedSecret,
-        string plaintext,
-        string kdfSalt,
-        string kdfInfo,
-        out string encrypted
+        string sharedSecretBase64,
+        string plaintextUtf8,
+        string kdfSaltBase64,
+        string kdfInfoBase64,
+        out string encryptedBase64
     )
     {
         try
         {
-            encrypted = keyAgreement.EncryptBase64(
+            encryptedBase64 = keyAgreement.EncryptBase64(
                 cipher,
                 kdf,
-                sharedSecret,
-                plaintext,
-                kdfSalt,
-                kdfInfo
+                sharedSecretBase64,
+                plaintextUtf8,
+                kdfSaltBase64,
+                kdfInfoBase64
             );
 
             return true;
         }
         catch
         {
-            encrypted = string.Empty;
+            encryptedBase64 = string.Empty;
 
             return false;
         }
@@ -343,29 +353,29 @@ public static class KeyAgreementExtensions
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
         IKeyExpansionKdf kdf,
-        string sharedSecret,
-        string encrypted,
-        string kdfSalt,
-        string kdfInfo,
-        out string plaintext
+        string sharedSecretBase64,
+        string encryptedBase64,
+        string kdfSaltBase64,
+        string kdfInfoBase64,
+        out string plaintextUtf8
     )
     {
         try
         {
-            plaintext = keyAgreement.DecryptBase64(
+            plaintextUtf8 = keyAgreement.DecryptBase64(
                 cipher,
                 kdf,
-                sharedSecret,
-                encrypted,
-                kdfSalt,
-                kdfInfo
+                sharedSecretBase64,
+                encryptedBase64,
+                kdfSaltBase64,
+                kdfInfoBase64
             );
 
             return true;
         }
         catch
         {
-            plaintext = string.Empty;
+            plaintextUtf8 = string.Empty;
 
             return false;
         }

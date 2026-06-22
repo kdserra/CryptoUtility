@@ -6,12 +6,12 @@ public static class AsymmetricCipherExtensions
 {
     public static string EncryptBase64(
         this IAsymmetricCipher cipher,
-        string publicKey,
-        string plaintext
+        string publicKeyBase64,
+        string plaintextUtf8
     )
     {
-        byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
-        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
+        byte[] publicKeyBytes = Convert.FromBase64String(publicKeyBase64);
+        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintextUtf8);
         byte[] encryptedBytes = cipher.Encrypt(publicKeyBytes, plaintextBytes);
         string encryptedBase64 = Convert.ToBase64String(encryptedBytes);
 
@@ -20,12 +20,12 @@ public static class AsymmetricCipherExtensions
 
     public static string DecryptBase64(
         this IAsymmetricCipher cipher,
-        string secretKey,
-        string encrypted
+        string secretKeyBase64,
+        string encryptedBase64
     )
     {
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
-        byte[] encryptedBytes = Convert.FromBase64String(encrypted);
+        byte[] secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
+        byte[] encryptedBytes = Convert.FromBase64String(encryptedBase64);
         byte[] decryptedBytes = cipher.Decrypt(secretKeyBytes, encryptedBytes);
         string plaintext = Encoding.UTF8.GetString(decryptedBytes);
 
@@ -39,6 +39,7 @@ public static class AsymmetricCipherExtensions
         (byte[] publicKeyBytes, byte[] secretKeyBytes) = cipher.GenerateKeyPair();
         string publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
         string secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
+
         return (publicKeyBase64, secretKeyBase64);
     }
 
@@ -100,12 +101,12 @@ public static class AsymmetricCipherExtensions
     public static string HybridEncryptBase64(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
-        string publicKey,
-        string plaintext
+        string publicKeyBase64,
+        string plaintextUtf8
     )
     {
-        byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
-        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintext);
+        byte[] publicKeyBytes = Convert.FromBase64String(publicKeyBase64);
+        byte[] plaintextBytes = Encoding.UTF8.GetBytes(plaintextUtf8);
 
         byte[] encryptedBytes = HybridEncrypt(
             asymmetricCipher,
@@ -122,12 +123,12 @@ public static class AsymmetricCipherExtensions
     public static string HybridDecryptBase64(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
-        string secretKey,
-        string encrypted
+        string secretKeyBase64,
+        string encryptedBase64
     )
     {
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
-        byte[] encryptedBytes = Convert.FromBase64String(encrypted);
+        byte[] secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
+        byte[] encryptedBytes = Convert.FromBase64String(encryptedBase64);
 
         byte[] plaintextBytes = HybridDecrypt(
             asymmetricCipher,
@@ -137,6 +138,7 @@ public static class AsymmetricCipherExtensions
         );
 
         string plaintext = Encoding.UTF8.GetString(plaintextBytes);
+
         return plaintext;
     }
 
@@ -150,11 +152,13 @@ public static class AsymmetricCipherExtensions
         try
         {
             encrypted = cipher.Encrypt(publicKey, plaintext);
+
             return true;
         }
         catch
         {
             encrypted = Array.Empty<byte>();
+
             return false;
         }
     }
@@ -169,49 +173,55 @@ public static class AsymmetricCipherExtensions
         try
         {
             plaintext = cipher.Decrypt(secretKey, encrypted);
+
             return true;
         }
         catch
         {
             plaintext = Array.Empty<byte>();
+
             return false;
         }
     }
 
     public static bool TryEncryptBase64(
         this IAsymmetricCipher cipher,
-        string publicKey,
-        string plaintext,
-        out string encrypted
+        string publicKeyBase64,
+        string plaintextUtf8,
+        out string encryptedBase64
     )
     {
         try
         {
-            encrypted = cipher.EncryptBase64(publicKey, plaintext);
+            encryptedBase64 = cipher.EncryptBase64(publicKeyBase64, plaintextUtf8);
+
             return true;
         }
         catch
         {
-            encrypted = string.Empty;
+            encryptedBase64 = string.Empty;
+
             return false;
         }
     }
 
     public static bool TryDecryptBase64(
         this IAsymmetricCipher cipher,
-        string publicKey,
-        string encrypted,
-        out string plaintext
+        string publicKeyBase64,
+        string encryptedBase64,
+        out string plaintextUtf8
     )
     {
         try
         {
-            plaintext = cipher.DecryptBase64(publicKey, encrypted);
+            plaintextUtf8 = cipher.DecryptBase64(publicKeyBase64, encryptedBase64);
+
             return true;
         }
         catch
         {
-            plaintext = string.Empty;
+            plaintextUtf8 = string.Empty;
+
             return false;
         }
     }
@@ -227,33 +237,37 @@ public static class AsymmetricCipherExtensions
             (byte[] publicKey, byte[] secretKey) keyPair = cipher.GenerateKeyPair();
             publicKey = keyPair.publicKey;
             secretKey = keyPair.secretKey;
+
             return true;
         }
         catch
         {
             publicKey = Array.Empty<byte>();
             secretKey = Array.Empty<byte>();
+
             return false;
         }
     }
 
     public static bool TryGenerateKeyPairBase64(
         this IAsymmetricCipher cipher,
-        out string publicKey,
-        out string secretKey
+        out string publicKeyBase64,
+        out string secretKeyBase64
     )
     {
         try
         {
             (string publicKey, string secretKey) keyPair = cipher.GenerateKeyPairBase64();
-            publicKey = keyPair.publicKey;
-            secretKey = keyPair.secretKey;
+            publicKeyBase64 = keyPair.publicKey;
+            secretKeyBase64 = keyPair.secretKey;
+
             return true;
         }
         catch
         {
-            publicKey = string.Empty;
-            secretKey = string.Empty;
+            publicKeyBase64 = string.Empty;
+            secretKeyBase64 = string.Empty;
+
             return false;
         }
     }
@@ -269,11 +283,13 @@ public static class AsymmetricCipherExtensions
         try
         {
             encrypted = asymmetricCipher.HybridEncrypt(symmetricCipher, publicKey, plaintext);
+
             return true;
         }
         catch
         {
             encrypted = Array.Empty<byte>();
+
             return false;
         }
     }
@@ -289,11 +305,13 @@ public static class AsymmetricCipherExtensions
         try
         {
             plaintext = asymmetricCipher.HybridDecrypt(symmetricCipher, secretKey, encrypted);
+
             return true;
         }
         catch
         {
             plaintext = Array.Empty<byte>();
+
             return false;
         }
     }
@@ -301,19 +319,24 @@ public static class AsymmetricCipherExtensions
     public static bool TryHybridEncryptBase64(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
-        string publicKey,
-        string plaintext,
-        out string encrypted
+        string publicKeyBase64,
+        string plaintextUtf8,
+        out string encryptedBase64
     )
     {
         try
         {
-            encrypted = asymmetricCipher.HybridEncryptBase64(symmetricCipher, publicKey, plaintext);
+            encryptedBase64 = asymmetricCipher.HybridEncryptBase64(
+                symmetricCipher,
+                publicKeyBase64,
+                plaintextUtf8
+            );
+
             return true;
         }
         catch
         {
-            encrypted = string.Empty;
+            encryptedBase64 = string.Empty;
             return false;
         }
     }
@@ -321,19 +344,24 @@ public static class AsymmetricCipherExtensions
     public static bool TryHybridDecryptBase64(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
-        string secretKey,
-        string encrypted,
-        out string plaintext
+        string secretKeyBase64,
+        string encryptedBase64,
+        out string plaintextUtf8
     )
     {
         try
         {
-            plaintext = asymmetricCipher.HybridDecryptBase64(symmetricCipher, secretKey, encrypted);
+            plaintextUtf8 = asymmetricCipher.HybridDecryptBase64(
+                symmetricCipher,
+                secretKeyBase64,
+                encryptedBase64
+            );
+
             return true;
         }
         catch
         {
-            plaintext = string.Empty;
+            plaintextUtf8 = string.Empty;
             return false;
         }
     }

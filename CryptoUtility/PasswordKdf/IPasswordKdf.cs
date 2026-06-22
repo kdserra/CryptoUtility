@@ -2,5 +2,5 @@
 
 public interface IPasswordKdf
 {
-    public byte[] DeriveKey(string password, byte[] salt, int iterations, int outputLength);
+    public byte[] DeriveKey(string passwordUtf8, byte[] salt, int iterations, int outputLength);
 }

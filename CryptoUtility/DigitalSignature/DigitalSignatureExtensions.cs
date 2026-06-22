@@ -6,12 +6,12 @@ public static class DigitalSignatureExtensions
 {
     public static string SignBase64(
         this IDigitalSignature digitalSignature,
-        string message,
-        string secretKey
+        string messageUtf8,
+        string secretKeyBase64
     )
     {
-        byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKey);
+        byte[] messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
+        byte[] secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
         byte[] signatureBytes = digitalSignature.Sign(messageBytes, secretKeyBytes);
         string signatureBase64 = Convert.ToBase64String(signatureBytes);
 
@@ -20,16 +20,16 @@ public static class DigitalSignatureExtensions
 
     public static bool VerifyBase64(
         this IDigitalSignature digitalSignature,
-        string message,
-        string signature,
-        string publicKey
+        string messageUtf8,
+        string signatureBase64,
+        string publicKeyBase64
     )
     {
         try
         {
-            byte[] messageBytes = Encoding.UTF8.GetBytes(message);
-            byte[] signatureBytes = Convert.FromBase64String(signature);
-            byte[] publicKeyBytes = Convert.FromBase64String(publicKey);
+            byte[] messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
+            byte[] signatureBytes = Convert.FromBase64String(signatureBase64);
+            byte[] publicKeyBytes = Convert.FromBase64String(publicKeyBase64);
             bool isValid = digitalSignature.Verify(messageBytes, signatureBytes, publicKeyBytes);
 
             return isValid;
@@ -74,20 +74,20 @@ public static class DigitalSignatureExtensions
 
     public static bool TrySignBase64(
         this IDigitalSignature digitalSignature,
-        string message,
-        string secretKey,
-        out string signature
+        string messageUtf8,
+        string secretKeyBase64,
+        out string signatureBase64
     )
     {
         try
         {
-            signature = digitalSignature.SignBase64(message, secretKey);
+            signatureBase64 = digitalSignature.SignBase64(messageUtf8, secretKeyBase64);
 
             return true;
         }
         catch
         {
-            signature = string.Empty;
+            signatureBase64 = string.Empty;
 
             return false;
         }
@@ -118,22 +118,22 @@ public static class DigitalSignatureExtensions
 
     public static bool TryGenerateKeyPairBase64(
         this IDigitalSignature digitalSignature,
-        out string publicKey,
-        out string secretKey
+        out string publicKeyBase64,
+        out string secretKeyBase64
     )
     {
         try
         {
             (string publicKey, string secretKey) result = digitalSignature.GenerateKeyPairBase64();
-            publicKey = result.publicKey;
-            secretKey = result.secretKey;
+            publicKeyBase64 = result.publicKey;
+            secretKeyBase64 = result.secretKey;
 
             return true;
         }
         catch
         {
-            publicKey = string.Empty;
-            secretKey = string.Empty;
+            publicKeyBase64 = string.Empty;
+            secretKeyBase64 = string.Empty;
 
             return false;
         }

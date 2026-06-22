@@ -6,14 +6,14 @@ public static class PasswordKdfExtensions
 {
     public static string DeriveKeyBase64(
         this IPasswordKdf kdf,
-        string password,
-        string salt,
+        string passwordUtf8,
+        string saltBase64,
         int iterations,
         int outputLength
     )
     {
-        byte[] saltBytes = Convert.FromBase64String(salt);
-        byte[] keyBytes = kdf.DeriveKey(password, saltBytes, iterations, outputLength);
+        byte[] saltBytes = Convert.FromBase64String(saltBase64);
+        byte[] keyBytes = kdf.DeriveKey(passwordUtf8, saltBytes, iterations, outputLength);
         string keyBase64 = Convert.ToBase64String(keyBytes);
 
         CryptographicOperations.ZeroMemory(keyBytes);
@@ -23,7 +23,7 @@ public static class PasswordKdfExtensions
 
     public static bool TryDeriveKey(
         this IPasswordKdf kdf,
-        string password,
+        string passwordUtf8,
         byte[] salt,
         int iterations,
         int outputLength,
@@ -32,33 +32,42 @@ public static class PasswordKdfExtensions
     {
         try
         {
-            derivedKey = kdf.DeriveKey(password, salt, iterations, outputLength);
+            derivedKey = kdf.DeriveKey(passwordUtf8, salt, iterations, outputLength);
+
             return true;
         }
         catch
         {
             derivedKey = Array.Empty<byte>();
+
             return false;
         }
     }
 
     public static bool TryDeriveKeyBase64(
         this IPasswordKdf kdf,
-        string password,
-        string salt,
+        string passwordUtf8,
+        string saltBase64,
         int iterations,
         int outputLength,
-        out string derivedKey
+        out string derivedKeyBase64
     )
     {
         try
         {
-            derivedKey = kdf.DeriveKeyBase64(password, salt, iterations, outputLength);
+            derivedKeyBase64 = kdf.DeriveKeyBase64(
+                passwordUtf8,
+                saltBase64,
+                iterations,
+                outputLength
+            );
+
             return true;
         }
         catch
         {
-            derivedKey = string.Empty;
+            derivedKeyBase64 = string.Empty;
+
             return false;
         }
     }
