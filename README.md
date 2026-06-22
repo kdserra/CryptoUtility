@@ -25,8 +25,8 @@ We define clean, unified interfaces like `ISymmetricCipher`, `IAsymmetricCipher`
 
 This is incredibly powerful for building modular application systems (such as a `SaveManager` or a networking layer). Your high-level managers can depend directly on `ISymmetricCipher` without being bound to a concrete implementation. You can swap your entire encryption algorithm from AES to ChaCha20 with a single line of code, without rewriting your business logic.
 
-## 📦 Automatic Cryptographic Envelopes
-For symmetric ciphers and hybrid encryption, CryptoUtility automatically packages the encrypted payload, random nonce, and authentication tag into a serialized cryptographic envelope under the hood using `MemoryPack` (an ultra-fast binary serializer). You receive a single, ready-to-transmit byte array or Base64 string. During decryption, the envelope is parsed automatically.
+## 📦 Automatic Encrypted and Decrypted Payload Formatting
+For symmetric ciphers and hybrid encryption, CryptoUtility automatically packages the encrypted payload, random nonce, and authentication tag into a unified format under the hood using `MemoryPack` (an ultra-fast binary serializer). You receive a single, ready-to-transmit encrypted byte array or Base64 string. During decryption, the encrypted data is parsed and decrypted automatically.
 
 ## ♻️ Cached Instances
 To completely avoid allocations, we provide a `<Algo>.Shared` cached instance.
@@ -43,14 +43,16 @@ Instead of learning a dozen distinct libraries, paradigms, and syntax patterns f
 
 * **Unified API Design**: Identical syntax patterns for encryption, decryption, signatures, key agreement, and hashing.
 * **Built-in Utilities**: Out-of-the-box helper methods for seamless **Base64 string operations**, **easy key generation** using `Cipher.GenerateKey()`, and backwards compatible cryptograhpic operations.
-* **Symmetric Encryption (AEAD)**: Modern standards including **AES-256-GCM**, **AES-192-GCM**, **AES-128-GCM**, **ChaCha20-Poly1305**, and more.
+* **Symmetric Encryption (AEAD)**: Modern standards including **AES-256-GCM**, **ChaCha20-Poly1305**, and more.
 * **Hybrid Encryption**: Encrypt large payloads easily using RSA public keys combined with the speed of AES-256-GCM under the hood.
-* **Asymmetric & Signatures**: Full support for **RSA-2048**, **RSA-4096**, and elliptic curve digital signatures (**ECDSA**).
-* **Key Agreement (ECDH)**: Establish secure session keys over open channels with Elliptic Curve Diffie-Hellman.
-* **Hashing & Checksums**: SHA-2/3, fast non-cryptographic hashes (xxHash32/64/128), and integrity checksums (CRC-32, CRC-64).
+* **Asymmetric & Signatures**: Full support for **RSA**, and elliptic curve digital signatures (**ECDSA**).
+* **Key Agreement**: Establish secure session keys over open channels using **ECDH**.
+* **Hashing & Checksums**: SHA-2/3, fast non-cryptographic hashes **(xxHash32/64/128)**, and integrity checksums **(CRC-32, CRC-64)**.
 * **MAC Providers**: Verify against message tampering by generating a Message Authentication Code (MAC) and verifying it against the incoming message.
 
 # 🚀 Getting Started
+
+All primary APIs return direct values and bubble up exceptions natively if an error occurs. 
 
 ## 1️⃣ Symmetric Encryption (AES-256-GCM)
 
@@ -61,16 +63,13 @@ using CryptoUtility.System;
 // 1. Generate a secure, random key as a Base64 string
 string base64Key = Aes256Gcm.GenerateKeyBase64();
 
-// 2. Encrypt plaintext into a self-contained Base64 envelope
+// 2. Encrypt plaintext directly into a self-contained Base64 string
 string plaintext = "Confidential customer details...";
-var (encSuccess, envelope) = Aes256Gcm.EncryptBase64(base64Key, plaintext);
+string encrypted = Aes256Gcm.EncryptBase64(base64Key, plaintext);
 
-if (encSuccess)
-{
-    // 3. Decrypt with a single call
-    var (decSuccess, decryptedText) = Aes256Gcm.DecryptBase64(base64Key, envelope);
-    Console.WriteLine($"Decrypted: {decryptedText}"); // Confidential customer details...
-}
+// 3. Decrypt with a single call directly to value
+string decryptedText = Aes256Gcm.DecryptBase64(base64Key, encrypted);
+Console.WriteLine($"Decrypted: {decryptedText}"); // Confidential customer details...
 ```
 
 ### 📦 Byte Array Workflow
@@ -81,12 +80,28 @@ using CryptoUtility.System;
 byte[] key = Aes256Gcm.GenerateKey();
 byte[] plaintext = "Hello World"u8.ToArray();
 
-// 2. Encrypt and Decrypt
-var (encSuccess, ciphertext) = Aes256Gcm.Encrypt(key, plaintext);
-var (decSuccess, decrypted) = Aes256Gcm.Decrypt(key, ciphertext);
+// 2. Encrypt and Decrypt directly
+byte[] encrypted = Aes256Gcm.Encrypt(key, plaintext);
+byte[] decrypted = Aes256Gcm.Decrypt(key, encrypted);
 ```
 
-## 2️⃣ Hybrid Asymmetric Encryption (RSA-4096 + AES)
+## 2️⃣ Asymmetric Encryption/Decryption (RSA-4096)
+
+```csharp
+using CryptoUtility.System;
+
+// 1. Generate an RSA KeyPair
+var (publicKey, privateKey) = Rsa4096.GenerateKeyPair();
+
+// 2. Encrypt plaintext with the public key
+byte[] plaintext = "Secret message"u8.ToArray();
+byte[] encrypted = Rsa4096.Encrypt(publicKey, plaintext);
+
+// 3. Decrypt ciphertext with the private key
+byte[] decrypted = Rsa4096.Decrypt(privateKey, encrypted);
+```
+
+## 3️⃣ Hybrid Asymmetric Encryption (RSA-4096 + AES)
 
 ```csharp
 using CryptoUtility.System;
@@ -96,13 +111,29 @@ var (publicKey, privateKey) = Rsa4096.GenerateKeyPairBase64();
 
 // Encrypt payload using the PUBLIC key
 string largePayload = "Highly confidential PDF database dump...";
-var (encSuccess, envelope) = Rsa4096.HybridEncryptBase64(Aes256Gcm.Shared, publicKey, largePayload);
+string encrypted = Rsa4096.HybridEncryptBase64(Aes256Gcm.Shared, publicKey, largePayload);
 
 // Decrypt payload using the PRIVATE key
-var (decSuccess, decryptedPayload) = Rsa4096.HybridDecryptBase64(Aes256Gcm.Shared, privateKey, envelope);
+string decrypted = Rsa4096.HybridDecryptBase64(Aes256Gcm.Shared, privateKey, encrypted);
 ```
 
-## 3️⃣ Key Agreement & Hybrid ECDH
+## 4️⃣ Digital Signatures (ECDSA)
+
+```csharp
+using CryptoUtility.System;
+
+// 1. Generate an ECDSA KeyPair
+var (publicKey, privateKey) = Ecdsa.GenerateKeyPair();
+
+// 2. Sign message bytes with the private key
+byte[] message = "Message to sign"u8.ToArray();
+byte[] signature = Ecdsa.Sign(message, privateKey);
+
+// 3. Verify signature with the public key
+bool isValid = Ecdsa.Verify(message, signature, publicKey);
+```
+
+## 5️⃣ Key Agreement (ECDH)
 
 ```csharp
 using CryptoUtility.System;
@@ -112,19 +143,85 @@ var (alicePub, alicePriv) = Ecdh.GenerateKeyPair();
 var (bobPub, bobPriv) = Ecdh.GenerateKeyPair();
 
 // 2. Alice and Bob derive the SAME shared secret
-var (_, aliceSecret) = Ecdh.DeriveSharedSecret(alicePriv, bobPub);
-var (_, bobSecret) = Ecdh.DeriveSharedSecret(bobPriv, alicePub);
+byte[] aliceSecret = Ecdh.DeriveSharedSecret(alicePriv, bobPub);
+byte[] bobSecret = Ecdh.DeriveSharedSecret(bobPriv, alicePub);
 
 // 3. Configure KDF parameters for session security
 byte[] kdfSalt = "session-salt"u8.ToArray();
 byte[] kdfInfo = "session-context-info"u8.ToArray();
 
 // 4. Encrypt and Decrypt using derived secrets
-var (_, ciphertext) = Ecdh.Encrypt(Aes256Gcm.Shared, Hkdf.Shared, aliceSecret, "Hi Bob!", kdfSalt, kdfInfo);
-var (_, decrypted) = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, ciphertext, kdfSalt, kdfInfo);
+byte[] encrypted = Ecdh.Encrypt(Aes256Gcm.Shared, Hkdf.Shared, aliceSecret, "Hi Bob!"u8.ToArray(), kdfSalt, kdfInfo);
+byte[] decrypted = Ecdh.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, bobSecret, encrypted, kdfSalt, kdfInfo);
 ```
 
-## 🧪 Sample
+## 6️⃣ Hashing & Checksums
+
+```csharp
+using CryptoUtility.System;
+
+byte[] data = "Hash this string"u8.ToArray();
+
+// Compute SHA-256 hash
+byte[] hash = Sha256.Hash(data);
+
+// Compute Base64 representation directly
+string base64Hash = Sha256.HashBase64("Hash this string");
+```
+
+## 7️⃣ Message Authentication Code (HMAC-SHA256)
+
+```csharp
+using CryptoUtility.System;
+
+// 1. Generate a random MAC key
+string macKey = HmacSha256.GenerateKeyBase64();
+
+// 2. Compute the MAC tag
+string message = "Authenticate me";
+string macTag = HmacSha256.ComputeMacBase64(macKey, message);
+
+// 3. Verify the MAC tag
+bool isValid = HmacSha256.VerifyBase64(macKey, message, macTag);
+```
+
+## 8️⃣ Key Derivation Functions (KDF)
+
+### 🔑 Key Expansion (HKDF)
+```csharp
+using CryptoUtility.System;
+
+byte[] inputKeyMaterial = "master-key-material"u8.ToArray();
+byte[] salt = "hkdf-salt-example"u8.ToArray();
+byte[] info = "application-context-example"u8.ToArray();
+
+// Expand key to 32 bytes
+byte[] expandedKey = Hkdf.DeriveKey(inputKeyMaterial, iterations: 1, outputLength: 32, salt, info);
+```
+
+### 🔒 Password-Based Key Derivation (PBKDF2)
+```csharp
+using CryptoUtility.System;
+
+string password = "UserPassword123!";
+byte[] salt = "user-specific-salt"u8.ToArray();
+
+// Derive a 32-byte key using 100,000 iterations
+byte[] derivedKey = Pbkdf2.DeriveKey(password, salt, iterations: 100000, outputLength: 32);
+```
+
+---
+
+> [!NOTE]
+> **Try Variant APIs**: For all direct-value throwing APIs, matching `Try` variant extension methods are available (e.g. `TryEncrypt`, `TryDecrypt`, `TryDeriveSharedSecret`). These catch exceptions internally, return `false` on failure, and return the output via an `out` parameter.
+> For example:
+> ```csharp
+> if (Aes256Gcm.TryEncrypt(key, plaintext, out byte[] encrypted)) {
+>     // Encryption succeeded
+> }
+> ```
+
+# 🧪 Sample
 
 View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUtility.Sample/Program.cs) to see all the features in use, you can also run the [pre-compiled sample binary](https://github.com/kdserra/CryptoUtility/releases) to see the execution results.
 
@@ -223,13 +320,13 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 
 ## 📝 API Notes
 
-The core CryptoUtility package contains only the contracts, envelopes, and utilities.  The individual extension packages contain implementations built upon the core contracts.
+The core CryptoUtility package contains only the contracts, serialization models, and utilities.  The individual extension packages contain implementations built upon the core contracts.
 
 Official .NET implementations are recommended, as they are usually hardware accelerated, and have the best support, but they typically have less platform support, which is important if your on an older version of .NET; such as Unity developers, in those cases consider BouncyCastle or a purpose specific library that offers the implementation you need.
 
 Over time the goal of this library is to support and unify all the popular cryptographic concepts and implementations.
 
-## 🎭 Disambiguation
+## 🗺️ Disambiguation
 
 To maintain API brevity, this library has opted for all algorithm classes to use the same name, and are intended to be disambiguated through namespaces, and namespace aliases.
 
