@@ -52,7 +52,11 @@ void RunSymmetricShowcase()
     Console.WriteLine($"  - Generated Key (Base64):  {base64Key}");
     Console.WriteLine($"  - Plaintext:               \"{plaintext}\"");
 
-    bool encSuccess = Aes256Gcm.TryEncryptBase64(base64Key, plaintext, out string encryptedEnvelope);
+    bool encSuccess = Aes256Gcm.TryEncryptBase64(
+        base64Key,
+        plaintext,
+        out string encryptedEnvelope
+    );
     if (encSuccess)
     {
         Console.WriteLine($"  - Encrypted Envelope:      {encryptedEnvelope}");
@@ -68,7 +72,11 @@ void RunSymmetricShowcase()
             Console.WriteLine($"    * Ciphertext:            {envelope.Ciphertext.ToHexString()}");
         }
 
-        bool decSuccess = Aes256Gcm.TryDecryptBase64(base64Key, encryptedEnvelope, out string decrypted);
+        bool decSuccess = Aes256Gcm.TryDecryptBase64(
+            base64Key,
+            encryptedEnvelope,
+            out string decrypted
+        );
         Console.WriteLine($"  - Decryption {(decSuccess ? "Succeeded!" : "Failed!")}");
         Console.WriteLine($"  - Decrypted Text:          \"{decrypted}\"");
     }
@@ -126,11 +134,19 @@ void RunSymmetricShowcase()
     Console.WriteLine("\n[ChaCha20-Poly1305 AEAD Demonstration]");
     string base64KeyCC = ChaCha20Poly1305.GenerateKeyBase64();
 
-    bool encCCSuccess = ChaCha20Poly1305.TryEncryptBase64(base64KeyCC, plaintext, out string encryptedEnvelopeCC);
+    bool encCCSuccess = ChaCha20Poly1305.TryEncryptBase64(
+        base64KeyCC,
+        plaintext,
+        out string encryptedEnvelopeCC
+    );
     if (encCCSuccess)
     {
         Console.WriteLine($"  - Encrypted Envelope:      {encryptedEnvelopeCC}");
-        bool decCCSuccess = ChaCha20Poly1305.TryDecryptBase64(base64KeyCC, encryptedEnvelopeCC, out string decryptedCC);
+        bool decCCSuccess = ChaCha20Poly1305.TryDecryptBase64(
+            base64KeyCC,
+            encryptedEnvelopeCC,
+            out string decryptedCC
+        );
         Console.WriteLine($"  - Decrypted Text:          \"{decryptedCC}\"");
     }
 }
