@@ -17,72 +17,47 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
     public int AuthTagSizeBytes => 16;
 
     /// <inheritdoc cref="ISymmetricCipher.Encrypt(byte[], byte[], byte[])" />
-    public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce) =>
+    public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce) =>
         Encrypt(key, plaintext, nonce, aad: []);
 
     /// <inheritdoc cref="ISymmetricCipherAEAD.Encrypt(byte[], byte[], byte[], byte[])" />
-    public (bool success, byte[] encrypted) Encrypt(
+    public byte[] Encrypt(
         byte[] key,
         byte[] plaintext,
         byte[] nonce,
         byte[] aad
     )
     {
-        if (!this.VerifyEncryptionParameters(key, plaintext, nonce))
-        {
-            return (false, []);
-        }
-
         byte[] ciphertext = new byte[plaintext.Length];
         byte[] tag = new byte[AuthTagSizeBytes];
 
-        try
-        {
-            using var aead = new global::NaCl.Core.ChaCha20Poly1305(key);
-            aead.Encrypt(nonce, plaintext, ciphertext, tag, aad);
+        using var aead = new global::NaCl.Core.ChaCha20Poly1305(key);
+        aead.Encrypt(nonce, plaintext, ciphertext, tag, aad);
 
-            var envelope = new SymmetricCipherEnvelope(
-                version: SymmetricCipherEnvelope.LatestVersion,
-                nonce: nonce,
-                tag: tag,
-                aad: aad,
-                ciphertext: ciphertext
-            );
+        var envelope = new SymmetricCipherEnvelope(
+            version: SymmetricCipherEnvelope.LatestVersion,
+            nonce: nonce,
+            tag: tag,
+            aad: aad,
+            ciphertext: ciphertext
+        );
 
-            return (true, envelope.ToBytes());
-        }
-        catch
-        {
-            return (false, []);
-        }
+        return envelope.ToBytes();
     }
 
     /// <inheritdoc cref="ISymmetricCipher.Decrypt(byte[], byte[])" />
-    public (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
+    public byte[] Decrypt(byte[] key, byte[] encrypted)
     {
         SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
         if (envelope == null)
         {
-            return (false, []);
-        }
-
-        if (!this.VerifyDecryptionParametersAEAD(key, envelope))
-        {
-            return (false, []);
+            throw new ArgumentException("Invalid envelope format");
         }
 
         byte[] plaintext = new byte[envelope.Ciphertext.Length];
+        using var aead = new global::NaCl.Core.ChaCha20Poly1305(key);
+        aead.Decrypt(envelope.Nonce, envelope.Ciphertext, envelope.Tag, plaintext, envelope.Aad);
 
-        try
-        {
-            using var aead = new global::NaCl.Core.ChaCha20Poly1305(key);
-            aead.Decrypt(envelope.Nonce, envelope.Ciphertext, envelope.Tag, plaintext, envelope.Aad);
-
-            return (true, plaintext);
-        }
-        catch
-        {
-            return (false, []);
-        }
+        return plaintext;
     }
 }

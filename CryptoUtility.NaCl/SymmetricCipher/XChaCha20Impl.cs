@@ -14,60 +14,36 @@ public sealed class XChaCha20Impl : ISymmetricCipher
     public int NonceSizeBytes => 24;
 
     /// <inheritdoc cref="ISymmetricCipher.Encrypt(byte[], byte[], byte[])" />
-    public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce)
+    public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce)
     {
-        if (!this.VerifyEncryptionParameters(key, plaintext, nonce))
-        {
-            return (false, []);
-        }
+        byte[] ciphertext = new byte[plaintext.Length];
+        using var xchacha = new global::NaCl.Core.XChaCha20(key, initialCounter: 0);
+        xchacha.Encrypt(plaintext, nonce, ciphertext);
 
-        try
-        {
-            byte[] ciphertext = new byte[plaintext.Length];
-            using var xchacha = new global::NaCl.Core.XChaCha20(key, initialCounter: 0);
-            xchacha.Encrypt(plaintext, nonce, ciphertext);
+        var envelope = new SymmetricCipherEnvelope(
+            version: SymmetricCipherEnvelope.LatestVersion,
+            nonce: nonce,
+            tag: [],
+            aad: [],
+            ciphertext: ciphertext
+        );
 
-            var envelope = new SymmetricCipherEnvelope(
-                version: SymmetricCipherEnvelope.LatestVersion,
-                nonce: nonce,
-                tag: [],
-                aad: [],
-                ciphertext: ciphertext
-            );
-
-            return (true, envelope.ToBytes());
-        }
-        catch
-        {
-            return (false, []);
-        }
+        return envelope.ToBytes();
     }
 
     /// <inheritdoc cref="ISymmetricCipher.Decrypt(byte[], byte[])" />
-    public (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
+    public byte[] Decrypt(byte[] key, byte[] encrypted)
     {
         SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
         if (envelope == null)
         {
-            return (false, []);
+            throw new ArgumentException("Invalid envelope format");
         }
 
-        if (!this.VerifyDecryptionParametersBase(key, envelope))
-        {
-            return (false, []);
-        }
+        byte[] plaintext = new byte[envelope.Ciphertext.Length];
+        using var xchacha = new global::NaCl.Core.XChaCha20(key, initialCounter: 0);
+        xchacha.Decrypt(envelope.Ciphertext, envelope.Nonce, plaintext);
 
-        try
-        {
-            byte[] plaintext = new byte[envelope.Ciphertext.Length];
-            using var xchacha = new global::NaCl.Core.XChaCha20(key, initialCounter: 0);
-            xchacha.Decrypt(envelope.Ciphertext, envelope.Nonce, plaintext);
-
-            return (true, plaintext);
-        }
-        catch
-        {
-            return (false, []);
-        }
+        return plaintext;
     }
 }

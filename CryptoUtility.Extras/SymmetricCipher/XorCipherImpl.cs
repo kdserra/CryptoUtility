@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 
 namespace CryptoUtility.Extras;
 
@@ -14,12 +14,14 @@ public sealed class XorCipherImpl : ISymmetricCipher
     public int NonceSizeBytes => 32;
 
     /// <inheritdoc cref="ISymmetricCipher.Encrypt(byte[], byte[], byte[])" />
-    public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce)
+    public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce)
     {
-        if (!this.VerifyEncryptionParameters(key, plaintext, nonce))
-        {
-            return (false, []);
-        }
+        if (key == null || key.Length == 0)
+            throw new CryptographicException("Key cannot be null or empty");
+        if (nonce == null || nonce.Length == 0)
+            throw new CryptographicException("Nonce cannot be null or empty");
+        if (plaintext == null)
+            throw new CryptographicException("Plaintext cannot be null");
 
         byte[] input = new byte[nonce.Length + plaintext.Length];
         Buffer.BlockCopy(nonce, 0, input, 0, nonce.Length);
@@ -37,33 +39,28 @@ public sealed class XorCipherImpl : ISymmetricCipher
 
         CryptographicOperations.ZeroMemory(input);
 
-        return (true, envelope.ToBytes());
+        return envelope.ToBytes();
     }
 
     /// <inheritdoc cref="ISymmetricCipher.Decrypt(byte[], byte[])" />
-    public (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
+    public byte[] Decrypt(byte[] key, byte[] encrypted)
     {
         SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
         if (envelope == null)
         {
-            return (false, []);
-        }
-
-        if (!this.VerifyDecryptionParametersBase(key, envelope))
-        {
-            return (false, []);
+            throw new ArgumentException("Invalid envelope format");
         }
 
         byte[] decrypted = Xor(envelope.Ciphertext, key);
         if (decrypted.Length < NonceSizeBytes)
         {
-            return (false, []);
+            throw new ArgumentException("Decrypted ciphertext too short");
         }
 
         byte[] plaintext = new byte[decrypted.Length - NonceSizeBytes];
         Buffer.BlockCopy(decrypted, NonceSizeBytes, plaintext, 0, plaintext.Length);
 
-        return (true, plaintext);
+        return plaintext;
     }
 
     private static byte[] Xor(byte[] input, byte[] key)

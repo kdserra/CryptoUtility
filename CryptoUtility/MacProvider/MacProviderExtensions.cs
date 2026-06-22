@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace CryptoUtility;
@@ -78,6 +78,10 @@ public static class MacProviderExtensions
         byte[] mac
     )
     {
+        if (key == null) throw new ArgumentNullException(nameof(key));
+        if (message == null) throw new ArgumentNullException(nameof(message));
+        if (mac == null) throw new ArgumentNullException(nameof(mac));
+
         byte[] computedMac = Array.Empty<byte>();
         bool isValid = false;
 

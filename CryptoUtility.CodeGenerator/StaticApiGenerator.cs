@@ -196,7 +196,17 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         var name = method.Name;
 
         var parameters = string.Join(", ", method.Parameters.Select(RenderParameter));
-        var args = string.Join(", ", method.Parameters.Select(p => p.Name));
+        var args = string.Join(", ", method.Parameters.Select(p =>
+        {
+            var prefix = p.RefKind switch
+            {
+                RefKind.Ref => "ref ",
+                RefKind.Out => "out ",
+                RefKind.In => "in ",
+                _ => "",
+            };
+            return prefix + p.Name;
+        }));
 
         sb.AppendLine(
             $"    /// <inheritdoc cref=\"{method.ContainingType.Name}.{method.Name}\" />"
@@ -223,7 +233,18 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         );
 
         var argsList = new List<string> { "Shared" };
-        argsList.AddRange(parameters.Select((p, i) => isInjected[i] ? "Shared" : p.Name));
+        argsList.AddRange(parameters.Select((p, i) =>
+        {
+            if (isInjected[i]) return "Shared";
+            var prefix = p.RefKind switch
+            {
+                RefKind.Ref => "ref ",
+                RefKind.Out => "out ",
+                RefKind.In => "in ",
+                _ => "",
+            };
+            return prefix + p.Name;
+        }));
         var args = string.Join(", ", argsList);
 
         var extClass = symbol.ContainingType.ToDisplayString(
@@ -240,15 +261,22 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
 
     private static string RenderParameter(IParameterSymbol p)
     {
+        var prefix = p.RefKind switch
+        {
+            RefKind.Ref => "ref ",
+            RefKind.Out => "out ",
+            RefKind.In => "in ",
+            _ => "",
+        };
         var type = p.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
         if (p.NullableAnnotation == NullableAnnotation.Annotated)
             type += "?";
 
         if (p.HasExplicitDefaultValue)
-            return $"{type} {p.Name} = {RenderDefaultValue(p)}";
+            return $"{prefix}{type} {p.Name} = {RenderDefaultValue(p)}";
 
-        return $"{type} {p.Name}";
+        return $"{prefix}{type} {p.Name}";
     }
 
     private static string RenderDefaultValue(IParameterSymbol p)

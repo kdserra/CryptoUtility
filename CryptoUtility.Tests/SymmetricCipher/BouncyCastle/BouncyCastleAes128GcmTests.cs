@@ -29,11 +29,8 @@ public sealed class BouncyCastleAes128GcmTests : SymmetricCipherAEADTests
         byte[] aad = Encoding.UTF8.GetBytes("associated data");
         byte[] plaintext = Encoding.UTF8.GetBytes("AES-128-GCM interop");
 
-        var (encSuccess, encrypted) = bouncyCastleCipher.Encrypt(key, plaintext, nonce, aad);
-        Assert.True(encSuccess);
-
-        var (decSuccess, decrypted) = systemCipher.Decrypt(key, encrypted);
-        Assert.True(decSuccess);
+        var encrypted = bouncyCastleCipher.Encrypt(key, plaintext, nonce, aad);
+        var decrypted = systemCipher.Decrypt(key, encrypted);
         Assert.Equal(plaintext, decrypted);
     }
 
@@ -47,11 +44,8 @@ public sealed class BouncyCastleAes128GcmTests : SymmetricCipherAEADTests
         byte[] aad = Encoding.UTF8.GetBytes("associated data");
         byte[] plaintext = Encoding.UTF8.GetBytes("AES-128-GCM interop");
 
-        var (encSuccess, encrypted) = systemCipher.Encrypt(key, plaintext, nonce, aad);
-        Assert.True(encSuccess);
-
-        var (decSuccess, decrypted) = bouncyCastleCipher.Decrypt(key, encrypted);
-        Assert.True(decSuccess);
+        var encrypted = systemCipher.Encrypt(key, plaintext, nonce, aad);
+        var decrypted = bouncyCastleCipher.Decrypt(key, encrypted);
         Assert.Equal(plaintext, decrypted);
     }
 }

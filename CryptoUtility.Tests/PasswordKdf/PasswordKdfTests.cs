@@ -50,29 +50,17 @@ public abstract class PasswordKdfTests
     {
         IPasswordKdf? nullKdf = null;
 
-        string derived = nullKdf!.DeriveKeyBase64("pass", 1, 16, [1, 2]);
-        Assert.Equal(string.Empty, derived);
+        Assert.False(nullKdf!.TryDeriveKey("pass", [1, 2], 1, 16, out _));
+        Assert.False(nullKdf!.TryDeriveKeyBase64("pass", "c2FsdA==", 1, 16, out _));
     }
 
     [Fact]
-    public void DeriveKeyBase64_WithInvalidInputs_SwallowsAndReturnsEmpty()
+    public void DeriveKeyBase64_WithInvalidInputs_Throws()
     {
-        string derived1 = Kdf.DeriveKeyBase64(null!, 1000, 16, [1, 2]);
-        Assert.Equal(string.Empty, derived1);
-
-        string derived2 = Kdf.DeriveKeyBase64("", 1000, 16, [1, 2]);
-        Assert.Equal(string.Empty, derived2);
-
-        string derived3 = Kdf.DeriveKeyBase64("pass", 1000, 16, null!);
-        Assert.Equal(string.Empty, derived3);
-
-        string derived4 = Kdf.DeriveKeyBase64("pass", 1000, 16, []);
-        Assert.Equal(string.Empty, derived4);
-
-        string derived5 = Kdf.DeriveKeyBase64("pass", 0, 16, [1, 2]);
-        Assert.Equal(string.Empty, derived5);
-
-        string derived6 = Kdf.DeriveKeyBase64("pass", 1000, -5, [1, 2]);
-        Assert.Equal(string.Empty, derived6);
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKeyBase64(null!, "c2FsdA==", 1000, 16));
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKeyBase64("pass", null!, 1000, 16));
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKeyBase64("pass", "invalid_base64", 1000, 16));
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKeyBase64("pass", "c2FsdA==", 0, 16));
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKeyBase64("pass", "c2FsdA==", 1000, -5));
     }
 }

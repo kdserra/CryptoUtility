@@ -1,4 +1,4 @@
-﻿#if NET8_0_OR_GREATER
+#if NET8_0_OR_GREATER
 using System.Security.Cryptography;
 
 namespace CryptoUtility.System;
@@ -16,100 +16,52 @@ public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
     public abstract int SaltSizeBytes { get; }
 
     /// <inheritdoc cref="IAsymmetricCipher.Encrypt(byte[], byte[])"/>
-    public (bool success, byte[] encrypted) Encrypt(byte[] publicKey, byte[] plaintext)
+    public byte[] Encrypt(byte[] publicKey, byte[] plaintext)
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(publicKey, plaintext))
-            {
-                return (false, Array.Empty<byte>());
-            }
+        using RSA rsa = RSA.Create();
+        rsa.ImportSubjectPublicKeyInfo(publicKey, out _);
 
-            using RSA rsa = RSA.Create();
-            rsa.ImportSubjectPublicKeyInfo(publicKey, out _);
-
-            byte[] ciphertext = rsa.Encrypt(plaintext, RSAEncryptionPadding.OaepSHA256);
-            return (true, ciphertext);
-        }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
+        byte[] ciphertext = rsa.Encrypt(plaintext, RSAEncryptionPadding.OaepSHA256);
+        return ciphertext;
     }
 
     /// <inheritdoc cref="IAsymmetricCipher.Decrypt(byte[], byte[])"/>
-    public (bool success, byte[] plaintext) Decrypt(byte[] secretKey, byte[] encrypted)
+    public byte[] Decrypt(byte[] secretKey, byte[] encrypted)
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(secretKey, encrypted))
-            {
-                return (false, Array.Empty<byte>());
-            }
+        using RSA rsa = RSA.Create();
+        rsa.ImportPkcs8PrivateKey(secretKey, out _);
 
-            using RSA rsa = RSA.Create();
-            rsa.ImportPkcs8PrivateKey(secretKey, out _);
-
-            byte[] plaintext = rsa.Decrypt(encrypted, RSAEncryptionPadding.OaepSHA256);
-            return (true, plaintext);
-        }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
+        byte[] plaintext = rsa.Decrypt(encrypted, RSAEncryptionPadding.OaepSHA256);
+        return plaintext;
     }
 
     /// <inheritdoc cref="IAsymmetricCipher.Sign(byte[], byte[])"/>
-    public (bool success, byte[] signature) Sign(byte[] input, byte[] secretKey)
+    public byte[] Sign(byte[] input, byte[] secretKey)
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(input, secretKey))
-            {
-                return (false, Array.Empty<byte>());
-            }
+        using RSA rsa = RSA.Create();
+        rsa.ImportPkcs8PrivateKey(secretKey, out _);
 
-            using RSA rsa = RSA.Create();
-            rsa.ImportPkcs8PrivateKey(secretKey, out _);
+        byte[] signature = rsa.SignData(
+            input,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1
+        );
 
-            byte[] signature = rsa.SignData(
-                input,
-                HashAlgorithmName.SHA256,
-                RSASignaturePadding.Pkcs1
-            );
-
-            return (true, signature);
-        }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
+        return signature;
     }
 
     /// <inheritdoc cref="IAsymmetricCipher.Verify(byte[], byte[], byte[])"/>
     public bool Verify(byte[] input, byte[] signature, byte[] publicKey)
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(input, signature, publicKey))
-            {
-                return false;
-            }
+        using RSA rsa = RSA.Create();
+        rsa.ImportSubjectPublicKeyInfo(publicKey, out _);
 
-            using RSA rsa = RSA.Create();
-            rsa.ImportSubjectPublicKeyInfo(publicKey, out _);
-
-            return rsa.VerifyData(
-                input,
-                signature,
-                HashAlgorithmName.SHA256,
-                RSASignaturePadding.Pkcs1
-            );
-        }
-        catch
-        {
-            return false;
-        }
+        return rsa.VerifyData(
+            input,
+            signature,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1
+        );
     }
 
     /// <inheritdoc cref="IAsymmetricCipher.GenerateKeyPair()"/>

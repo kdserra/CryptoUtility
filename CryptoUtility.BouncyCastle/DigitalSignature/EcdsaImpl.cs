@@ -20,7 +20,7 @@ public sealed class EcdsaImpl : IDigitalSignature
     private const string Algorithm = "SHA-256withECDSA";
     private const string CurveName = "P-256";
 
-    public (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
+    public (byte[] publicKey, byte[] secretKey) GenerateKeyPair()
     {
         X9ECParameters ecParams = ECNamedCurveTable.GetByName(CurveName);
         ECDomainParameters domainParams = new(
@@ -45,50 +45,26 @@ public sealed class EcdsaImpl : IDigitalSignature
         return (publicKey, privateKey);
     }
 
-    public (bool success, byte[] signature) Sign(byte[] message, byte[] secretKey)
+    public byte[] Sign(byte[] message, byte[] secretKey)
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(message, secretKey))
-            {
-                return (false, Array.Empty<byte>());
-            }
+        AsymmetricKeyParameter privateKeyParam = PrivateKeyFactory.CreateKey(secretKey);
 
-            AsymmetricKeyParameter privateKeyParam = PrivateKeyFactory.CreateKey(secretKey);
+        ISigner signer = SignerUtilities.GetSigner(Algorithm);
+        signer.Init(true, privateKeyParam);
+        signer.BlockUpdate(message, 0, message.Length);
 
-            ISigner signer = SignerUtilities.GetSigner(Algorithm);
-            signer.Init(true, privateKeyParam);
-            signer.BlockUpdate(message, 0, message.Length);
-
-            byte[] signature = signer.GenerateSignature();
-            return (true, signature);
-        }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
+        byte[] signature = signer.GenerateSignature();
+        return signature;
     }
 
     public bool Verify(byte[] message, byte[] signature, byte[] publicKey)
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(message, signature, publicKey))
-            {
-                return false;
-            }
+        AsymmetricKeyParameter publicKeyParam = PublicKeyFactory.CreateKey(publicKey);
 
-            AsymmetricKeyParameter publicKeyParam = PublicKeyFactory.CreateKey(publicKey);
+        ISigner signer = SignerUtilities.GetSigner(Algorithm);
+        signer.Init(false, publicKeyParam);
+        signer.BlockUpdate(message, 0, message.Length);
 
-            ISigner signer = SignerUtilities.GetSigner(Algorithm);
-            signer.Init(false, publicKeyParam);
-            signer.BlockUpdate(message, 0, message.Length);
-
-            return signer.VerifySignature(signature);
-        }
-        catch
-        {
-            return false;
-        }
+        return signer.VerifySignature(signature);
     }
 }

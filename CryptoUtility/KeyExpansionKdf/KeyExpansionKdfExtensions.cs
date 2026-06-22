@@ -13,6 +13,11 @@ public static class KeyExpansionKdfExtensions
         string infoBase64
     )
     {
+        if (kdf == null) throw new ArgumentNullException(nameof(kdf));
+        if (inputKeyMaterialBase64 == null) throw new ArgumentNullException(nameof(inputKeyMaterialBase64));
+        if (saltBase64 == null) throw new ArgumentNullException(nameof(saltBase64));
+        if (infoBase64 == null) throw new ArgumentNullException(nameof(infoBase64));
+
         byte[] inputKeyMaterialBytes = Array.Empty<byte>();
         byte[] saltBytes = Array.Empty<byte>();
         byte[] infoBytes = Array.Empty<byte>();
@@ -55,6 +60,11 @@ public static class KeyExpansionKdfExtensions
         byte[] info
     )
     {
+        if (kdf == null) throw new ArgumentNullException(nameof(kdf));
+        if (inputKeyMaterial == null) throw new ArgumentNullException(nameof(inputKeyMaterial));
+        if (salt == null) throw new ArgumentNullException(nameof(salt));
+        if (info == null) throw new ArgumentNullException(nameof(info));
+
         byte[] keyBytes = Array.Empty<byte>();
         string keyBase64 = string.Empty;
 

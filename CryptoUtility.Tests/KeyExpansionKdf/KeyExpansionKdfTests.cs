@@ -31,33 +31,17 @@ public abstract class KeyExpansionKdfTests
     {
         IKeyExpansionKdf? nullKdf = null;
 
-        string derived = nullKdf!.DeriveKeyBase64([1, 2], 1, 16, [3, 4], [5, 6]);
-        Assert.Equal(string.Empty, derived);
+        Assert.False(nullKdf!.TryDeriveKey([1, 2], 1, 16, [3, 4], [5, 6], out _));
+        Assert.False(nullKdf!.TryDeriveKeyBase64("c2Vj", 1, 16, "c2FsdA==", "aW5mbw==", out _));
     }
 
     [Fact]
-    public void DeriveKeyBase64_WithInvalidInputs_SwallowsAndReturnsEmpty()
+    public void DeriveKeyBase64_WithInvalidInputs_Throws()
     {
-        string derived1 = Kdf.DeriveKeyBase64(null!, 1, 16, [1, 2], [3, 4]);
-        Assert.Equal(string.Empty, derived1);
-
-        string derived2 = Kdf.DeriveKeyBase64([], 1, 16, [1, 2], [3, 4]);
-        Assert.Equal(string.Empty, derived2);
-
-        string derived3 = Kdf.DeriveKeyBase64([1, 2], 1, 16, null!, [3, 4]);
-        Assert.Equal(string.Empty, derived3);
-
-        string derived4 = Kdf.DeriveKeyBase64([1, 2], 1, 16, [], [3, 4]);
-        Assert.Equal(string.Empty, derived4);
-
-        string derived5 = Kdf.DeriveKeyBase64([1, 2], 1, 16, [1, 2], null!);
-        Assert.Equal(string.Empty, derived5);
-
-        string derived6 = Kdf.DeriveKeyBase64([1, 2], 1, 16, [1, 2], []);
-        Assert.Equal(string.Empty, derived6);
-
-        string derived7 = Kdf.DeriveKeyBase64([1, 2], 1, -5, [1, 2], [3, 4]);
-        Assert.Equal(string.Empty, derived7);
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKeyBase64(null!, 1, 16, [1, 2], [3, 4]));
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKeyBase64([1, 2], 1, 16, null!, [3, 4]));
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKeyBase64([1, 2], 1, 16, [1, 2], null!));
+        Assert.ThrowsAny<Exception>(() => Kdf.DeriveKeyBase64([1, 2], 1, -5, [1, 2], [3, 4]));
     }
 
     [Fact]

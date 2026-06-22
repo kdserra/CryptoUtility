@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Xunit;
 
@@ -128,37 +128,26 @@ public abstract class MacProviderTests
     [Theory]
     [InlineData(null, "bWVzc2FnZQ==")]
     [InlineData("a2V5", null)]
-    public void ComputeMacBase64_NullInputs_ReturnsEmptyString(string? key, string? message)
+    public void ComputeMacBase64_NullInputs_Throws(string? key, string? message)
     {
-        // Act
-        string result = Mac.ComputeMacBase64(key!, message!);
-
-        // Assert
-        Assert.Equal(string.Empty, result);
+        Assert.ThrowsAny<Exception>(() => Mac.ComputeMacBase64(key!, message!));
     }
 
     [Fact]
-    public void VerifyMac_NullInputs_ReturnsFalse()
+    public void VerifyMac_NullInputs_Throws()
     {
-        // Arrange
         byte[] validArray = [1, 2, 3];
-
-        // Assert & Act
-        Assert.False(Mac.VerifyMac(null!, validArray, validArray));
-        Assert.False(Mac.VerifyMac(validArray, null!, validArray));
-        Assert.False(Mac.VerifyMac(validArray, validArray, null!));
+        Assert.ThrowsAny<Exception>(() => Mac.VerifyMac(null!, validArray, validArray));
+        Assert.ThrowsAny<Exception>(() => Mac.VerifyMac(validArray, null!, validArray));
+        Assert.ThrowsAny<Exception>(() => Mac.VerifyMac(validArray, validArray, null!));
     }
 
     [Theory]
     [InlineData(null, "bWVzc2FnZQ==", "bWFj")]
     [InlineData("a2V5", null, "bWFj")]
     [InlineData("a2V5", "bWVzc2FnZQ==", null)]
-    public void VerifyBase64_NullInputs_ReturnsFalse(string? key, string? message, string? mac)
+    public void VerifyBase64_NullInputs_Throws(string? key, string? message, string? mac)
     {
-        // Act
-        bool isValid = Mac.VerifyBase64(key!, message!, mac!);
-
-        // Assert
-        Assert.False(isValid);
+        Assert.ThrowsAny<Exception>(() => Mac.VerifyBase64(key!, message!, mac!));
     }
 }

@@ -6,7 +6,7 @@ public abstract class DigitalSignatureTests
 {
     internal abstract IDigitalSignature Signer { get; }
 
-    protected (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
+    protected (byte[] publicKey, byte[] secretKey) GenerateKeyPair()
     {
         return Signer.GenerateKeyPair();
     }
@@ -17,22 +17,27 @@ public abstract class DigitalSignatureTests
     }
 
     [Fact]
-    public void Sign_WithNullKey_Fails()
+    public abstract void Verify_AlgorithmSpecification();
+
+    [Fact]
+    public void Sign_WithNullKey_ThrowsOrFails()
     {
         var message = GeneratePlaintext();
-
-        var (success, signature) = Signer.Sign(message, null!);
-
-        Assert.False(success);
-        Assert.NotNull(signature);
-        Assert.Empty(signature);
+        Assert.ThrowsAny<Exception>(() => Signer.Sign(message, null!));
     }
 
     [Fact]
-    public void Verify_WithNullInputs_Fails()
+    public void Sign_WithNullKey_Try_ReturnsFalse()
     {
-        var result = Signer.Verify(null!, null!, null!);
-        Assert.False(result);
+        var message = GeneratePlaintext();
+        bool success = Signer.TrySign(message, null!, out _);
+        Assert.False(success);
+    }
+
+    [Fact]
+    public void Verify_WithNullInputs_Throws()
+    {
+        Assert.ThrowsAny<Exception>(() => Signer.Verify(null!, null!, null!));
     }
 
     [Fact]
@@ -41,8 +46,21 @@ public abstract class DigitalSignatureTests
         var (pub, sec) = Signer.GenerateKeyPairBase64();
         string message = "hello world";
 
-        var (okSign, signature) = Signer.SignBase64(message, sec);
-        Assert.True(okSign);
+        var signature = Signer.SignBase64(message, sec);
+        Assert.False(string.IsNullOrEmpty(signature));
+
+        var verified = Signer.VerifyBase64(message, signature, pub);
+        Assert.True(verified);
+    }
+
+    [Fact]
+    public void SignVerify_Base64_Try_Roundtrip()
+    {
+        var (pub, sec) = Signer.GenerateKeyPairBase64();
+        string message = "hello world";
+
+        bool signSuccess = Signer.TrySignBase64(message, sec, out var signature);
+        Assert.True(signSuccess);
         Assert.False(string.IsNullOrEmpty(signature));
 
         var verified = Signer.VerifyBase64(message, signature, pub);
@@ -55,8 +73,7 @@ public abstract class DigitalSignatureTests
         var (pub, sec) = Signer.GenerateKeyPairBase64();
         string message = "hello world";
 
-        var (okSign, signature) = Signer.SignBase64(message, sec);
-        Assert.True(okSign);
+        var signature = Signer.SignBase64(message, sec);
 
         var verified = Signer.VerifyBase64("tampered", signature, pub);
         Assert.False(verified);
@@ -68,8 +85,7 @@ public abstract class DigitalSignatureTests
         var (pub, sec) = Signer.GenerateKeyPairBase64();
         string message = "hello world";
 
-        var (okSign, signature) = Signer.SignBase64(message, sec);
-        Assert.True(okSign);
+        var signature = Signer.SignBase64(message, sec);
 
         var bytes = Convert.FromBase64String(signature);
         bytes[0] ^= 0xFF;
@@ -80,37 +96,28 @@ public abstract class DigitalSignatureTests
     }
 
     [Fact]
-    public void SignBase64_WithEmptyMessage_Fails()
+    public void SignBase64_WithInvalidNullMessage_ThrowsOrFails()
     {
         var (_, sec) = Signer.GenerateKeyPairBase64();
-
-        var (success, signature) = Signer.SignBase64("", sec);
-
-        Assert.False(success);
-        Assert.True(string.IsNullOrEmpty(signature));
+        Assert.ThrowsAny<Exception>(() => Signer.SignBase64(null!, sec));
     }
 
     [Fact]
-    public void SignBase64_WithInvalidKey_Fails()
+    public void SignBase64_WithInvalidKey_ThrowsOrFails()
     {
-        var (success, signature) = Signer.SignBase64("hello", "");
-
-        Assert.False(success);
-        Assert.True(string.IsNullOrEmpty(signature));
+        Assert.ThrowsAny<Exception>(() => Signer.SignBase64("hello", ""));
     }
 
     [Fact]
-    public void VerifyBase64_WithInvalidInputs_Fails()
+    public void VerifyBase64_WithInvalidInputs_Throws()
     {
-        var result = Signer.VerifyBase64("", "", "");
-        Assert.False(result);
+        Assert.ThrowsAny<Exception>(() => Signer.VerifyBase64("", "", ""));
     }
 
     [Fact]
-    public void VerifyBase64_WithNullInputs_Fails()
+    public void VerifyBase64_WithNullInputs_Throws()
     {
-        var result = Signer.VerifyBase64(null!, null!, null!);
-        Assert.False(result);
+        Assert.ThrowsAny<Exception>(() => Signer.VerifyBase64(null!, null!, null!));
     }
 
     [Fact]
@@ -119,8 +126,22 @@ public abstract class DigitalSignatureTests
         var (pub, sec) = GenerateKeyPair();
         var message = GeneratePlaintext();
 
-        var (okSign, signature) = Signer.Sign(message, sec);
-        Assert.True(okSign);
+        var signature = Signer.Sign(message, sec);
+        Assert.NotNull(signature);
+        Assert.NotEmpty(signature);
+
+        var verified = Signer.Verify(message, signature, pub);
+        Assert.True(verified);
+    }
+
+    [Fact]
+    public void SignVerify_Try_Roundtrip()
+    {
+        var (pub, sec) = GenerateKeyPair();
+        var message = GeneratePlaintext();
+
+        bool signSuccess = Signer.TrySign(message, sec, out var signature);
+        Assert.True(signSuccess);
         Assert.NotNull(signature);
         Assert.NotEmpty(signature);
 
@@ -134,8 +155,7 @@ public abstract class DigitalSignatureTests
         var (pub, sec) = GenerateKeyPair();
         var message = GeneratePlaintext();
 
-        var (okSign, signature) = Signer.Sign(message, sec);
-        Assert.True(okSign);
+        var signature = Signer.Sign(message, sec);
 
         var tampered = Encoding.UTF8.GetBytes("tampered");
 
@@ -149,8 +169,7 @@ public abstract class DigitalSignatureTests
         var (pub, sec) = GenerateKeyPair();
         var message = GeneratePlaintext();
 
-        var (okSign, signature) = Signer.Sign(message, sec);
-        Assert.True(okSign);
+        var signature = Signer.Sign(message, sec);
 
         signature[0] ^= 0xFF;
 
@@ -159,50 +178,32 @@ public abstract class DigitalSignatureTests
     }
 
     [Fact]
-    public void Sign_WithInvalidEmptyKey_Fails()
+    public void Sign_WithInvalidEmptyKey_ThrowsOrFails()
     {
         var message = GeneratePlaintext();
-
-        var (success, signature) = Signer.Sign(message, []);
-
-        Assert.False(success);
-        Assert.NotNull(signature);
-        Assert.Empty(signature);
+        Assert.ThrowsAny<Exception>(() => Signer.Sign(message, []));
     }
 
     [Fact]
-    public void Sign_WithInvalidEmptyMessage_Fails()
+    public void Sign_WithInvalidNullMessage_ThrowsOrFails()
     {
         var (_, sec) = GenerateKeyPair();
-
-        var (success, signature) = Signer.Sign([], sec);
-
-        Assert.False(success);
-        Assert.NotNull(signature);
-        Assert.Empty(signature);
+        Assert.ThrowsAny<Exception>(() => Signer.Sign(null!, sec));
     }
 
     [Fact]
-    public void Verify_WithInvalidInputs_Fails()
+    public void Verify_WithInvalidInputs_Throws()
     {
-        var result = Signer.Verify([], [], []);
-        Assert.False(result);
+        Assert.ThrowsAny<Exception>(() => Signer.Verify([], [], []));
     }
 
     [Fact]
-    public void DigitalSignatureExtensions_NullHandling()
+    public void DigitalSignatureExtensions_NullHandling_Try_ReturnsFalse()
     {
         IDigitalSignature? nullSig = null;
 
-        var (signSuccess, signature) = nullSig!.SignBase64("msg", "secKey");
-        Assert.False(signSuccess);
-        Assert.Equal(string.Empty, signature);
-
-        bool verifyResult = nullSig!.VerifyBase64("msg", "sig", "pubKey");
-        Assert.False(verifyResult);
-
-        var (pub, sec) = nullSig!.GenerateKeyPairBase64();
-        Assert.Equal(string.Empty, pub);
-        Assert.Equal(string.Empty, sec);
+        Assert.False(nullSig!.TrySignBase64("msg", "secKey", out _));
+        Assert.False(nullSig!.TryGenerateKeyPair(out _, out _));
+        Assert.False(nullSig!.TryGenerateKeyPairBase64(out _, out _));
     }
 }

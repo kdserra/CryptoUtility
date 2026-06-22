@@ -1,5 +1,7 @@
+using System;
 using System.Text;
 using CryptoUtility.System;
+using Xunit;
 
 namespace CryptoUtility.Tests;
 
@@ -8,6 +10,8 @@ public abstract class KeyAgreementTests
     internal abstract IKeyAgreement KeyAgreement { get; }
 
     internal abstract IKeyAgreement CreateNew();
+
+    public abstract void Verify_AlgorithmSpecification();
 
     protected (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
     {
@@ -39,34 +43,24 @@ public abstract class KeyAgreementTests
         var (aPub, aSec) = a.GenerateKeyPair();
         var (bPub, bSec) = b.GenerateKeyPair();
 
-        var (okA, secretA) = a.DeriveSharedSecret(aSec, bPub);
-        var (okB, secretB) = b.DeriveSharedSecret(bSec, aPub);
+        var secretA = a.DeriveSharedSecret(aSec, bPub);
+        var secretB = b.DeriveSharedSecret(bSec, aPub);
 
-        Assert.True(okA);
-        Assert.True(okB);
         Assert.NotEmpty(secretA);
         Assert.NotEmpty(secretB);
         Assert.Equal(secretA, secretB);
     }
 
     [Fact]
-    public void DeriveSharedSecret_InvalidInputs_Fail()
+    public void DeriveSharedSecret_InvalidInputs_Throws()
     {
-        var (ok, secret) = KeyAgreement.DeriveSharedSecret([], []);
-
-        Assert.False(ok);
-        Assert.NotNull(secret);
-        Assert.Empty(secret);
+        Assert.ThrowsAny<Exception>(() => KeyAgreement.DeriveSharedSecret([], []));
     }
 
     [Fact]
-    public void DeriveSharedSecret_NullInputs_Fail()
+    public void DeriveSharedSecret_NullInputs_Throws()
     {
-        var (ok, secret) = KeyAgreement.DeriveSharedSecret(null!, null!);
-
-        Assert.False(ok);
-        Assert.NotNull(secret);
-        Assert.Empty(secret);
+        Assert.ThrowsAny<Exception>(() => KeyAgreement.DeriveSharedSecret(null!, null!));
     }
 
     [Fact]
@@ -87,30 +81,24 @@ public abstract class KeyAgreementTests
         var (aPub, aSec) = a.GenerateKeyPairBase64();
         var (bPub, bSec) = b.GenerateKeyPairBase64();
 
-        var (okA, secretA) = a.DeriveSharedSecretBase64(aSec, bPub);
-        var (okB, secretB) = b.DeriveSharedSecretBase64(bSec, aPub);
+        var secretA = a.DeriveSharedSecretBase64(aSec, bPub);
+        var secretB = b.DeriveSharedSecretBase64(bSec, aPub);
 
-        Assert.True(okA);
-        Assert.True(okB);
         Assert.False(string.IsNullOrEmpty(secretA));
         Assert.False(string.IsNullOrEmpty(secretB));
         Assert.Equal(secretA, secretB);
     }
 
     [Fact]
-    public void DeriveSharedSecretBase64_InvalidInputs_Fail()
+    public void DeriveSharedSecretBase64_InvalidInputs_Throws()
     {
-        var result = KeyAgreement.DeriveSharedSecretBase64("", "");
-        Assert.False(result.success);
-        Assert.True(string.IsNullOrEmpty(result.sharedSecret));
+        Assert.ThrowsAny<Exception>(() => KeyAgreement.DeriveSharedSecretBase64("", ""));
     }
 
     [Fact]
-    public void DeriveSharedSecretBase64_NullInputs_Fail()
+    public void DeriveSharedSecretBase64_NullInputs_Throws()
     {
-        var result = KeyAgreement.DeriveSharedSecretBase64(null!, null!);
-        Assert.False(result.success);
-        Assert.True(string.IsNullOrEmpty(result.sharedSecret));
+        Assert.ThrowsAny<Exception>(() => KeyAgreement.DeriveSharedSecretBase64(null!, null!));
     }
 
     [Fact]
@@ -122,34 +110,24 @@ public abstract class KeyAgreementTests
         var (aPub, aSec) = a.GenerateKeyPair();
         var (bPub, bSec) = b.GenerateKeyPair();
 
-        var (okA, secretA) = a.DeriveSharedSecret(aSec, bPub);
-        var (okB, secretB) = b.DeriveSharedSecret(bSec, aPub);
+        var secretA = a.DeriveSharedSecret(aSec, bPub);
+        var secretB = b.DeriveSharedSecret(bSec, aPub);
 
-        Assert.True(okA);
-        Assert.True(okB);
         Assert.NotEmpty(secretA);
         Assert.NotEmpty(secretB);
         Assert.Equal(secretA, secretB);
     }
 
     [Fact]
-    public void SameInstance_DeriveSharedSecret_InvalidInputs_Fail()
+    public void SameInstance_DeriveSharedSecret_InvalidInputs_Throws()
     {
-        var (ok, secret) = KeyAgreement.DeriveSharedSecret([], []);
-
-        Assert.False(ok);
-        Assert.NotNull(secret);
-        Assert.Empty(secret);
+        Assert.ThrowsAny<Exception>(() => KeyAgreement.DeriveSharedSecret([], []));
     }
 
     [Fact]
-    public void SameInstance_DeriveSharedSecret_NullInputs_Fail()
+    public void SameInstance_DeriveSharedSecret_NullInputs_Throws()
     {
-        var (ok, secret) = KeyAgreement.DeriveSharedSecret(null!, null!);
-
-        Assert.False(ok);
-        Assert.NotNull(secret);
-        Assert.Empty(secret);
+        Assert.ThrowsAny<Exception>(() => KeyAgreement.DeriveSharedSecret(null!, null!));
     }
 
     [Fact]
@@ -161,32 +139,24 @@ public abstract class KeyAgreementTests
         var (aPub, aSec) = a.GenerateKeyPairBase64();
         var (bPub, bSec) = b.GenerateKeyPairBase64();
 
-        var (okA, secretA) = a.DeriveSharedSecretBase64(aSec, bPub);
-        var (okB, secretB) = b.DeriveSharedSecretBase64(bSec, aPub);
+        var secretA = a.DeriveSharedSecretBase64(aSec, bPub);
+        var secretB = b.DeriveSharedSecretBase64(bSec, aPub);
 
-        Assert.True(okA);
-        Assert.True(okB);
         Assert.False(string.IsNullOrEmpty(secretA));
         Assert.False(string.IsNullOrEmpty(secretB));
         Assert.Equal(secretA, secretB);
     }
 
     [Fact]
-    public void SameInstance_DeriveSharedSecretBase64_InvalidInputs_Fail()
+    public void SameInstance_DeriveSharedSecretBase64_InvalidInputs_Throws()
     {
-        var result = KeyAgreement.DeriveSharedSecretBase64("", "");
-
-        Assert.False(result.success);
-        Assert.True(string.IsNullOrEmpty(result.sharedSecret));
+        Assert.ThrowsAny<Exception>(() => KeyAgreement.DeriveSharedSecretBase64("", ""));
     }
 
     [Fact]
-    public void SameInstance_DeriveSharedSecretBase64_NullInputs_Fail()
+    public void SameInstance_DeriveSharedSecretBase64_NullInputs_Throws()
     {
-        var result = KeyAgreement.DeriveSharedSecretBase64(null!, null!);
-
-        Assert.False(result.success);
-        Assert.True(string.IsNullOrEmpty(result.sharedSecret));
+        Assert.ThrowsAny<Exception>(() => KeyAgreement.DeriveSharedSecretBase64(null!, null!));
     }
 
     [Fact]
@@ -198,38 +168,26 @@ public abstract class KeyAgreementTests
         var (aPub, aSec) = a.GenerateKeyPair();
         var (bPub, bSec) = b.GenerateKeyPair();
 
-        var (okA, secretA) = a.DeriveSharedSecret(aSec, bPub);
-        var (okB, secretB) = b.DeriveSharedSecret(bSec, aPub);
+        var secretA = a.DeriveSharedSecret(aSec, bPub);
+        var secretB = b.DeriveSharedSecret(bSec, aPub);
 
-        Assert.True(okA);
-        Assert.True(okB);
         Assert.NotEmpty(secretA);
         Assert.NotEmpty(secretB);
         Assert.Equal(secretA, secretB);
     }
 
     [Fact]
-    public void NewInstance_DeriveSharedSecret_InvalidInputs_Fail()
+    public void NewInstance_DeriveSharedSecret_InvalidInputs_Throws()
     {
         var a = CreateNew();
-
-        var (ok, secret) = a.DeriveSharedSecret([], []);
-
-        Assert.False(ok);
-        Assert.NotNull(secret);
-        Assert.Empty(secret);
+        Assert.ThrowsAny<Exception>(() => a.DeriveSharedSecret([], []));
     }
 
     [Fact]
-    public void NewInstance_DeriveSharedSecret_NullInputs_Fail()
+    public void NewInstance_DeriveSharedSecret_NullInputs_Throws()
     {
         var a = CreateNew();
-
-        var (ok, secret) = a.DeriveSharedSecret(null!, null!);
-
-        Assert.False(ok);
-        Assert.NotNull(secret);
-        Assert.Empty(secret);
+        Assert.ThrowsAny<Exception>(() => a.DeriveSharedSecret(null!, null!));
     }
 
     [Fact]
@@ -241,36 +199,44 @@ public abstract class KeyAgreementTests
         var (aPub, aSec) = a.GenerateKeyPairBase64();
         var (bPub, bSec) = b.GenerateKeyPairBase64();
 
-        var (okA, secretA) = a.DeriveSharedSecretBase64(aSec, bPub);
-        var (okB, secretB) = b.DeriveSharedSecretBase64(bSec, aPub);
+        var secretA = a.DeriveSharedSecretBase64(aSec, bPub);
+        var secretB = b.DeriveSharedSecretBase64(bSec, aPub);
 
-        Assert.True(okA);
-        Assert.True(okB);
         Assert.False(string.IsNullOrEmpty(secretA));
         Assert.False(string.IsNullOrEmpty(secretB));
         Assert.Equal(secretA, secretB);
     }
 
     [Fact]
-    public void NewInstance_DeriveSharedSecretBase64_InvalidInputs_Fail()
+    public void NewInstance_DeriveSharedSecretBase64_InvalidInputs_Throws()
     {
         var a = CreateNew();
-
-        var result = a.DeriveSharedSecretBase64("", "");
-
-        Assert.False(result.success);
-        Assert.True(string.IsNullOrEmpty(result.sharedSecret));
+        Assert.ThrowsAny<Exception>(() => a.DeriveSharedSecretBase64("", ""));
     }
 
     [Fact]
-    public void NewInstance_DeriveSharedSecretBase64_NullInputs_Fail()
+    public void NewInstance_DeriveSharedSecretBase64_NullInputs_Throws()
     {
         var a = CreateNew();
+        Assert.ThrowsAny<Exception>(() => a.DeriveSharedSecretBase64(null!, null!));
+    }
 
-        var result = a.DeriveSharedSecretBase64(null!, null!);
+    [Fact]
+    public void KeyAgreement_Base64_SharedSecret_Try_Roundtrip()
+    {
+        var a = KeyAgreement;
+        var b = CreateNew();
 
-        Assert.False(result.success);
-        Assert.True(string.IsNullOrEmpty(result.sharedSecret));
+        var (aPub, aSec) = a.GenerateKeyPairBase64();
+        var (bPub, bSec) = b.GenerateKeyPairBase64();
+
+        bool successA = a.TryDeriveSharedSecretBase64(aSec, bPub, out var secretA);
+        bool successB = b.TryDeriveSharedSecretBase64(bSec, aPub, out var secretB);
+
+        Assert.True(successA);
+        Assert.True(successB);
+        Assert.False(string.IsNullOrEmpty(secretA));
+        Assert.Equal(secretA, secretB);
     }
 
     [Fact]
@@ -282,17 +248,14 @@ public abstract class KeyAgreementTests
         var (aPub, aSec) = a.GenerateKeyPair();
         var (bPub, bSec) = b.GenerateKeyPair();
 
-        var (okA, secretA) = a.DeriveSharedSecret(aSec, bPub);
-        var (okB, secretB) = b.DeriveSharedSecret(bSec, aPub);
-
-        Assert.True(okA);
-        Assert.True(okB);
+        var secretA = a.DeriveSharedSecret(aSec, bPub);
+        var secretB = b.DeriveSharedSecret(bSec, aPub);
 
         var plaintext = Encoding.UTF8.GetBytes("Super secret message");
         var salt = Encoding.UTF8.GetBytes("TestSalt");
         var info = Encoding.UTF8.GetBytes("ApplicationInfo");
 
-        var (encSuccess, ciphertext) = a.Encrypt(
+        var ciphertext = a.Encrypt(
             Aes256Gcm.Shared,
             Hkdf.Shared,
             secretA,
@@ -301,23 +264,64 @@ public abstract class KeyAgreementTests
             info
         );
 
-        Assert.True(encSuccess);
         Assert.NotEmpty(ciphertext);
 
-        var (decSuccess, decrypted) = b.Decrypt(
+        var decrypted = b.Decrypt(
             Aes256Gcm.Shared,
             Hkdf.Shared,
             secretB,
             ciphertext,
             salt,
             info
+        );
+        Assert.Equal(plaintext, decrypted);
+    }
+
+    [Fact]
+    public void KeyAgreement_EncryptDecrypt_Try_Roundtrip()
+    {
+        var a = KeyAgreement;
+        var b = CreateNew();
+
+        var (aPub, aSec) = a.GenerateKeyPair();
+        var (bPub, bSec) = b.GenerateKeyPair();
+
+        bool deriveA = a.TryDeriveSharedSecret(aSec, bPub, out var secretA);
+        bool deriveB = b.TryDeriveSharedSecret(bSec, aPub, out var secretB);
+        Assert.True(deriveA);
+        Assert.True(deriveB);
+
+        var plaintext = Encoding.UTF8.GetBytes("Super secret message");
+        var salt = Encoding.UTF8.GetBytes("TestSalt");
+        var info = Encoding.UTF8.GetBytes("ApplicationInfo");
+
+        bool encSuccess = a.TryEncrypt(
+            Aes256Gcm.Shared,
+            Hkdf.Shared,
+            secretA,
+            plaintext,
+            salt,
+            info,
+            out var ciphertext
+        );
+        Assert.True(encSuccess);
+        Assert.NotEmpty(ciphertext);
+
+        bool decSuccess = b.TryDecrypt(
+            Aes256Gcm.Shared,
+            Hkdf.Shared,
+            secretB,
+            ciphertext,
+            salt,
+            info,
+            out var decrypted
         );
         Assert.True(decSuccess);
         Assert.Equal(plaintext, decrypted);
     }
 
     [Fact]
-    public void KeyAgreement_EncryptDecrypt_WrongSecret_Fails()
+    public void KeyAgreement_EncryptDecrypt_WrongSecret_ThrowsOrFails()
     {
         var a = KeyAgreement;
         var b = CreateNew();
@@ -325,14 +329,13 @@ public abstract class KeyAgreementTests
         var (aPub, aSec) = a.GenerateKeyPair();
         var (bPub, bSec) = b.GenerateKeyPair();
 
-        var (okA, secretA) = a.DeriveSharedSecret(aSec, bPub);
-        var (okB, secretB) = b.DeriveSharedSecret(bSec, aPub);
+        var secretA = a.DeriveSharedSecret(aSec, bPub);
 
         var plaintext = Encoding.UTF8.GetBytes("Super secret message");
         var salt = Encoding.UTF8.GetBytes("TestSalt");
         var info = Encoding.UTF8.GetBytes("ApplicationInfo");
 
-        var (encSuccess, ciphertext) = a.Encrypt(
+        var ciphertext = a.Encrypt(
             Aes256Gcm.Shared,
             Hkdf.Shared,
             secretA,
@@ -340,25 +343,22 @@ public abstract class KeyAgreementTests
             salt,
             info
         );
-        Assert.True(encSuccess);
 
-        // Derive wrong secret (e.g. from Bob's own keys)
-        var (_, wrongSec) = b.DeriveSharedSecret(bSec, bPub);
+        // Derive wrong secret
+        var wrongSec = b.DeriveSharedSecret(bSec, bPub);
 
-        var (decSuccess, decrypted) = b.Decrypt(
+        Assert.ThrowsAny<Exception>(() => b.Decrypt(
             Aes256Gcm.Shared,
             Hkdf.Shared,
             wrongSec,
             ciphertext,
             salt,
             info
-        );
-        Assert.False(decSuccess);
-        Assert.Empty(decrypted);
+        ));
     }
 
     [Fact]
-    public void KeyAgreement_EncryptDecrypt_WrongInfo_Fails()
+    public void KeyAgreement_EncryptDecrypt_WrongInfo_ThrowsOrFails()
     {
         var a = KeyAgreement;
         var b = CreateNew();
@@ -366,15 +366,15 @@ public abstract class KeyAgreementTests
         var (aPub, aSec) = a.GenerateKeyPair();
         var (bPub, bSec) = b.GenerateKeyPair();
 
-        var (okA, secretA) = a.DeriveSharedSecret(aSec, bPub);
-        var (okB, secretB) = b.DeriveSharedSecret(bSec, aPub);
+        var secretA = a.DeriveSharedSecret(aSec, bPub);
+        var secretB = b.DeriveSharedSecret(bSec, aPub);
 
         var plaintext = Encoding.UTF8.GetBytes("Super secret message");
         var salt = Encoding.UTF8.GetBytes("TestSalt");
         var info = Encoding.UTF8.GetBytes("ApplicationInfo");
         var wrongInfo = Encoding.UTF8.GetBytes("WrongApplicationInfo");
 
-        var (encSuccess, ciphertext) = a.Encrypt(
+        var ciphertext = a.Encrypt(
             Aes256Gcm.Shared,
             Hkdf.Shared,
             secretA,
@@ -382,53 +382,42 @@ public abstract class KeyAgreementTests
             salt,
             info
         );
-        Assert.True(encSuccess);
 
-        var (decSuccess, decrypted) = b.Decrypt(
+        Assert.ThrowsAny<Exception>(() => b.Decrypt(
             Aes256Gcm.Shared,
             Hkdf.Shared,
             secretB,
             ciphertext,
             salt,
             wrongInfo
-        );
-        Assert.False(decSuccess);
-        Assert.Empty(decrypted);
+        ));
     }
 
     [Fact]
-    public void KeyAgreementExtensions_NullHandling()
+    public void KeyAgreementExtensions_NullHandling_Try_ReturnsFalse()
     {
         IKeyAgreement? nullAgreement = null;
 
-        var (deriveSuccess, secret) = nullAgreement!.DeriveSharedSecretBase64("secKey", "pubKey");
-        Assert.False(deriveSuccess);
-        Assert.Equal(string.Empty, secret);
-
-        var (pub, sec) = nullAgreement!.GenerateKeyPairBase64();
-        Assert.Equal(string.Empty, pub);
-        Assert.Equal(string.Empty, sec);
-
-        var (encSuccess, encrypted) = nullAgreement!.Encrypt(
+        Assert.False(nullAgreement!.TryDeriveSharedSecretBase64("secKey", "pubKey", out _));
+        Assert.False(nullAgreement!.TryGenerateKeyPair(out _, out _));
+        Assert.False(nullAgreement!.TryGenerateKeyPairBase64(out _, out _));
+        Assert.False(nullAgreement!.TryEncrypt(
             Aes256Gcm.Shared,
             Hkdf.Shared,
             [1, 2],
             [3, 4],
             [5, 6],
-            [7, 8]
-        );
-        Assert.False(encSuccess);
-        Assert.Empty(encrypted);
-
-        var (decSuccess, decrypted) = nullAgreement!.Decrypt(
+            [7, 8],
+            out _
+        ));
+        Assert.False(nullAgreement!.TryDecrypt(
             Aes256Gcm.Shared,
             Hkdf.Shared,
             [1, 2],
             [3, 4],
             [5, 6],
-            [7, 8]
-        );
-        Assert.False(decSuccess);
-        Assert.Empty(decrypted);
+            [7, 8],
+            out _
+        ));
     }
 }

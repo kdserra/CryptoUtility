@@ -300,11 +300,13 @@ public static class SymmetricCipherExtensions
 
     public static byte[] GenerateKey(this ISymmetricCipher cipher)
     {
+        if (cipher == null) throw new ArgumentNullException(nameof(cipher));
         return CryptoHelper.GetBytes(cipher.KeySizeBytes);
     }
 
     public static string GenerateKeyBase64(this ISymmetricCipher cipher)
     {
+        if (cipher == null) throw new ArgumentNullException(nameof(cipher));
         byte[] key = Array.Empty<byte>();
         string result = string.Empty;
 
@@ -324,11 +326,13 @@ public static class SymmetricCipherExtensions
 
     public static byte[] GenerateNonce(this ISymmetricCipher cipher)
     {
+        if (cipher == null) throw new ArgumentNullException(nameof(cipher));
         return CryptoHelper.GetBytes(cipher.NonceSizeBytes);
     }
 
     public static string GenerateNonceBase64(this ISymmetricCipher cipher)
     {
+        if (cipher == null) throw new ArgumentNullException(nameof(cipher));
         byte[] nonce = Array.Empty<byte>();
         string nonceBase64 = string.Empty;
 

@@ -51,30 +51,23 @@ public sealed class EcdhImpl : IKeyAgreement
     private static readonly ECCurve _defaultECCurve = ECCurve.NamedCurves.nistP256;
 
     /// <inheritdoc cref="IKeyAgreement.DeriveSharedSecret(byte[], byte[])"/>
-    public (bool success, byte[] sharedSecret) DeriveSharedSecret(
+    public byte[] DeriveSharedSecret(
         byte[] secretKey,
         byte[] peerPublicKey
     )
     {
-        try
-        {
-            using var local = ECDiffieHellman.Create(_defaultECCurve);
-            local.ImportPkcs8PrivateKey(secretKey, out _);
+        using var local = ECDiffieHellman.Create(_defaultECCurve);
+        local.ImportPkcs8PrivateKey(secretKey, out _);
 
-            using var peer = ECDiffieHellman.Create(_defaultECCurve);
-            peer.ImportSubjectPublicKeyInfo(peerPublicKey, out _);
+        using var peer = ECDiffieHellman.Create(_defaultECCurve);
+        peer.ImportSubjectPublicKeyInfo(peerPublicKey, out _);
 
-            byte[] secret = local.DeriveKeyMaterial(peer.PublicKey);
-            return (true, secret);
-        }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
+        byte[] secret = local.DeriveKeyMaterial(peer.PublicKey);
+        return secret;
     }
 
     /// <inheritdoc cref="IKeyAgreement.GenerateKeyPair()"/>
-    public (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
+    public (byte[] publicKey, byte[] secretKey) GenerateKeyPair()
     {
         using var ecdh = ECDiffieHellman.Create(_defaultECCurve);
         byte[] publicKey = ecdh.ExportSubjectPublicKeyInfo();

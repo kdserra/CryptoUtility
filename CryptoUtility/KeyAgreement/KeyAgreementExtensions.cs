@@ -73,6 +73,7 @@ public static class KeyAgreementExtensions
         byte[] kdfInfo
     )
     {
+        if (keyAgreement == null) throw new ArgumentNullException(nameof(keyAgreement));
         byte[] key = Array.Empty<byte>();
         byte[] encrypted = Array.Empty<byte>();
 
@@ -106,6 +107,7 @@ public static class KeyAgreementExtensions
         byte[] kdfInfo
     )
     {
+        if (keyAgreement == null) throw new ArgumentNullException(nameof(keyAgreement));
         byte[] key = Array.Empty<byte>();
         byte[] decrypted = Array.Empty<byte>();
 
@@ -226,7 +228,7 @@ public static class KeyAgreementExtensions
     }
 
     public static bool TryDeriveSharedSecret(
-        IKeyAgreement keyAgreement,
+        this IKeyAgreement keyAgreement,
         byte[] secretKey,
         byte[] peerPublicKey,
         out byte[] derivedSharedSecret
@@ -247,7 +249,7 @@ public static class KeyAgreementExtensions
     }
 
     public static bool TryDeriveSharedSecretBase64(
-        IKeyAgreement keyAgreement,
+        this IKeyAgreement keyAgreement,
         string secretKeyBase64,
         string peerPublicKeyBase64,
         out string derivedSharedSecretBase64
@@ -271,7 +273,7 @@ public static class KeyAgreementExtensions
     }
 
     public static bool TryGenerateKeyPair(
-        IKeyAgreement keyAgreement,
+        this IKeyAgreement keyAgreement,
         out byte[] publicKey,
         out byte[] secretKey
     )
@@ -294,7 +296,7 @@ public static class KeyAgreementExtensions
     }
 
     public static bool TryGenerateKeyPairBase64(
-        IKeyAgreement keyAgreement,
+        this IKeyAgreement keyAgreement,
         out string publicKeyBase64,
         out string secretKeyBase64
     )

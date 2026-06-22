@@ -1,4 +1,4 @@
-﻿using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
@@ -20,97 +20,49 @@ public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
 
     public abstract int SaltSizeBytes { get; }
 
-    public (bool success, byte[] encrypted) Encrypt(byte[] publicKey, byte[] plaintext)
+    public byte[] Encrypt(byte[] publicKey, byte[] plaintext)
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(publicKey, plaintext))
-            {
-                return (false, Array.Empty<byte>());
-            }
+        AsymmetricKeyParameter asymmetricKeyParameter = PublicKeyFactory.CreateKey(publicKey);
 
-            AsymmetricKeyParameter asymmetricKeyParameter = PublicKeyFactory.CreateKey(publicKey);
+        var cipher = new OaepEncoding(new RsaEngine(), new Sha256Digest());
+        cipher.Init(true, asymmetricKeyParameter);
 
-            var cipher = new OaepEncoding(new RsaEngine(), new Sha256Digest());
-            cipher.Init(true, asymmetricKeyParameter);
-
-            byte[] ciphertext = cipher.ProcessBlock(plaintext, 0, plaintext.Length);
-            return (true, ciphertext);
-        }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
+        byte[] ciphertext = cipher.ProcessBlock(plaintext, 0, plaintext.Length);
+        return ciphertext;
     }
 
-    public (bool success, byte[] plaintext) Decrypt(byte[] secretKey, byte[] encrypted)
+    public byte[] Decrypt(byte[] secretKey, byte[] encrypted)
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(secretKey, encrypted))
-            {
-                return (false, Array.Empty<byte>());
-            }
+        AsymmetricKeyParameter asymmetricKeyParameter = PrivateKeyFactory.CreateKey(secretKey);
 
-            AsymmetricKeyParameter asymmetricKeyParameter = PrivateKeyFactory.CreateKey(secretKey);
+        var cipher = new OaepEncoding(new RsaEngine(), new Sha256Digest());
+        cipher.Init(false, asymmetricKeyParameter);
 
-            var cipher = new OaepEncoding(new RsaEngine(), new Sha256Digest());
-            cipher.Init(false, asymmetricKeyParameter);
-
-            byte[] plaintext = cipher.ProcessBlock(encrypted, 0, encrypted.Length);
-            return (true, plaintext);
-        }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
+        byte[] plaintext = cipher.ProcessBlock(encrypted, 0, encrypted.Length);
+        return plaintext;
     }
 
-    public (bool success, byte[] signature) Sign(byte[] message, byte[] secretKey)
+    public byte[] Sign(byte[] message, byte[] secretKey)
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(message, secretKey))
-            {
-                return (false, Array.Empty<byte>());
-            }
+        AsymmetricKeyParameter asymmetricKeyParameter = PrivateKeyFactory.CreateKey(secretKey);
 
-            AsymmetricKeyParameter asymmetricKeyParameter = PrivateKeyFactory.CreateKey(secretKey);
+        var signer = new RsaDigestSigner(new Sha256Digest());
+        signer.Init(true, asymmetricKeyParameter);
+        signer.BlockUpdate(message, 0, message.Length);
 
-            var signer = new RsaDigestSigner(new Sha256Digest());
-            signer.Init(true, asymmetricKeyParameter);
-            signer.BlockUpdate(message, 0, message.Length);
-
-            byte[] signature = signer.GenerateSignature();
-            return (true, signature);
-        }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
+        byte[] signature = signer.GenerateSignature();
+        return signature;
     }
 
     public bool Verify(byte[] message, byte[] signature, byte[] publicKey)
     {
-        try
-        {
-            if (!LibraryHelper.NotNullOrEmpty(message, signature, publicKey))
-            {
-                return false;
-            }
+        AsymmetricKeyParameter asymmetricKeyParameter = PublicKeyFactory.CreateKey(publicKey);
 
-            AsymmetricKeyParameter asymmetricKeyParameter = PublicKeyFactory.CreateKey(publicKey);
+        var signer = new RsaDigestSigner(new Sha256Digest());
+        signer.Init(false, asymmetricKeyParameter);
+        signer.BlockUpdate(message, 0, message.Length);
 
-            var signer = new RsaDigestSigner(new Sha256Digest());
-            signer.Init(false, asymmetricKeyParameter);
-            signer.BlockUpdate(message, 0, message.Length);
-
-            return signer.VerifySignature(signature);
-        }
-        catch
-        {
-            return false;
-        }
+        return signer.VerifySignature(signature);
     }
 
     public (byte[] publicKey, byte[] secretKey) GenerateKeyPair()

@@ -22,86 +22,62 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
     public int AuthTagSizeBytes => 16;
 
     /// <inheritdoc cref="ISymmetricCipherAEAD.Encrypt" />
-    public (bool success, byte[] encrypted) Encrypt(byte[] key, byte[] plaintext, byte[] nonce) =>
+    public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce) =>
         Encrypt(key, plaintext, nonce, aad: []);
 
     /// <inheritdoc cref="ISymmetricCipherAEAD.Encrypt" />
-    public (bool success, byte[] encrypted) Encrypt(
+    public byte[] Encrypt(
         byte[] key,
         byte[] plaintext,
         byte[] nonce,
         byte[] aad
     )
     {
-        if (!this.VerifyEncryptionParameters(key, plaintext, nonce))
-        {
-            return (false, []);
-        }
-
         byte[] ciphertext = new byte[plaintext.Length];
         byte[] tag = new byte[AuthTagSizeBytes];
 
-        try
-        {
-            using var chacha = new SystemChaCha20Poly1305(key);
+        using var chacha = new SystemChaCha20Poly1305(key);
 
-            chacha.Encrypt(
-                nonce: nonce,
-                plaintext: plaintext,
-                ciphertext: ciphertext,
-                tag: tag,
-                associatedData: aad
-            );
+        chacha.Encrypt(
+            nonce: nonce,
+            plaintext: plaintext,
+            ciphertext: ciphertext,
+            tag: tag,
+            associatedData: aad
+        );
 
-            var envelope = new SymmetricCipherEnvelope(
-                version: 1,
-                nonce: nonce,
-                tag: tag,
-                aad: aad,
-                ciphertext: ciphertext
-            );
+        var envelope = new SymmetricCipherEnvelope(
+            version: 1,
+            nonce: nonce,
+            tag: tag,
+            aad: aad,
+            ciphertext: ciphertext
+        );
 
-            return (true, envelope.ToBytes());
-        }
-        catch
-        {
-            return (false, []);
-        }
+        return envelope.ToBytes();
     }
 
-    public (bool success, byte[] plaintext) Decrypt(byte[] key, byte[] encrypted)
+    public byte[] Decrypt(byte[] key, byte[] encrypted)
     {
         SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
         if (envelope == null)
         {
-            return (false, []);
-        }
-
-        if (!this.VerifyDecryptionParametersAEAD(key, envelope))
-        {
-            return (false, []);
+            throw new ArgumentException("Invalid envelope format");
         }
 
         byte[] plaintext = new byte[envelope.Ciphertext.Length];
 
-        try
-        {
-            using var chacha = new SystemChaCha20Poly1305(key);
+        using var chacha = new SystemChaCha20Poly1305(key);
 
-            chacha.Decrypt(
-                nonce: envelope.Nonce,
-                ciphertext: envelope.Ciphertext,
-                tag: envelope.Tag,
-                plaintext: plaintext,
-                associatedData: envelope.Aad
-            );
+        chacha.Decrypt(
+            nonce: envelope.Nonce,
+            ciphertext: envelope.Ciphertext,
+            tag: envelope.Tag,
+            plaintext: plaintext,
+            associatedData: envelope.Aad
+        );
 
-            return (true, plaintext);
-        }
-        catch
-        {
-            return (false, []);
-        }
+        return plaintext;
     }
 }
 #endif

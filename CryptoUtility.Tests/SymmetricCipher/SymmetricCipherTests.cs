@@ -1,4 +1,5 @@
 using System.Text;
+using CryptoUtility;
 
 namespace CryptoUtility.Tests;
 
@@ -24,8 +25,7 @@ public abstract class SymmetricCipherTests
         var key = GenerateKey();
         var plaintext = GeneratePlaintext();
 
-        var (okEnc, encrypted) = Cipher.Encrypt(key, plaintext);
-        Assert.True(okEnc);
+        var encrypted = Cipher.Encrypt(key, plaintext);
 
         var envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
 
@@ -48,11 +48,8 @@ public abstract class SymmetricCipherTests
         var key = GenerateKey();
         var plaintext = GeneratePlaintext();
 
-        var (okEnc, encrypted) = Cipher.Encrypt(key, plaintext);
-        Assert.True(okEnc);
-
-        var (okDec, decrypted) = Cipher.Decrypt(key, encrypted);
-        Assert.True(okDec);
+        var encrypted = Cipher.Encrypt(key, plaintext);
+        var decrypted = Cipher.Decrypt(key, encrypted);
 
         Assert.Equal(plaintext, decrypted);
     }
@@ -79,12 +76,10 @@ public abstract class SymmetricCipherTests
         var key = Cipher.GenerateKey();
         var plaintext = Encoding.UTF8.GetBytes("test message");
 
-        var (encSuccess, encrypted) = Cipher.Encrypt(key, plaintext);
-        Assert.True(encSuccess);
+        var encrypted = Cipher.Encrypt(key, plaintext);
         Assert.NotNull(encrypted);
 
-        var (decSuccess, decrypted) = Cipher.Decrypt(key, encrypted);
-        Assert.True(decSuccess);
+        var decrypted = Cipher.Decrypt(key, encrypted);
         Assert.Equal(plaintext, decrypted);
     }
 
@@ -94,12 +89,10 @@ public abstract class SymmetricCipherTests
         var key = Cipher.GenerateKeyBase64();
         var plaintext = "hello world";
 
-        var (encSuccess, encrypted) = Cipher.EncryptBase64(key, plaintext);
-        Assert.True(encSuccess);
+        var encrypted = Cipher.EncryptBase64(key, plaintext);
         Assert.False(string.IsNullOrEmpty(encrypted));
 
-        var (decSuccess, decrypted) = Cipher.DecryptBase64(key, encrypted);
-        Assert.True(decSuccess);
+        var decrypted = Cipher.DecryptBase64(key, encrypted);
         Assert.False(string.IsNullOrEmpty(decrypted));
         Assert.Equal(plaintext, decrypted);
     }
@@ -110,13 +103,13 @@ public abstract class SymmetricCipherTests
         string keyString = Cipher.GenerateKeyBase64();
         byte[] plaintextBytes = Encoding.UTF8.GetBytes("hello world");
 
-        var (encSuccess, encrypted) = Cipher.EncryptBase64(keyString, plaintextBytes);
-        Assert.True(encSuccess);
-        Assert.False(encrypted.IsNullOrEmpty());
+        var encrypted = Cipher.Encrypt(keyString, plaintextBytes);
+        Assert.NotNull(encrypted);
+        Assert.NotEmpty(encrypted);
 
-        var (decSuccess, decrypted) = Cipher.DecryptBase64(keyString, encrypted);
-        Assert.True(decSuccess);
-        Assert.False(decrypted.IsNullOrEmpty());
+        var decrypted = Cipher.Decrypt(keyString, encrypted);
+        Assert.NotNull(decrypted);
+        Assert.NotEmpty(decrypted);
         Assert.Equal(plaintextBytes, decrypted);
     }
 
@@ -127,164 +120,88 @@ public abstract class SymmetricCipherTests
         var plaintext = Encoding.UTF8.GetBytes("nonce test");
         var nonce = Cipher.GenerateNonce();
 
-        var (success, encrypted) = Cipher.Encrypt(key, plaintext, nonce);
+        var encrypted = Cipher.Encrypt(key, plaintext, nonce);
 
-        Assert.True(success);
         Assert.NotNull(encrypted);
         Assert.NotEmpty(encrypted);
     }
 
     [Fact]
-    public void Encrypt_WithInvalidEmptyKey_Fails()
+    public void Encrypt_WithInvalidEmptyKey_Throws()
     {
         var plaintext = Encoding.UTF8.GetBytes("Hello, world!");
-
-        var (success, encrypted) = Cipher.Encrypt(key: [], plaintext);
-
-        Assert.False(success);
-        Assert.NotNull(encrypted);
-        Assert.Empty(encrypted);
+        Assert.ThrowsAny<Exception>(() => Cipher.Encrypt(key: [], plaintext));
     }
 
     [Fact]
-    public void Encrypt_WithInvalidEmptyPlaintext_Fails()
+    public void Encrypt_WithInvalidNullPlaintext_Throws()
     {
         var key = Cipher.GenerateKey();
-
-        var (success, encrypted) = Cipher.Encrypt(key, plaintext: []);
-
-        Assert.False(success);
-        Assert.NotNull(encrypted);
-        Assert.Empty(encrypted);
+        Assert.ThrowsAny<Exception>(() => Cipher.Encrypt(key, plaintext: null!));
     }
 
     [Fact]
-    public void Encrypt_WithInvalidEmptyNonce_Fails()
+    public void Encrypt_WithInvalidEmptyNonce_Throws()
     {
         var key = Cipher.GenerateKey();
         var plaintext = Encoding.UTF8.GetBytes("Hello, world!");
-
-        var (success, encrypted) = Cipher.Encrypt(key, plaintext, nonce: []);
-
-        Assert.False(success);
-        Assert.NotNull(encrypted);
-        Assert.Empty(encrypted);
+        Assert.ThrowsAny<Exception>(() => Cipher.Encrypt(key, plaintext, nonce: []));
     }
 
     [Fact]
-    public void Encrypt_WithInvalidEmptyKeyAndPlaintext_Fails()
+    public void Encrypt_WithInvalidEmptyKeyAndPlaintext_Throws()
     {
-        var (success, encrypted) = Cipher.Encrypt(key: [], plaintext: []);
-
-        Assert.False(success);
-        Assert.NotNull(encrypted);
-        Assert.Empty(encrypted);
+        Assert.ThrowsAny<Exception>(() => Cipher.Encrypt(key: [], plaintext: []));
     }
 
     [Fact]
-    public void Encrypt_WithInvalidEmptyKeyAndPlaintextAndNonce_Fails()
+    public void Encrypt_WithInvalidEmptyKeyAndPlaintextAndNonce_Throws()
     {
-        var (success, encrypted) = Cipher.Encrypt(key: [], plaintext: [], nonce: []);
-
-        Assert.False(success);
-        Assert.NotNull(encrypted);
-        Assert.Empty(encrypted);
+        Assert.ThrowsAny<Exception>(() => Cipher.Encrypt(key: [], plaintext: [], nonce: []));
     }
 
     [Fact]
-    public void Encrypt_WithInvalidNullKey_Fails()
+    public void Encrypt_WithInvalidNullKey_Throws()
     {
         var plaintext = Encoding.UTF8.GetBytes("Hello, world!");
-
-        var (success, encrypted) = Cipher.Encrypt(key: null!, plaintext);
-
-        Assert.False(success);
-        Assert.NotNull(encrypted);
-        Assert.Empty(encrypted);
+        Assert.ThrowsAny<Exception>(() => Cipher.Encrypt(key: null!, plaintext));
     }
 
-    [Fact]
-    public void Encrypt_WithInvalidNullPlaintext_Fails()
-    {
-        var key = Cipher.GenerateKey();
 
-        var (success, encrypted) = Cipher.Encrypt(key, plaintext: null!);
-
-        Assert.False(success);
-        Assert.NotNull(encrypted);
-        Assert.Empty(encrypted);
-    }
 
     [Fact]
-    public void Encrypt_WithInvalidNullNonce_Fails()
+    public void Encrypt_WithInvalidNullNonce_Throws()
     {
         var key = Cipher.GenerateKey();
         var plaintext = Encoding.UTF8.GetBytes("Hello, world!");
-
-        var (success, encrypted) = Cipher.Encrypt(key, plaintext, nonce: null!);
-
-        Assert.False(success);
-        Assert.NotNull(encrypted);
-        Assert.Empty(encrypted);
+        Assert.ThrowsAny<Exception>(() => Cipher.Encrypt(key, plaintext, nonce: null!));
     }
 
     [Fact]
-    public void Encrypt_WithInvalidNullKeyAndPlaintext_Fails()
+    public void Encrypt_WithInvalidNullKeyAndPlaintext_Throws()
     {
-        var (success, encrypted) = Cipher.Encrypt(key: null!, plaintext: null!);
-
-        Assert.False(success);
-        Assert.NotNull(encrypted);
-        Assert.Empty(encrypted);
+        Assert.ThrowsAny<Exception>(() => Cipher.Encrypt(key: null!, plaintext: null!));
     }
 
     [Fact]
-    public void Encrypt_WithInvalidNullKeyAndPlaintextAndNonce_Fails()
+    public void Encrypt_WithInvalidNullKeyAndPlaintextAndNonce_Throws()
     {
-        var (success, encrypted) = Cipher.Encrypt(key: null!, plaintext: null!, nonce: null!);
-
-        Assert.False(success);
-        Assert.NotNull(encrypted);
-        Assert.Empty(encrypted);
+        Assert.ThrowsAny<Exception>(() => Cipher.Encrypt(key: null!, plaintext: null!, nonce: null!));
     }
-
 
     [Fact]
     public void SymmetricCipherExtensions_NullHandling()
     {
         ISymmetricCipher? nullSymmetric = null;
 
-        var (encSuccess, encrypted) = nullSymmetric!.Encrypt([1, 2], [3, 4]);
-        Assert.False(encSuccess);
-        Assert.Empty(encrypted);
+        Assert.False(nullSymmetric!.TryEncrypt([1, 2], [3, 4], out _));
+        Assert.False(nullSymmetric!.TryEncryptBase64("key", "plain", out _));
+        Assert.False(nullSymmetric!.TryDecryptBase64("key", "enc", out _));
 
-        var (encBase64Success, encBase64) = nullSymmetric!.EncryptBase64("key", "plain");
-        Assert.False(encBase64Success);
-        Assert.Equal(string.Empty, encBase64);
-
-        var (decBase64Success, decBase64) = nullSymmetric!.DecryptBase64("key", "enc");
-        Assert.False(decBase64Success);
-        Assert.Equal(string.Empty, decBase64);
-
-        var (encBytesSuccess, encBytes) = nullSymmetric!.EncryptBase64("key", new byte[] { 1, 2 });
-        Assert.False(encBytesSuccess);
-        Assert.Empty(encBytes);
-
-        var (decBytesSuccess, decBytes) = nullSymmetric!.DecryptBase64("key", new byte[] { 1, 2 });
-        Assert.False(decBytesSuccess);
-        Assert.Empty(decBytes);
-
-        byte[] key = nullSymmetric!.GenerateKey();
-        Assert.Empty(key);
-
-        byte[] nonce = nullSymmetric!.GenerateNonce();
-        Assert.Empty(nonce);
-
-        string nonceBase64 = nullSymmetric!.GenerateNonceBase64();
-        Assert.Equal(string.Empty, nonceBase64);
-
-        string keyBase64 = nullSymmetric!.GenerateKeyBase64();
-        Assert.Equal(string.Empty, keyBase64);
+        Assert.Throws<ArgumentNullException>(() => nullSymmetric!.GenerateKey());
+        Assert.Throws<ArgumentNullException>(() => nullSymmetric!.GenerateNonce());
+        Assert.Throws<ArgumentNullException>(() => nullSymmetric!.GenerateNonceBase64());
+        Assert.Throws<ArgumentNullException>(() => nullSymmetric!.GenerateKeyBase64());
     }
 }
 

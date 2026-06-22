@@ -1,4 +1,4 @@
-﻿using Org.BouncyCastle.Asn1.Sec;
+using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
@@ -29,43 +29,36 @@ public sealed class EcdhImpl : IKeyAgreement
     );
 
     /// <inheritdoc cref="IKeyAgreement.DeriveSharedSecret(byte[], byte[])"/>
-    public (bool success, byte[] sharedSecret) DeriveSharedSecret(
+    public byte[] DeriveSharedSecret(
         byte[] secretKey,
         byte[] peerPublicKey
     )
     {
-        try
+        var privateKeyParam = (ECPrivateKeyParameters)PrivateKeyFactory.CreateKey(secretKey);
+        var publicKeyParam = (ECPublicKeyParameters)PublicKeyFactory.CreateKey(peerPublicKey);
+
+        var agreement = AgreementUtilities.GetBasicAgreement("ECDH");
+        agreement.Init(privateKeyParam);
+        var secretBigInt = agreement.CalculateAgreement(publicKeyParam);
+
+        byte[] rawSecret = secretBigInt.ToByteArrayUnsigned();
+        if (rawSecret.Length < 32)
         {
-            var privateKeyParam = (ECPrivateKeyParameters)PrivateKeyFactory.CreateKey(secretKey);
-            var publicKeyParam = (ECPublicKeyParameters)PublicKeyFactory.CreateKey(peerPublicKey);
-
-            var agreement = AgreementUtilities.GetBasicAgreement("ECDH");
-            agreement.Init(privateKeyParam);
-            var secretBigInt = agreement.CalculateAgreement(publicKeyParam);
-
-            byte[] rawSecret = secretBigInt.ToByteArrayUnsigned();
-            if (rawSecret.Length < 32)
-            {
-                byte[] paddedSecret = new byte[32];
-                Array.Copy(rawSecret, 0, paddedSecret, 32 - rawSecret.Length, rawSecret.Length);
-                rawSecret = paddedSecret;
-            }
-
-            var digest = new Sha256Digest();
-            byte[] hashedSecret = new byte[digest.GetDigestSize()];
-            digest.BlockUpdate(rawSecret, 0, rawSecret.Length);
-            digest.DoFinal(hashedSecret, 0);
-
-            return (true, hashedSecret);
+            byte[] paddedSecret = new byte[32];
+            Array.Copy(rawSecret, 0, paddedSecret, 32 - rawSecret.Length, rawSecret.Length);
+            rawSecret = paddedSecret;
         }
-        catch
-        {
-            return (false, Array.Empty<byte>());
-        }
+
+        var digest = new Sha256Digest();
+        byte[] hashedSecret = new byte[digest.GetDigestSize()];
+        digest.BlockUpdate(rawSecret, 0, rawSecret.Length);
+        digest.DoFinal(hashedSecret, 0);
+
+        return hashedSecret;
     }
 
     /// <inheritdoc cref="IKeyAgreement.GenerateKeyPair()"/>
-    public (byte[] PublicKey, byte[] SecretKey) GenerateKeyPair()
+    public (byte[] publicKey, byte[] secretKey) GenerateKeyPair()
     {
         var keyGenParam = new ECKeyGenerationParameters(DomainParams, new SecureRandom());
         var generator = new ECKeyPairGenerator();

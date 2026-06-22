@@ -12,8 +12,7 @@ public abstract class SymmetricCipherAEADTests : SymmetricCipherAETests
         var key = GenerateKey();
         var plaintext = GeneratePlaintext();
 
-        var (okEnc, encrypted) = Cipher.Encrypt(key, plaintext);
-        Assert.True(okEnc);
+        var encrypted = Cipher.Encrypt(key, plaintext);
 
         var envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
 
@@ -42,9 +41,8 @@ public abstract class SymmetricCipherAEADTests : SymmetricCipherAETests
 
         new Random().NextBytes(nonce);
 
-        var (success, encrypted) = CipherAEAD.Encrypt(key, plaintext, nonce, aad);
+        var encrypted = CipherAEAD.Encrypt(key, plaintext, nonce, aad);
 
-        Assert.True(success);
         Assert.NotNull(encrypted);
         Assert.NotEmpty(encrypted);
     }
@@ -59,11 +57,8 @@ public abstract class SymmetricCipherAEADTests : SymmetricCipherAETests
 
         new Random().NextBytes(nonce);
 
-        var (encSuccess, encrypted) = CipherAEAD.Encrypt(key, plaintext, nonce, aad);
-        Assert.True(encSuccess);
-
-        var (decSuccess, decrypted) = CipherAEAD.Decrypt(key, encrypted);
-        Assert.True(decSuccess);
+        var encrypted = CipherAEAD.Encrypt(key, plaintext, nonce, aad);
+        var decrypted = CipherAEAD.Decrypt(key, encrypted);
         Assert.Equal(plaintext, decrypted);
     }
 }

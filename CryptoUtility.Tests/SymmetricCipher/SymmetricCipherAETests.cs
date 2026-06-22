@@ -1,4 +1,4 @@
-﻿namespace CryptoUtility.Tests;
+namespace CryptoUtility.Tests;
 
 public abstract class SymmetricCipherAETests : SymmetricCipherTests
 {
@@ -10,8 +10,7 @@ public abstract class SymmetricCipherAETests : SymmetricCipherTests
         var key = GenerateKey();
         var plaintext = GeneratePlaintext();
 
-        var (okEnc, encrypted) = Cipher.Encrypt(key, plaintext);
-        Assert.True(okEnc);
+        var encrypted = Cipher.Encrypt(key, plaintext);
 
         var envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
 
