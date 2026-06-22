@@ -1,6 +1,3 @@
-using CryptoUtility;
-
-/*
 using System.Text;
 using CryptoUtility;
 using CryptoUtility.System;
@@ -55,7 +52,7 @@ void RunSymmetricShowcase()
     Console.WriteLine($"  - Generated Key (Base64):  {base64Key}");
     Console.WriteLine($"  - Plaintext:               \"{plaintext}\"");
 
-    var (encSuccess, encryptedEnvelope) = Aes256Gcm.EncryptBase64(base64Key, plaintext);
+    bool encSuccess = Aes256Gcm.TryEncryptBase64(base64Key, plaintext, out string encryptedEnvelope);
     if (encSuccess)
     {
         Console.WriteLine($"  - Encrypted Envelope:      {encryptedEnvelope}");
@@ -71,7 +68,7 @@ void RunSymmetricShowcase()
             Console.WriteLine($"    * Ciphertext:            {envelope.Ciphertext.ToHexString()}");
         }
 
-        var (decSuccess, decrypted) = Aes256Gcm.DecryptBase64(base64Key, encryptedEnvelope);
+        bool decSuccess = Aes256Gcm.TryDecryptBase64(base64Key, encryptedEnvelope, out string decrypted);
         Console.WriteLine($"  - Decryption {(decSuccess ? "Succeeded!" : "Failed!")}");
         Console.WriteLine($"  - Decrypted Text:          \"{decrypted}\"");
     }
@@ -93,17 +90,34 @@ void RunSymmetricShowcase()
     Console.WriteLine($"  - Plaintext:               \"{plaintext}\"");
     Console.WriteLine($"  - AAD Payload:             \"Showcase-Metadata-AAD\"");
 
-    var (byteEncSuccess, byteEncEnvelopeBytes) = Aes256Gcm.Encrypt(
-        byteKey,
-        bytePlaintext,
-        byteNonce,
-        aad
-    );
+    byte[] byteEncEnvelopeBytes;
+    bool byteEncSuccess = false;
+    try
+    {
+        byteEncEnvelopeBytes = Aes256Gcm.Encrypt(byteKey, bytePlaintext, byteNonce, aad);
+        byteEncSuccess = true;
+    }
+    catch
+    {
+        byteEncEnvelopeBytes = [];
+    }
+
     if (byteEncSuccess)
     {
         Console.WriteLine($"  - Encrypted Envelope Bytes: {byteEncEnvelopeBytes.ToHexString(30)}");
 
-        var (byteDecSuccess, byteDecryptedBytes) = Aes256Gcm.Decrypt(byteKey, byteEncEnvelopeBytes);
+        byte[] byteDecryptedBytes;
+        bool byteDecSuccess = false;
+        try
+        {
+            byteDecryptedBytes = Aes256Gcm.Decrypt(byteKey, byteEncEnvelopeBytes);
+            byteDecSuccess = true;
+        }
+        catch
+        {
+            byteDecryptedBytes = [];
+        }
+
         string byteDecrypted = Encoding.UTF8.GetString(byteDecryptedBytes);
         Console.WriteLine($"  - Decryption {(byteDecSuccess ? "Succeeded!" : "Failed!")}");
         Console.WriteLine($"  - Decrypted Text:            \"{byteDecrypted}\"");
@@ -112,17 +126,11 @@ void RunSymmetricShowcase()
     Console.WriteLine("\n[ChaCha20-Poly1305 AEAD Demonstration]");
     string base64KeyCC = ChaCha20Poly1305.GenerateKeyBase64();
 
-    var (encCCSuccess, encryptedEnvelopeCC) = ChaCha20Poly1305.EncryptBase64(
-        base64KeyCC,
-        plaintext
-    );
+    bool encCCSuccess = ChaCha20Poly1305.TryEncryptBase64(base64KeyCC, plaintext, out string encryptedEnvelopeCC);
     if (encCCSuccess)
     {
         Console.WriteLine($"  - Encrypted Envelope:      {encryptedEnvelopeCC}");
-        var (decCCSuccess, decryptedCC) = ChaCha20Poly1305.DecryptBase64(
-            base64KeyCC,
-            encryptedEnvelopeCC
-        );
+        bool decCCSuccess = ChaCha20Poly1305.TryDecryptBase64(base64KeyCC, encryptedEnvelopeCC, out string decryptedCC);
         Console.WriteLine($"  - Decrypted Text:          \"{decryptedCC}\"");
     }
 }
@@ -136,26 +144,27 @@ void RunAsymmetricAndHybridShowcase()
     Console.WriteLine($"  - Original Payload: \"{secretPayload}\"\n");
 
     Console.WriteLine("[Standard RSA-2048 Asymmetric Encryption]");
-    (string pubKey, string privKey) = Rsa2048.GenerateKeyPairBase64();
+    var (pubKey, privKey) = Rsa2048.GenerateKeyPairBase64();
     Console.WriteLine(
         $"  - RSA Public Key (Base64 SubjectPublicKeyInfo):\n    {pubKey.Truncate(80)}"
     );
     Console.WriteLine($"  - RSA Private Key (Base64 PKCS8):\n    {privKey.Truncate(80)}");
 
     string smallMessage = "Meet at midnight.";
-    var (encSuccess, encBytes) = Rsa2048.EncryptBase64(pubKey, smallMessage);
+    bool encSuccess = Rsa2048.TryEncryptBase64(pubKey, smallMessage, out string encBytes);
     if (encSuccess)
     {
         Console.WriteLine($"  - Encrypted Asymmetric Ciphertext:\n    {encBytes.Truncate(80)}");
-        var (decSuccess, decText) = Rsa2048.DecryptBase64(privKey, encBytes);
+        bool decSuccess = Rsa2048.TryDecryptBase64(privKey, encBytes, out string decText);
         Console.WriteLine($"  - Decrypted Asymmetric Text: \"{decText}\"");
     }
 
     Console.WriteLine("\n[Hybrid Encryption (RSA-2048 + AES-256-GCM)]");
-    var (hybridSuccess, hybridEnvelope) = Rsa2048.HybridEncryptBase64(
+    bool hybridSuccess = Rsa2048.TryHybridEncryptBase64(
         Aes256Gcm.Shared,
         pubKey,
-        secretPayload
+        secretPayload,
+        out string hybridEnvelope
     );
     if (hybridSuccess)
     {
@@ -163,10 +172,11 @@ void RunAsymmetricAndHybridShowcase()
             $"  - Encrypted Hybrid Envelope (Base64):\n    {hybridEnvelope.Truncate(80)}"
         );
 
-        var (decHybridSuccess, decPayload) = Rsa2048.HybridDecryptBase64(
+        bool decHybridSuccess = Rsa2048.TryHybridDecryptBase64(
             Aes256Gcm.Shared,
             privKey,
-            hybridEnvelope
+            hybridEnvelope,
+            out string decPayload
         );
         Console.WriteLine($"  - Decrypted Hybrid Payload: \"{decPayload}\"");
     }
@@ -180,8 +190,8 @@ void RunDigitalSignatureShowcase()
     Console.WriteLine($"  - Message to Sign: \"{message}\"\n");
 
     Console.WriteLine("[RSA-2048 Digital Signatures]");
-    (string rsaPub, string rsaPriv) = Rsa2048.GenerateKeyPairBase64();
-    var (rsaSignSuccess, rsaSig) = Rsa2048.SignBase64(message, rsaPriv);
+    var (rsaPub, rsaPriv) = Rsa2048.GenerateKeyPairBase64();
+    bool rsaSignSuccess = Rsa2048.TrySignBase64(message, rsaPriv, out string rsaSig);
     if (rsaSignSuccess)
     {
         Console.WriteLine($"  - RSA Signature (Base64): {rsaSig.Truncate(60)}");
@@ -193,8 +203,8 @@ void RunDigitalSignatureShowcase()
     }
 
     Console.WriteLine("\n[ECDSA P-256 Digital Signatures]");
-    (string ecdsaPub, string ecdsaPriv) = Ecdsa.GenerateKeyPairBase64();
-    var (ecdsaSignSuccess, ecdsaSig) = Ecdsa.SignBase64(message, ecdsaPriv);
+    var (ecdsaPub, ecdsaPriv) = Ecdsa.GenerateKeyPairBase64();
+    bool ecdsaSignSuccess = Ecdsa.TrySignBase64(message, ecdsaPriv, out string ecdsaSig);
     if (ecdsaSignSuccess)
     {
         Console.WriteLine($"  - ECDSA Signature (Base64): {ecdsaSig.Truncate(60)}");
@@ -207,15 +217,14 @@ void RunKeyAgreementShowcase()
 {
     PrintHeader("4. Key Agreement (Elliptic Curve Diffie-Hellman)");
 
-    (byte[] alicePub, byte[] alicePriv) = Ecdh.GenerateKeyPair();
-    (byte[] bobPub, byte[] bobPriv) = Ecdh.GenerateKeyPair();
+    var (alicePub, alicePriv) = Ecdh.GenerateKeyPair();
+    var (bobPub, bobPriv) = Ecdh.GenerateKeyPair();
 
     Console.WriteLine($"  - Alice's Public Key: {alicePub.ToHexString(40)}");
     Console.WriteLine($"  - Bob's Public Key:   {bobPub.ToHexString(40)}\n");
 
-    var (aliceSuccess, aliceSharedSecret) = Ecdh.DeriveSharedSecret(alicePriv, bobPub);
-
-    var (bobSuccess, bobSharedSecret) = Ecdh.DeriveSharedSecret(bobPriv, alicePub);
+    bool aliceSuccess = Ecdh.TryDeriveSharedSecret(alicePriv, bobPub, out byte[] aliceSharedSecret);
+    bool bobSuccess = Ecdh.TryDeriveSharedSecret(bobPriv, alicePub, out byte[] bobSharedSecret);
 
     if (aliceSuccess && bobSuccess)
     {
@@ -235,13 +244,14 @@ void RunKeyAgreementShowcase()
         byte[] kdfSalt = "ECDH-HKDF-Salt"u8.ToArray();
         byte[] info = "ECDH-AES-GCM-HKDF-Context-Info"u8.ToArray();
 
-        var (encSuccess, ciphertext) = Ecdh.Encrypt(
+        bool encSuccess = Ecdh.TryEncrypt(
             Aes256Gcm.Shared,
             Hkdf.Shared,
             aliceSharedSecret,
             plainBytes,
             kdfSalt,
-            info
+            info,
+            out byte[] ciphertext
         );
         if (encSuccess)
         {
@@ -249,13 +259,14 @@ void RunKeyAgreementShowcase()
             Console.WriteLine($"  - Context Info:         \"{Encoding.UTF8.GetString(info)}\"");
             Console.WriteLine($"  - Encrypted Ciphertext: {ciphertext.ToHexString(40)}");
 
-            var (decSuccess, decryptedBytes) = Ecdh.Decrypt(
+            bool decSuccess = Ecdh.TryDecrypt(
                 Aes256Gcm.Shared,
                 Hkdf.Shared,
                 bobSharedSecret,
                 ciphertext,
                 kdfSalt,
-                info
+                info,
+                out byte[] decryptedBytes
             );
 
             if (decSuccess)
@@ -402,5 +413,3 @@ public static class Extensions
         return text.Substring(0, maxLength) + "...";
     }
 }
-
-*/
