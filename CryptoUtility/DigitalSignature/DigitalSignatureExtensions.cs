@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text;
 
 namespace CryptoUtility;
@@ -13,7 +14,12 @@ public static class DigitalSignatureExtensions
         byte[] messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
         byte[] secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
         byte[] signatureBytes = digitalSignature.Sign(messageBytes, secretKeyBytes);
+
         string signatureBase64 = Convert.ToBase64String(signatureBytes);
+
+        CryptographicOperations.ZeroMemory(messageBytes);
+        CryptographicOperations.ZeroMemory(secretKeyBytes);
+        CryptographicOperations.ZeroMemory(signatureBytes);
 
         return signatureBase64;
     }
@@ -30,7 +36,12 @@ public static class DigitalSignatureExtensions
             byte[] messageBytes = Encoding.UTF8.GetBytes(messageUtf8);
             byte[] signatureBytes = Convert.FromBase64String(signatureBase64);
             byte[] publicKeyBytes = Convert.FromBase64String(publicKeyBase64);
+
             bool isValid = digitalSignature.Verify(messageBytes, signatureBytes, publicKeyBytes);
+
+            CryptographicOperations.ZeroMemory(messageBytes);
+            CryptographicOperations.ZeroMemory(signatureBytes);
+            CryptographicOperations.ZeroMemory(publicKeyBytes);
 
             return isValid;
         }
@@ -45,8 +56,12 @@ public static class DigitalSignatureExtensions
     )
     {
         (byte[] publicKeyBytes, byte[] secretKeyBytes) = digitalSignature.GenerateKeyPair();
+
         string publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
         string secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
+
+        CryptographicOperations.ZeroMemory(publicKeyBytes);
+        CryptographicOperations.ZeroMemory(secretKeyBytes);
 
         return (publicKeyBase64, secretKeyBase64);
     }
@@ -102,6 +117,7 @@ public static class DigitalSignatureExtensions
         try
         {
             (byte[] publicKey, byte[] secretKey) keyPair = digitalSignature.GenerateKeyPair();
+
             publicKey = keyPair.publicKey;
             secretKey = keyPair.secretKey;
 
@@ -124,9 +140,11 @@ public static class DigitalSignatureExtensions
     {
         try
         {
-            (string publicKey, string secretKey) result = digitalSignature.GenerateKeyPairBase64();
-            publicKeyBase64 = result.publicKey;
-            secretKeyBase64 = result.secretKey;
+            (string publicKeyBase64, string secretKeyBase64) result =
+                digitalSignature.GenerateKeyPairBase64();
+
+            publicKeyBase64 = result.publicKeyBase64;
+            secretKeyBase64 = result.secretKeyBase64;
 
             return true;
         }

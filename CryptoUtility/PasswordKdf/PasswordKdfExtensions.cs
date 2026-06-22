@@ -14,8 +14,10 @@ public static class PasswordKdfExtensions
     {
         byte[] saltBytes = Convert.FromBase64String(saltBase64);
         byte[] keyBytes = kdf.DeriveKey(passwordUtf8, saltBytes, iterations, outputLength);
+
         string keyBase64 = Convert.ToBase64String(keyBytes);
 
+        CryptographicOperations.ZeroMemory(saltBytes);
         CryptographicOperations.ZeroMemory(keyBytes);
 
         return keyBase64;

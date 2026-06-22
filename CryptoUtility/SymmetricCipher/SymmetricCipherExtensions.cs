@@ -7,7 +7,12 @@ public static class SymmetricCipherExtensions
 {
     public static byte[] Encrypt(this ISymmetricCipher cipher, byte[] key, byte[] plaintext)
     {
-        return cipher.Encrypt(key, plaintext, nonce: cipher.GenerateNonce());
+        byte[] nonce = cipher.GenerateNonce();
+        byte[] encrypted = cipher.Encrypt(key, plaintext, nonce);
+
+        CryptographicOperations.ZeroMemory(nonce);
+
+        return encrypted;
     }
 
     public static string EncryptBase64(
@@ -252,6 +257,12 @@ public static class SymmetricCipherExtensions
 
     public static string GenerateNonceBase64(this ISymmetricCipher cipher)
     {
-        return Convert.ToBase64String(cipher.GenerateNonce());
+        byte[] nonce = cipher.GenerateNonce();
+
+        string nonceBase64 = Convert.ToBase64String(nonce);
+
+        CryptographicOperations.ZeroMemory(nonce);
+
+        return nonceBase64;
     }
 }

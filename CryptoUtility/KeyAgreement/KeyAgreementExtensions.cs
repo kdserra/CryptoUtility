@@ -298,7 +298,7 @@ public static class KeyAgreementExtensions
     {
         try
         {
-            plaintext = keyAgreement.Encrypt(
+            plaintext = keyAgreement.Decrypt(
                 cipher,
                 kdf,
                 sharedSecret,
