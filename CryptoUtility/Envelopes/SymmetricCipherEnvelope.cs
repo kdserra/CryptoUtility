@@ -1,4 +1,5 @@
-﻿using MemoryPack;
+﻿using System.Security.Cryptography;
+using MemoryPack;
 
 namespace CryptoUtility;
 
@@ -108,6 +109,9 @@ public partial class SymmetricCipherEnvelope
     {
         byte[] envelopeBytes = ToBytes(envelope);
         string envelopeBase64 = Convert.ToBase64String(envelopeBytes);
+
+        CryptographicOperations.ZeroMemory(envelopeBytes);
+
         return envelopeBase64;
     }
 
@@ -121,6 +125,9 @@ public partial class SymmetricCipherEnvelope
     {
         byte[] envelopeBytes = Convert.FromBase64String(envelopeBase64);
         SymmetricCipherEnvelope? envelope = FromBytes(envelopeBytes);
+
+        CryptographicOperations.ZeroMemory(envelopeBytes);
+
         return envelope;
     }
 

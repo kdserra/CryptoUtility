@@ -45,6 +45,7 @@ public static class KeyExpansionKdfExtensions
     )
     {
         byte[] keyBytes = kdf.DeriveKey(inputKeyMaterial, iterations, outputLength, salt, info);
+
         string keyBase64 = Convert.ToBase64String(keyBytes);
 
         CryptographicOperations.ZeroMemory(keyBytes);

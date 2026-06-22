@@ -1,4 +1,5 @@
-﻿using CryptoUtility;
+﻿using System.Security.Cryptography;
+using CryptoUtility;
 using MemoryPack;
 
 /// <summary>
@@ -76,6 +77,9 @@ public partial class HybridCipherEnvelope
     {
         byte[] envelopeBytes = ToBytes(envelope);
         string envelopeBase64 = Convert.ToBase64String(envelopeBytes);
+
+        CryptographicOperations.ZeroMemory(envelopeBytes);
+
         return envelopeBase64;
     }
 
@@ -88,7 +92,11 @@ public partial class HybridCipherEnvelope
     public static HybridCipherEnvelope? FromBase64(string envelopeBase64)
     {
         byte[] envelopeBytes = Convert.FromBase64String(envelopeBase64);
+
         HybridCipherEnvelope? envelope = FromBytes(envelopeBytes);
+
+        CryptographicOperations.ZeroMemory(envelopeBytes);
+
         return envelope;
     }
 
