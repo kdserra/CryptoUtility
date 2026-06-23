@@ -4,39 +4,9 @@ This project contains third-party software components governed by the license(s)
 
 -------------------------------------------------------------------------------
 
-## .NET
-
-https://github.com/dotnet/dotnet
-
-```
-The MIT License (MIT)
-
-Copyright (c) .NET Foundation and Contributors
-
-All rights reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
-
--------------------------------------------------------------------------------
-
 ## MemoryPack
+
+Used within the core `CryptoUtility` package.
 
 https://github.com/Cysharp/MemoryPack
 
@@ -68,6 +38,8 @@ SOFTWARE.
 
 ## HKDF.Standard
 
+Used within the `CryptoUtility.HkdfStandard` integration package.
+
 https://github.com/andreimilto/HKDF.Standard
 
 ```
@@ -97,6 +69,8 @@ SOFTWARE.
 -------------------------------------------------------------------------------
 
 ## NaCl.Core
+
+Used within the `CryptoUtility.NaCl` integration package.
 
 https://github.com/daviddesmet/NaCl.Core
 
@@ -128,6 +102,8 @@ SOFTWARE.
 
 ## BouncyCastle
 
+Used within the `CryptoUtility.BouncyCastle` integration package.
+
 https://www.bouncycastle.org/
 
 https://www.bouncycastle.org/licence.html
@@ -150,3 +126,6 @@ The OpenPGP library and the MLS library both make use of additional open source 
     openpgp - includes modified BZIP2 library which is licensed under the Apache Software License, Version 2.0.
     MLS - The MLS Client makes use of io.grpc licensed under Apache Software License, Version 2.0, and com.google.protobuf which is licensed under the 3-Clause BSD License.
 ```
+
+-------------------------------------------------------------------------------
+
