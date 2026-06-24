@@ -1,12 +1,11 @@
 using System.Text;
 using CryptoUtility.BouncyCastle;
-using Org.BouncyCastle.Crypto.Parameters;
 
 namespace CryptoUtility.Tests;
 
 public class BouncyCastleMlDsa44Tests : DigitalSignatureTests
 {
-    internal override IDigitalSignature Signer { get; } = new MlDsaImpl(MLDsaParameters.ml_dsa_44);
+    internal override IDigitalSignature Signer => MlDsa44Impl.Shared;
 
     public override void Verify_AlgorithmSpecification()
     {
@@ -19,7 +18,7 @@ public class BouncyCastleMlDsa44Tests : DigitalSignatureTests
 
 public class BouncyCastleMlDsa65Tests : DigitalSignatureTests
 {
-    internal override IDigitalSignature Signer => MlDsaImpl.Shared;
+    internal override IDigitalSignature Signer => MlDsa65Impl.Shared;
 
     public override void Verify_AlgorithmSpecification()
     {
@@ -32,7 +31,7 @@ public class BouncyCastleMlDsa65Tests : DigitalSignatureTests
 
 public class BouncyCastleMlDsa87Tests : DigitalSignatureTests
 {
-    internal override IDigitalSignature Signer { get; } = new MlDsaImpl(MLDsaParameters.ml_dsa_87);
+    internal override IDigitalSignature Signer => MlDsa87Impl.Shared;
 
     public override void Verify_AlgorithmSpecification()
     {

@@ -1,19 +1,18 @@
 using CryptoUtility.BouncyCastle;
-using Org.BouncyCastle.Pqc.Crypto.Hqc;
 
 namespace CryptoUtility.Tests;
 
 public sealed class BouncyCastleHqc128Tests : KeyEncapsulationMechanismTests
 {
-    internal override IKeyEncapsulationMechanism Kem => HqcImpl.Shared;
+    internal override IKeyEncapsulationMechanism Kem => Hqc128Impl.Shared;
 }
 
 public sealed class BouncyCastleHqc192Tests : KeyEncapsulationMechanismTests
 {
-    internal override IKeyEncapsulationMechanism Kem { get; } = new HqcImpl(HqcParameters.hqc192);
+    internal override IKeyEncapsulationMechanism Kem => Hqc192Impl.Shared;
 }
 
 public sealed class BouncyCastleHqc256Tests : KeyEncapsulationMechanismTests
 {
-    internal override IKeyEncapsulationMechanism Kem { get; } = new HqcImpl(HqcParameters.hqc256);
+    internal override IKeyEncapsulationMechanism Kem => Hqc256Impl.Shared;
 }

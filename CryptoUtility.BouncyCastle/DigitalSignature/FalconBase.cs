@@ -5,30 +5,17 @@ using Org.BouncyCastle.Security;
 namespace CryptoUtility.BouncyCastle;
 
 /// <summary>
-/// Bouncy Castle FALCON Digital Signature implementation.
+/// Base class for Bouncy Castle FALCON Digital Signature implementations.
 /// </summary>
-[GenerateStaticApi]
-public sealed class FalconImpl : IDigitalSignature
+public abstract class FalconBase : IDigitalSignature
 {
-    /// <summary>
-    /// The default FALCON parameters used by the shared instance (falcon_512).
-    /// </summary>
-    public static readonly FalconImpl Shared = new(FalconParameters.falcon_512);
-
     private readonly FalconParameters _parameters;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="FalconImpl"/> class with default parameters (falcon_512).
-    /// </summary>
-    public FalconImpl() : this(FalconParameters.falcon_512)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="FalconImpl"/> class with specified parameters.
+    /// Initializes a new instance of the <see cref="FalconBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The FALCON parameters to use.</param>
-    public FalconImpl(FalconParameters parameters)
+    protected FalconBase(FalconParameters parameters)
     {
         _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
     }

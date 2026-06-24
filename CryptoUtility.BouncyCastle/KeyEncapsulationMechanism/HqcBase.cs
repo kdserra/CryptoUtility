@@ -5,16 +5,10 @@ using Org.BouncyCastle.Security;
 namespace CryptoUtility.BouncyCastle;
 
 /// <summary>
-/// Bouncy Castle HQC Key Encapsulation Mechanism implementation.
+/// Base class for Bouncy Castle HQC Key Encapsulation Mechanism implementations.
 /// </summary>
-[GenerateStaticApi]
-public sealed class HqcImpl : IKeyEncapsulationMechanism
+public abstract class HqcBase : IKeyEncapsulationMechanism
 {
-    /// <summary>
-    /// The default HQC parameters used by the shared instance (hqc128).
-    /// </summary>
-    public static readonly HqcImpl Shared = new(HqcParameters.hqc128);
-
     private readonly HqcParameters _parameters;
 
     /// <inheritdoc />
@@ -30,17 +24,10 @@ public sealed class HqcImpl : IKeyEncapsulationMechanism
     public int SharedSecretSizeBytes { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="HqcImpl"/> class with default parameters (hqc128).
-    /// </summary>
-    public HqcImpl() : this(HqcParameters.hqc128)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="HqcImpl"/> class with specified parameters.
+    /// Initializes a new instance of the <see cref="HqcBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The HQC parameters to use.</param>
-    public HqcImpl(HqcParameters parameters)
+    protected HqcBase(HqcParameters parameters)
     {
         _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 

@@ -1,36 +1,22 @@
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Signers;
-using Org.BouncyCastle.Pqc.Crypto.Utilities;
 using Org.BouncyCastle.Security;
 
 namespace CryptoUtility.BouncyCastle;
 
 /// <summary>
-/// Bouncy Castle ML-DSA Digital Signature implementation.
+/// Base class for Bouncy Castle ML-DSA Digital Signature implementations.
 /// </summary>
-[GenerateStaticApi]
-public sealed class MlDsaImpl : IDigitalSignature
+public abstract class MlDsaBase : IDigitalSignature
 {
-    /// <summary>
-    /// The default ML-DSA parameters used by the shared instance (ML-DSA-65).
-    /// </summary>
-    public static readonly MlDsaImpl Shared = new(MLDsaParameters.ml_dsa_65);
-
     private readonly MLDsaParameters _parameters;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MlDsaImpl"/> class with default parameters (ML-DSA-65).
-    /// </summary>
-    public MlDsaImpl() : this(MLDsaParameters.ml_dsa_65)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MlDsaImpl"/> class with specified parameters.
+    /// Initializes a new instance of the <see cref="MlDsaBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The ML-DSA parameters to use.</param>
-    public MlDsaImpl(MLDsaParameters parameters)
+    protected MlDsaBase(MLDsaParameters parameters)
     {
         _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
     }

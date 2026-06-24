@@ -1,22 +1,15 @@
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Kems;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Pqc.Crypto.Utilities;
 using Org.BouncyCastle.Security;
 
 namespace CryptoUtility.BouncyCastle;
 
 /// <summary>
-/// Bouncy Castle ML-KEM Key Encapsulation Mechanism implementation.
+/// Base class for Bouncy Castle ML-KEM Key Encapsulation Mechanism implementations.
 /// </summary>
-[GenerateStaticApi]
-public sealed class MlKemImpl : IKeyEncapsulationMechanism
+public abstract class MlKemBase : IKeyEncapsulationMechanism
 {
-    /// <summary>
-    /// The default ML-KEM parameters used by the shared instance (ML-KEM-768).
-    /// </summary>
-    public static readonly MlKemImpl Shared = new(MLKemParameters.ml_kem_768);
-
     private readonly MLKemParameters _parameters;
 
     /// <inheritdoc />
@@ -32,17 +25,10 @@ public sealed class MlKemImpl : IKeyEncapsulationMechanism
     public int SharedSecretSizeBytes { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MlKemImpl"/> class with default parameters (ML-KEM-768).
-    /// </summary>
-    public MlKemImpl() : this(MLKemParameters.ml_kem_768)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MlKemImpl"/> class with specified parameters.
+    /// Initializes a new instance of the <see cref="MlKemBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The ML-KEM parameters to use.</param>
-    public MlKemImpl(MLKemParameters parameters)
+    protected MlKemBase(MLKemParameters parameters)
     {
         _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 

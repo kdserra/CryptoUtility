@@ -1,36 +1,22 @@
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.Crypto.Signers;
-using Org.BouncyCastle.Pqc.Crypto.Utilities;
 using Org.BouncyCastle.Security;
 
 namespace CryptoUtility.BouncyCastle;
 
 /// <summary>
-/// Bouncy Castle SLH-DSA Digital Signature implementation.
+/// Base class for Bouncy Castle SLH-DSA Digital Signature implementations.
 /// </summary>
-[GenerateStaticApi]
-public sealed class SlhDsaImpl : IDigitalSignature
+public abstract class SlhDsaBase : IDigitalSignature
 {
-    /// <summary>
-    /// The default SLH-DSA parameters used by the shared instance (sha2_128s).
-    /// </summary>
-    public static readonly SlhDsaImpl Shared = new(SlhDsaParameters.slh_dsa_sha2_128s);
-
     private readonly SlhDsaParameters _parameters;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="SlhDsaImpl"/> class with default parameters (sha2_128s).
-    /// </summary>
-    public SlhDsaImpl() : this(SlhDsaParameters.slh_dsa_sha2_128s)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SlhDsaImpl"/> class with specified parameters.
+    /// Initializes a new instance of the <see cref="SlhDsaBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The SLH-DSA parameters to use.</param>
-    public SlhDsaImpl(SlhDsaParameters parameters)
+    protected SlhDsaBase(SlhDsaParameters parameters)
     {
         _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
     }

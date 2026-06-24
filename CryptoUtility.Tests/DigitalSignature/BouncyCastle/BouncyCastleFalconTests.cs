@@ -1,12 +1,11 @@
 using System.Text;
 using CryptoUtility.BouncyCastle;
-using Org.BouncyCastle.Pqc.Crypto.Falcon;
 
 namespace CryptoUtility.Tests;
 
 public class BouncyCastleFalcon512Tests : DigitalSignatureTests
 {
-    internal override IDigitalSignature Signer => FalconImpl.Shared;
+    internal override IDigitalSignature Signer => Falcon512Impl.Shared;
 
     public override void Verify_AlgorithmSpecification()
     {
@@ -19,7 +18,7 @@ public class BouncyCastleFalcon512Tests : DigitalSignatureTests
 
 public class BouncyCastleFalcon1024Tests : DigitalSignatureTests
 {
-    internal override IDigitalSignature Signer { get; } = new FalconImpl(FalconParameters.falcon_1024);
+    internal override IDigitalSignature Signer => Falcon1024Impl.Shared;
 
     public override void Verify_AlgorithmSpecification()
     {

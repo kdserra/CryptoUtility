@@ -5,16 +5,10 @@ using Org.BouncyCastle.Security;
 namespace CryptoUtility.BouncyCastle;
 
 /// <summary>
-/// Bouncy Castle BIKE Key Encapsulation Mechanism implementation.
+/// Base class for Bouncy Castle BIKE Key Encapsulation Mechanism implementations.
 /// </summary>
-[GenerateStaticApi]
-public sealed class BikeImpl : IKeyEncapsulationMechanism
+public abstract class BikeBase : IKeyEncapsulationMechanism
 {
-    /// <summary>
-    /// The default BIKE parameters used by the shared instance (bike128).
-    /// </summary>
-    public static readonly BikeImpl Shared = new(BikeParameters.bike128);
-
     private readonly BikeParameters _parameters;
 
     /// <inheritdoc />
@@ -30,17 +24,10 @@ public sealed class BikeImpl : IKeyEncapsulationMechanism
     public int SharedSecretSizeBytes { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="BikeImpl"/> class with default parameters (bike128).
-    /// </summary>
-    public BikeImpl() : this(BikeParameters.bike128)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="BikeImpl"/> class with specified parameters.
+    /// Initializes a new instance of the <see cref="BikeBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The BIKE parameters to use.</param>
-    public BikeImpl(BikeParameters parameters)
+    protected BikeBase(BikeParameters parameters)
     {
         _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 

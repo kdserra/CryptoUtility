@@ -1,19 +1,18 @@
 using CryptoUtility.BouncyCastle;
-using Org.BouncyCastle.Pqc.Crypto.Bike;
 
 namespace CryptoUtility.Tests;
 
 public sealed class BouncyCastleBike128Tests : KeyEncapsulationMechanismTests
 {
-    internal override IKeyEncapsulationMechanism Kem => BikeImpl.Shared;
+    internal override IKeyEncapsulationMechanism Kem => Bike128Impl.Shared;
 }
 
 public sealed class BouncyCastleBike192Tests : KeyEncapsulationMechanismTests
 {
-    internal override IKeyEncapsulationMechanism Kem { get; } = new BikeImpl(BikeParameters.bike192);
+    internal override IKeyEncapsulationMechanism Kem => Bike192Impl.Shared;
 }
 
 public sealed class BouncyCastleBike256Tests : KeyEncapsulationMechanismTests
 {
-    internal override IKeyEncapsulationMechanism Kem { get; } = new BikeImpl(BikeParameters.bike256);
+    internal override IKeyEncapsulationMechanism Kem => Bike256Impl.Shared;
 }
