@@ -1,4 +1,4 @@
-using Org.BouncyCastle.Asn1.Sec;
+﻿using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
@@ -16,6 +16,9 @@ namespace CryptoUtility.BouncyCastle;
 [GenerateStaticApi]
 public sealed class EcdhImpl : IKeyAgreement
 {
+    /// <summary>
+    /// Gets the shared instance.
+    /// </summary>
     public static readonly EcdhImpl Shared = new();
 
     private static readonly X9ECParameters EcParams = SecNamedCurves.GetByName("secp256r1");

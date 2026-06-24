@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <GenerateDocumentationFile Condition="!$(MSBuildProjectName.Contains('Tests')) And !$(MSBuildProjectName.Contains('Sample'))">true</GenerateDocumentationFile>
+  </PropertyGroup>
+</Project>

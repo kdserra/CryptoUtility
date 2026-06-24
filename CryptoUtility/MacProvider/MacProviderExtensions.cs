@@ -1,10 +1,18 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
 
 namespace CryptoUtility;
+    /// <summary>
+    /// Provides extension methods for simplified Message Authentication Code (MAC) computation and verification.
+    /// </summary>
 
 public static class MacProviderExtensions
 {
+    /// <summary>
+    /// Get recommended key size in bytes.
+    /// </summary>
+    /// <param name="macProvider">The MAC provider instance.</param>
+    /// <returns>The size in bytes.</returns>
     public static int GetRecommendedKeySizeInBytes(this IMacProvider macProvider)
     {
         if (macProvider.RequiredKeySizeInBytes > 0)
@@ -14,6 +22,11 @@ public static class MacProviderExtensions
 
         return Math.Max(32, macProvider.MacSizeInBytes);
     }
+    /// <summary>
+    /// Generate key.
+    /// </summary>
+    /// <param name="macProvider">The MAC provider instance.</param>
+    /// <returns>A byte array containing the result.</returns>
 
     public static byte[] GenerateKey(this IMacProvider macProvider)
     {
@@ -22,6 +35,11 @@ public static class MacProviderExtensions
 
         return key;
     }
+    /// <summary>
+    /// Generate key using Base64-encoded strings.
+    /// </summary>
+    /// <param name="macProvider">The MAC provider instance.</param>
+    /// <returns>A string containing the result.</returns>
 
     public static string GenerateKeyBase64(this IMacProvider macProvider)
     {
@@ -41,6 +59,13 @@ public static class MacProviderExtensions
 
         return keyBase64;
     }
+    /// <summary>
+    /// Computes the Message Authentication Code (MAC) for the specified message using the provided key using Base64-encoded strings.
+    /// </summary>
+    /// <param name="macProvider">The MAC provider instance.</param>
+    /// <param name="keyBase64">The Base64-encoded symmetric key.</param>
+    /// <param name="messageUtf8">The input UTF-8 encoded string.</param>
+    /// <returns>A string containing the result.</returns>
 
     public static string ComputeMacBase64(
         this IMacProvider macProvider,
@@ -70,6 +95,14 @@ public static class MacProviderExtensions
 
         return macBase64;
     }
+    /// <summary>
+    /// Verifies the Message Authentication Code (MAC) for the specified message.
+    /// </summary>
+    /// <param name="macProvider">The MAC provider instance.</param>
+    /// <param name="key">The symmetric key.</param>
+    /// <param name="message">The input data to process.</param>
+    /// <param name="mac">The Message Authentication Code (MAC) bytes.</param>
+    /// <returns>true if the verification succeeded; otherwise, false.</returns>
 
     public static bool VerifyMac(
         this IMacProvider macProvider,
@@ -96,6 +129,14 @@ public static class MacProviderExtensions
 
         return isValid;
     }
+    /// <summary>
+    /// Verifies the digital signature of the specified input data using Base64-encoded strings.
+    /// </summary>
+    /// <param name="macProvider">The MAC provider instance.</param>
+    /// <param name="keyBase64">The Base64-encoded symmetric key.</param>
+    /// <param name="messageUtf8">The input UTF-8 encoded string.</param>
+    /// <param name="macBase64">The Base64-encoded Message Authentication Code (MAC).</param>
+    /// <returns>true if the verification succeeded; otherwise, false.</returns>
 
     public static bool VerifyBase64(
         this IMacProvider macProvider,
@@ -126,6 +167,14 @@ public static class MacProviderExtensions
 
         return isValid;
     }
+    /// <summary>
+    /// Attempts to computes the message authentication code (mac) for the specified message using the provided key.
+    /// </summary>
+    /// <param name="macProvider">The MAC provider instance.</param>
+    /// <param name="key">The symmetric key.</param>
+    /// <param name="message">The input data to process.</param>
+    /// <param name="mac">The Message Authentication Code (MAC) bytes.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
 
     public static bool TryComputeMac(
         this IMacProvider macProvider,
@@ -147,6 +196,14 @@ public static class MacProviderExtensions
             return false;
         }
     }
+    /// <summary>
+    /// Attempts to computes the message authentication code (mac) for the specified message using the provided key using base64-encoded strings.
+    /// </summary>
+    /// <param name="macProvider">The MAC provider instance.</param>
+    /// <param name="keyBase64">The Base64-encoded symmetric key.</param>
+    /// <param name="messageUtf8">The input UTF-8 encoded string.</param>
+    /// <param name="macBase64">The Base64-encoded Message Authentication Code (MAC).</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
 
     public static bool TryComputeMacBase64(
         this IMacProvider macProvider,

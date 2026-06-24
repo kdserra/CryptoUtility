@@ -1,4 +1,4 @@
-namespace CryptoUtility.BouncyCastle;
+﻿namespace CryptoUtility.BouncyCastle;
 
 /// <summary>
 /// BouncyCastle AES-192 GCM
@@ -6,6 +6,9 @@ namespace CryptoUtility.BouncyCastle;
 [GenerateStaticApi]
 public sealed class Aes192GcmImpl : AesGcmBase
 {
+    /// <summary>
+    /// Gets the shared instance.
+    /// </summary>
     public static readonly Aes192GcmImpl Shared = new();
 
     /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />

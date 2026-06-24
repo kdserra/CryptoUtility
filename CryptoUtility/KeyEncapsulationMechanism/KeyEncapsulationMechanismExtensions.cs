@@ -1,6 +1,9 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 namespace CryptoUtility;
+    /// <summary>
+    /// Provides extension methods for simplified key encapsulation and post-quantum hybrid encryption.
+    /// </summary>
 
 public static class KeyEncapsulationMechanismExtensions
 {
@@ -26,6 +29,7 @@ public static class KeyEncapsulationMechanismExtensions
     /// <summary>
     /// Encapsulates a shared secret using the peer's public key.
     /// </summary>
+    /// <param name="kem">The key encapsulation mechanism.</param>
     /// <param name="peerPublicKeyBase64">The peer's public key bytes.</param>
     /// <returns>A tuple containing the derived shared secret and the encapsulated ciphertext.</returns>
     public static (string sharedSecretBase64, string ciphertextBase64) EncapsulateBase64(
@@ -49,6 +53,7 @@ public static class KeyEncapsulationMechanismExtensions
     /// <summary>
     /// Decapsulates the ciphertext using the secret key to recover the shared secret.
     /// </summary>
+    /// <param name="kem">The key encapsulation mechanism.</param>
     /// <param name="secretKeyBase64">The secret (private) key bytes.</param>
     /// <param name="ciphertextBase64">The encapsulated ciphertext bytes.</param>
     /// <returns>The recovered shared secret.</returns>
@@ -71,6 +76,14 @@ public static class KeyEncapsulationMechanismExtensions
 
         return decapsulatedBase64;
     }
+    /// <summary>
+    /// Attempts to encapsulates a shared secret using the peer's public key.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="peerPublicKey">The remote peer's public key.</param>
+    /// <param name="sharedSecret">When this method returns, contains the derived shared secret bytes.</param>
+    /// <param name="ciphertext">When this method returns, contains the encapsulated shared secret ciphertext.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
 
     public static bool TryEncapsulate(
         this IKeyEncapsulationMechanism kem,
@@ -94,6 +107,14 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+    /// <summary>
+    /// Attempts to encapsulates a shared secret using the peer's public key using base64-encoded strings.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="peerPublicKeyBase64">The remote peer's Base64-encoded public key.</param>
+    /// <param name="sharedSecretBase64">When this method returns, contains the Base64-encoded derived shared secret.</param>
+    /// <param name="ciphertextBase64">When this method returns, contains the Base64-encoded encapsulated shared secret ciphertext.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
 
     public static bool TryEncapsulateBase64(
         this IKeyEncapsulationMechanism kem,
@@ -119,6 +140,14 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+    /// <summary>
+    /// Attempts to decapsulates the ciphertext using the private key to recover the shared secret.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="secretKey">The private (secret) key.</param>
+    /// <param name="ciphertext">When this method returns, contains the encapsulated shared secret ciphertext.</param>
+    /// <param name="sharedSecret">When this method returns, contains the derived shared secret bytes.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
 
     public static bool TryDecapsulate(
         this IKeyEncapsulationMechanism kem,
@@ -138,6 +167,14 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+    /// <summary>
+    /// Attempts to decapsulates the ciphertext using the private key to recover the shared secret using base64-encoded strings.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="secretKeyBase64">The Base64-encoded private (secret) key.</param>
+    /// <param name="ciphertextBase64">When this method returns, contains the Base64-encoded encapsulated shared secret ciphertext.</param>
+    /// <param name="sharedSecretBase64">When this method returns, contains the Base64-encoded derived shared secret.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
 
     public static bool TryDecapsulateBase64(
         this IKeyEncapsulationMechanism kem,
@@ -157,6 +194,17 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+    /// <summary>
+    /// Encrypts the specified plaintext data.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="cipher">The symmetric cipher instance.</param>
+    /// <param name="kdf">The key derivation function instance.</param>
+    /// <param name="peerPublicKey">The remote peer's public key.</param>
+    /// <param name="plaintext">The plaintext bytes to encrypt.</param>
+    /// <param name="kdfSalt">The salt value for key derivation.</param>
+    /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
+    /// <returns>A byte array containing the result.</returns>
 
     public static byte[] Encrypt(
         this IKeyEncapsulationMechanism kem,
@@ -206,6 +254,17 @@ public static class KeyEncapsulationMechanismExtensions
 
         return envelopeBytes;
     }
+    /// <summary>
+    /// Decrypts the specified ciphertext data.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="cipher">The symmetric cipher instance.</param>
+    /// <param name="kdf">The key derivation function instance.</param>
+    /// <param name="secretKey">The private (secret) key.</param>
+    /// <param name="encrypted">The encrypted ciphertext bytes.</param>
+    /// <param name="kdfSalt">The salt value for key derivation.</param>
+    /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
+    /// <returns>A byte array containing the result.</returns>
 
     public static byte[] Decrypt(
         this IKeyEncapsulationMechanism kem,
@@ -254,6 +313,17 @@ public static class KeyEncapsulationMechanismExtensions
 
         return decrypted;
     }
+    /// <summary>
+    /// Encrypts the specified plaintext data using Base64-encoded strings.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="cipher">The symmetric cipher instance.</param>
+    /// <param name="kdf">The key derivation function instance.</param>
+    /// <param name="peerPublicKeyBase64">The remote peer's Base64-encoded public key.</param>
+    /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
+    /// <param name="kdfSaltBase64">The Base64-encoded salt value for key derivation.</param>
+    /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
+    /// <returns>A string containing the result.</returns>
 
     public static string EncryptBase64(
         this IKeyEncapsulationMechanism kem,
@@ -302,6 +372,17 @@ public static class KeyEncapsulationMechanismExtensions
 
         return encryptedBase64;
     }
+    /// <summary>
+    /// Decrypts the specified ciphertext data using Base64-encoded strings.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="cipher">The symmetric cipher instance.</param>
+    /// <param name="kdf">The key derivation function instance.</param>
+    /// <param name="secretKeyBase64">The Base64-encoded private (secret) key.</param>
+    /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
+    /// <param name="kdfSaltBase64">The Base64-encoded salt value for key derivation.</param>
+    /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
+    /// <returns>A string containing the result.</returns>
 
     public static string DecryptBase64(
         this IKeyEncapsulationMechanism kem,
@@ -350,6 +431,18 @@ public static class KeyEncapsulationMechanismExtensions
 
         return plaintextUtf8;
     }
+    /// <summary>
+    /// Attempts to encrypts the specified plaintext data.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="cipher">The symmetric cipher instance.</param>
+    /// <param name="kdf">The key derivation function instance.</param>
+    /// <param name="peerPublicKey">The remote peer's public key.</param>
+    /// <param name="plaintext">The plaintext bytes to encrypt.</param>
+    /// <param name="kdfSalt">The salt value for key derivation.</param>
+    /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
+    /// <param name="encrypted">The encrypted ciphertext bytes.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
 
 
 
@@ -375,6 +468,18 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+    /// <summary>
+    /// Attempts to decrypts the specified ciphertext data.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="cipher">The symmetric cipher instance.</param>
+    /// <param name="kdf">The key derivation function instance.</param>
+    /// <param name="secretKey">The private (secret) key.</param>
+    /// <param name="encrypted">The encrypted ciphertext bytes.</param>
+    /// <param name="kdfSalt">The salt value for key derivation.</param>
+    /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
+    /// <param name="plaintext">The plaintext bytes to encrypt.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
 
     public static bool TryDecrypt(
         this IKeyEncapsulationMechanism kem,
@@ -398,6 +503,18 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+    /// <summary>
+    /// Attempts to encrypts the specified plaintext data using base64-encoded strings.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="cipher">The symmetric cipher instance.</param>
+    /// <param name="kdf">The key derivation function instance.</param>
+    /// <param name="peerPublicKeyBase64">The remote peer's Base64-encoded public key.</param>
+    /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
+    /// <param name="kdfSaltBase64">The Base64-encoded salt value for key derivation.</param>
+    /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
+    /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
 
     public static bool TryEncryptBase64(
         this IKeyEncapsulationMechanism kem,
@@ -421,6 +538,18 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+    /// <summary>
+    /// Attempts to decrypts the specified ciphertext data using base64-encoded strings.
+    /// </summary>
+    /// <param name="kem">The key encapsulation mechanism instance.</param>
+    /// <param name="cipher">The symmetric cipher instance.</param>
+    /// <param name="kdf">The key derivation function instance.</param>
+    /// <param name="secretKeyBase64">The Base64-encoded private (secret) key.</param>
+    /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
+    /// <param name="kdfSaltBase64">The Base64-encoded salt value for key derivation.</param>
+    /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
+    /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
+    /// <returns>true if the operation succeeded; otherwise, false.</returns>
 
     public static bool TryDecryptBase64(
         this IKeyEncapsulationMechanism kem,

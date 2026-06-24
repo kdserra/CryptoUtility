@@ -1,4 +1,4 @@
-namespace CryptoUtility.System;
+﻿namespace CryptoUtility.System;
 
 /// <summary>
 /// Official .NET AES-128 GCM
@@ -6,6 +6,9 @@ namespace CryptoUtility.System;
 [GenerateStaticApi]
 public sealed class Aes128GcmImpl : AesGcmBase
 {
+    /// <summary>
+    /// Gets the shared instance.
+    /// </summary>
     public static readonly Aes128GcmImpl Shared = new();
 
     /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />

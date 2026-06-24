@@ -1,13 +1,20 @@
-using System.Text;
+﻿using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace CryptoUtility.CodeGenerator;
 
+/// <summary>
+/// Represents the static api generator implementation.
+/// </summary>
 [Generator]
 public sealed class StaticApiGenerator : IIncrementalGenerator
 {
+    /// <summary>
+    /// Initialize.
+    /// </summary>
+    /// <param name="context">The context.</param>
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var impls = context
@@ -96,6 +103,7 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         var sb = new StringBuilder();
 
         sb.AppendLine("#nullable enable");
+        sb.AppendLine("#pragma warning disable CS1591, CS1573, CS1574, CS1584, CS1658, CS0419");
         sb.AppendLine($"namespace {ns};");
         sb.AppendLine();
 
@@ -196,17 +204,20 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         var name = method.Name;
 
         var parameters = string.Join(", ", method.Parameters.Select(RenderParameter));
-        var args = string.Join(", ", method.Parameters.Select(p =>
-        {
-            var prefix = p.RefKind switch
+        var args = string.Join(
+            ", ",
+            method.Parameters.Select(p =>
             {
-                RefKind.Ref => "ref ",
-                RefKind.Out => "out ",
-                RefKind.In => "in ",
-                _ => "",
-            };
-            return prefix + p.Name;
-        }));
+                var prefix = p.RefKind switch
+                {
+                    RefKind.Ref => "ref ",
+                    RefKind.Out => "out ",
+                    RefKind.In => "in ",
+                    _ => "",
+                };
+                return prefix + p.Name;
+            })
+        );
 
         sb.AppendLine(
             $"    /// <inheritdoc cref=\"{method.ContainingType.Name}.{method.Name}\" />"
@@ -233,18 +244,23 @@ public sealed class StaticApiGenerator : IIncrementalGenerator
         );
 
         var argsList = new List<string> { "Shared" };
-        argsList.AddRange(parameters.Select((p, i) =>
-        {
-            if (isInjected[i]) return "Shared";
-            var prefix = p.RefKind switch
-            {
-                RefKind.Ref => "ref ",
-                RefKind.Out => "out ",
-                RefKind.In => "in ",
-                _ => "",
-            };
-            return prefix + p.Name;
-        }));
+        argsList.AddRange(
+            parameters.Select(
+                (p, i) =>
+                {
+                    if (isInjected[i])
+                        return "Shared";
+                    var prefix = p.RefKind switch
+                    {
+                        RefKind.Ref => "ref ",
+                        RefKind.Out => "out ",
+                        RefKind.In => "in ",
+                        _ => "",
+                    };
+                    return prefix + p.Name;
+                }
+            )
+        );
         var args = string.Join(", ", argsList);
 
         var extClass = symbol.ContainingType.ToDisplayString(

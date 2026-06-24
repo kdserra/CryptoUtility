@@ -1,4 +1,4 @@
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 
 namespace CryptoUtility.System;
 
@@ -47,6 +47,9 @@ namespace CryptoUtility.System;
 [GenerateStaticApi]
 public sealed class EcdhImpl : IKeyAgreement
 {
+    /// <summary>
+    /// Gets the shared instance.
+    /// </summary>
     public static readonly EcdhImpl Shared = new();
     private static readonly ECCurve _defaultECCurve = ECCurve.NamedCurves.nistP256;
 

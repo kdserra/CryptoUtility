@@ -35,7 +35,7 @@ public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
         return plaintext;
     }
 
-    /// <inheritdoc cref="IAsymmetricCipher.Sign(byte[], byte[])"/>
+    /// <inheritdoc cref="IDigitalSignature.Sign(byte[], byte[])"/>
     public byte[] Sign(byte[] input, byte[] secretKey)
     {
         using RSA rsa = RSA.Create();
@@ -50,7 +50,7 @@ public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
         return signature;
     }
 
-    /// <inheritdoc cref="IAsymmetricCipher.Verify(byte[], byte[], byte[])"/>
+    /// <inheritdoc cref="IDigitalSignature.Verify(byte[], byte[], byte[])"/>
     public bool Verify(byte[] input, byte[] signature, byte[] publicKey)
     {
         using RSA rsa = RSA.Create();
