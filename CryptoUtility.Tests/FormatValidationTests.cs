@@ -77,4 +77,62 @@ public class FormatValidationTests
         string argon2Hash = argon2id.HashPassword("password123");
         Assert.StartsWith("$argon2id$", argon2Hash);
     }
+
+    [Fact]
+    public void ValidatePasswordHashingPhcBase64Compatibility()
+    {
+        IPasswordHasher[] hashers = [
+            CryptoUtility.System.Pbkdf2Impl.Shared,
+            CryptoUtility.BouncyCastle.Pbkdf2Impl.Shared,
+            CryptoUtility.BouncyCastle.ScryptImpl.Shared,
+            CryptoUtility.BouncyCastle.Argon2idImpl.Shared,
+            CryptoUtility.BouncyCastle.Argon2iImpl.Shared,
+            CryptoUtility.BouncyCastle.Argon2dImpl.Shared
+        ];
+
+        string password = "PHC_Compatibility_Test_123!@#";
+
+        foreach (var hasher in hashers)
+        {
+            string hash = hasher.HashPassword(password);
+            var parts = hash.Split('$');
+            
+            Assert.True(parts.Length >= 4, $"Hash for {hasher.GetType().Name} has too few parts: {hash}");
+            
+            string saltB64 = parts[parts.Length - 2];
+            string hashB64 = parts[parts.Length - 1];
+
+            // 1. Validate that standard base64 characters '+' and '=' are not present
+            Assert.DoesNotContain("+", saltB64);
+            Assert.DoesNotContain("=", saltB64);
+            Assert.DoesNotContain("+", hashB64);
+            Assert.DoesNotContain("=", hashB64);
+
+            // 2. Validate that the alphabet consists only of Argon2 B64 characters: ./0-9A-Za-z
+            foreach (char c in saltB64)
+            {
+                Assert.True(
+                    c == '.' || c == '/' || (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'),
+                    $"Invalid character '{c}' in salt: {saltB64}"
+                );
+            }
+            foreach (char c in hashB64)
+            {
+                Assert.True(
+                    c == '.' || c == '/' || (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'),
+                    $"Invalid character '{c}' in checksum: {hashB64}"
+                );
+            }
+
+            // 3. Verify decoding works correctly using PhcB64
+            byte[] saltBytes = PhcB64.FromB64String(saltB64);
+            byte[] hashBytes = PhcB64.FromB64String(hashB64);
+            Assert.NotEmpty(saltBytes);
+            Assert.NotEmpty(hashBytes);
+
+            // 4. Verify password verification round-trip succeeds
+            bool matches = hasher.VerifyPassword(password, hash);
+            Assert.True(matches, $"Password verification failed for {hasher.GetType().Name}");
+        }
+    }
 }
