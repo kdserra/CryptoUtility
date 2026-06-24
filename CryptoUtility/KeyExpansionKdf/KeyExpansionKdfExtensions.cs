@@ -32,12 +32,7 @@ public static class KeyExpansionKdfExtensions
             saltBytes = Convert.FromBase64String(saltBase64);
             infoBytes = Convert.FromBase64String(infoBase64);
 
-            keyBytes = kdf.DeriveKey(
-                inputKeyMaterialBytes,
-                outputLength,
-                saltBytes,
-                infoBytes
-            );
+            keyBytes = kdf.DeriveKey(inputKeyMaterialBytes, outputLength, saltBytes, infoBytes);
 
             keyBase64 = Convert.ToBase64String(keyBytes);
         }
@@ -153,12 +148,7 @@ public static class KeyExpansionKdfExtensions
     {
         try
         {
-            derivedKeyBase64 = kdf.DeriveKeyBase64(
-                inputKeyMaterial,
-                outputLength,
-                salt,
-                info
-            );
+            derivedKeyBase64 = kdf.DeriveKeyBase64(inputKeyMaterial, outputLength, salt, info);
 
             return true;
         }

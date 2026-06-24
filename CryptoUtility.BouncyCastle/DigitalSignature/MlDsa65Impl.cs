@@ -13,5 +13,6 @@ public sealed class MlDsa65Impl : MlDsaBase
     /// </summary>
     public static readonly MlDsa65Impl Shared = new();
 
-    private MlDsa65Impl() : base(MLDsaParameters.ml_dsa_65) { }
+    private MlDsa65Impl()
+        : base(MLDsaParameters.ml_dsa_65) { }
 }

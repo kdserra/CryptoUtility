@@ -12,7 +12,7 @@ public abstract class PasswordHasherTests
     {
         string password = "MySecurePassword123!";
         string hash = Hasher.HashPassword(password);
-        
+
         Assert.False(string.IsNullOrEmpty(hash));
 
         bool matches = Hasher.VerifyPassword(password, hash);
@@ -39,7 +39,7 @@ public abstract class PasswordHasherTests
     public void VerifyPassword_WithNullInputs_Throws()
     {
         string hash = Hasher.HashPassword("password");
-        
+
         Assert.ThrowsAny<Exception>(() => Hasher.VerifyPassword(null!, hash));
         Assert.ThrowsAny<Exception>(() => Hasher.VerifyPassword("password", null!));
     }

@@ -1,8 +1,8 @@
 ﻿namespace CryptoUtility;
-    /// <summary>
-    /// Defines the contract for cryptographic key agreement (Diffie-Hellman).
-    /// </summary>
 
+/// <summary>
+/// Defines the contract for cryptographic key agreement (Diffie-Hellman).
+/// </summary>
 public interface IKeyAgreement
 {
     /// <summary>
@@ -12,6 +12,7 @@ public interface IKeyAgreement
     /// <param name="peerPublicKey">The remote peer's public key.</param>
     /// <returns>A byte array containing the result.</returns>
     public byte[] DeriveSharedSecret(byte[] secretKey, byte[] peerPublicKey);
+
     /// <summary>
     /// Generates a new public/private key pair.
     /// </summary>

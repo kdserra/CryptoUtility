@@ -6,7 +6,10 @@ namespace CryptoUtility.Tests;
 
 public class KeyEncapsulationMechanismExtensionsTests
 {
-    private readonly IKeyEncapsulationMechanism _kem = CryptoUtility.BouncyCastle.MlKem768Impl.Shared;
+    private readonly IKeyEncapsulationMechanism _kem = CryptoUtility
+        .BouncyCastle
+        .MlKem768Impl
+        .Shared;
     private readonly ISymmetricCipher _symmetricCipher = CryptoUtility.System.Aes256Gcm.Shared;
     private readonly IKeyExpansionKdf _kdf = CryptoUtility.System.Hkdf.Shared;
 
@@ -18,26 +21,12 @@ public class KeyEncapsulationMechanismExtensionsTests
         var salt = Encoding.UTF8.GetBytes("KdfSalt-12345");
         var info = Encoding.UTF8.GetBytes("KdfInfo-67890");
 
-        var encrypted = _kem.Encrypt(
-            _symmetricCipher,
-            _kdf,
-            publicKey,
-            plaintext,
-            salt,
-            info
-        );
+        var encrypted = _kem.Encrypt(_symmetricCipher, _kdf, publicKey, plaintext, salt, info);
 
         Assert.NotNull(encrypted);
         Assert.NotEmpty(encrypted);
 
-        var decrypted = _kem.Decrypt(
-            _symmetricCipher,
-            _kdf,
-            secretKey,
-            encrypted,
-            salt,
-            info
-        );
+        var decrypted = _kem.Decrypt(_symmetricCipher, _kdf, secretKey, encrypted, salt, info);
 
         Assert.Equal(plaintext, decrypted);
     }
@@ -45,7 +34,8 @@ public class KeyEncapsulationMechanismExtensionsTests
     [Fact]
     public void Kem_EncryptDecryptBase64_Roundtrip_Succeeds()
     {
-        var (publicKeyBase64, secretKeyBase64) = KeyEncapsulationMechanismExtensions.GenerateKeyPair(_kem);
+        var (publicKeyBase64, secretKeyBase64) =
+            KeyEncapsulationMechanismExtensions.GenerateKeyPair(_kem);
         var plaintext = "Base64 post-quantum encryption test.";
         var saltBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes("KdfSalt-Base64"));
         var infoBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes("KdfInfo-Base64"));
@@ -112,7 +102,8 @@ public class KeyEncapsulationMechanismExtensionsTests
     [Fact]
     public void Kem_TryEncryptDecryptBase64_Roundtrip_Succeeds()
     {
-        var (publicKeyBase64, secretKeyBase64) = KeyEncapsulationMechanismExtensions.GenerateKeyPair(_kem);
+        var (publicKeyBase64, secretKeyBase64) =
+            KeyEncapsulationMechanismExtensions.GenerateKeyPair(_kem);
         var plaintext = "Try-pattern Base64 post-quantum encryption payload.";
         var saltBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes("KdfSalt-Try-Base64"));
         var infoBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes("KdfInfo-Try-Base64"));
@@ -152,14 +143,7 @@ public class KeyEncapsulationMechanismExtensionsTests
         var salt = Encoding.UTF8.GetBytes("Salt");
         var info = Encoding.UTF8.GetBytes("Info");
 
-        var encrypted = _kem.Encrypt(
-            _symmetricCipher,
-            _kdf,
-            publicKey,
-            plaintext,
-            salt,
-            info
-        );
+        var encrypted = _kem.Encrypt(_symmetricCipher, _kdf, publicKey, plaintext, salt, info);
 
         // Corrupt the envelope bytes
         byte[] corrupted = new byte[encrypted.Length];
@@ -169,14 +153,9 @@ public class KeyEncapsulationMechanismExtensionsTests
             corrupted[i] ^= 0xFF; // Invert envelope header
         }
 
-        Assert.ThrowsAny<Exception>(() => _kem.Decrypt(
-            _symmetricCipher,
-            _kdf,
-            secretKey,
-            corrupted,
-            salt,
-            info
-        ));
+        Assert.ThrowsAny<Exception>(() =>
+            _kem.Decrypt(_symmetricCipher, _kdf, secretKey, corrupted, salt, info)
+        );
     }
 
     [Fact]
@@ -187,14 +166,7 @@ public class KeyEncapsulationMechanismExtensionsTests
         var salt = Encoding.UTF8.GetBytes("Salt");
         var info = Encoding.UTF8.GetBytes("Info");
 
-        var encrypted = _kem.Encrypt(
-            _symmetricCipher,
-            _kdf,
-            publicKey,
-            plaintext,
-            salt,
-            info
-        );
+        var encrypted = _kem.Encrypt(_symmetricCipher, _kdf, publicKey, plaintext, salt, info);
 
         byte[] corrupted = new byte[encrypted.Length];
         Array.Copy(encrypted, corrupted, encrypted.Length);

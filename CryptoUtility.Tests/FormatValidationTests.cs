@@ -46,7 +46,12 @@ public class FormatValidationTests
         int asymLength = BinaryPrimitives.ReadInt32BigEndian(encrypted.AsSpan(0, 4));
 
         Assert.True(asymLength > 0);
-        Assert.Equal(encrypted.Length, 4 + asymLength + (symmetric.NonceSizeBytes + plaintext.Length + symmetric.AuthTagSizeBytes));
+        Assert.Equal(
+            encrypted.Length,
+            4
+                + asymLength
+                + (symmetric.NonceSizeBytes + plaintext.Length + symmetric.AuthTagSizeBytes)
+        );
     }
 
     [Fact]

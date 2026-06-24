@@ -255,25 +255,11 @@ public abstract class KeyAgreementTests
         var salt = Encoding.UTF8.GetBytes("TestSalt");
         var info = Encoding.UTF8.GetBytes("ApplicationInfo");
 
-        var ciphertext = a.Encrypt(
-            Aes256Gcm.Shared,
-            Hkdf.Shared,
-            secretA,
-            plaintext,
-            salt,
-            info
-        );
+        var ciphertext = a.Encrypt(Aes256Gcm.Shared, Hkdf.Shared, secretA, plaintext, salt, info);
 
         Assert.NotEmpty(ciphertext);
 
-        var decrypted = b.Decrypt(
-            Aes256Gcm.Shared,
-            Hkdf.Shared,
-            secretB,
-            ciphertext,
-            salt,
-            info
-        );
+        var decrypted = b.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, secretB, ciphertext, salt, info);
         Assert.Equal(plaintext, decrypted);
     }
 
@@ -335,26 +321,14 @@ public abstract class KeyAgreementTests
         var salt = Encoding.UTF8.GetBytes("TestSalt");
         var info = Encoding.UTF8.GetBytes("ApplicationInfo");
 
-        var ciphertext = a.Encrypt(
-            Aes256Gcm.Shared,
-            Hkdf.Shared,
-            secretA,
-            plaintext,
-            salt,
-            info
-        );
+        var ciphertext = a.Encrypt(Aes256Gcm.Shared, Hkdf.Shared, secretA, plaintext, salt, info);
 
         // Derive wrong secret
         var wrongSec = b.DeriveSharedSecret(bSec, bPub);
 
-        Assert.ThrowsAny<Exception>(() => b.Decrypt(
-            Aes256Gcm.Shared,
-            Hkdf.Shared,
-            wrongSec,
-            ciphertext,
-            salt,
-            info
-        ));
+        Assert.ThrowsAny<Exception>(() =>
+            b.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, wrongSec, ciphertext, salt, info)
+        );
     }
 
     [Fact]
@@ -374,23 +348,11 @@ public abstract class KeyAgreementTests
         var info = Encoding.UTF8.GetBytes("ApplicationInfo");
         var wrongInfo = Encoding.UTF8.GetBytes("WrongApplicationInfo");
 
-        var ciphertext = a.Encrypt(
-            Aes256Gcm.Shared,
-            Hkdf.Shared,
-            secretA,
-            plaintext,
-            salt,
-            info
-        );
+        var ciphertext = a.Encrypt(Aes256Gcm.Shared, Hkdf.Shared, secretA, plaintext, salt, info);
 
-        Assert.ThrowsAny<Exception>(() => b.Decrypt(
-            Aes256Gcm.Shared,
-            Hkdf.Shared,
-            secretB,
-            ciphertext,
-            salt,
-            wrongInfo
-        ));
+        Assert.ThrowsAny<Exception>(() =>
+            b.Decrypt(Aes256Gcm.Shared, Hkdf.Shared, secretB, ciphertext, salt, wrongInfo)
+        );
     }
 
     [Fact]
@@ -401,23 +363,27 @@ public abstract class KeyAgreementTests
         Assert.False(nullAgreement!.TryDeriveSharedSecretBase64("secKey", "pubKey", out _));
         Assert.False(nullAgreement!.TryGenerateKeyPair(out _, out _));
         Assert.False(nullAgreement!.TryGenerateKeyPairBase64(out _, out _));
-        Assert.False(nullAgreement!.TryEncrypt(
-            Aes256Gcm.Shared,
-            Hkdf.Shared,
-            [1, 2],
-            [3, 4],
-            [5, 6],
-            [7, 8],
-            out _
-        ));
-        Assert.False(nullAgreement!.TryDecrypt(
-            Aes256Gcm.Shared,
-            Hkdf.Shared,
-            [1, 2],
-            [3, 4],
-            [5, 6],
-            [7, 8],
-            out _
-        ));
+        Assert.False(
+            nullAgreement!.TryEncrypt(
+                Aes256Gcm.Shared,
+                Hkdf.Shared,
+                [1, 2],
+                [3, 4],
+                [5, 6],
+                [7, 8],
+                out _
+            )
+        );
+        Assert.False(
+            nullAgreement!.TryDecrypt(
+                Aes256Gcm.Shared,
+                Hkdf.Shared,
+                [1, 2],
+                [3, 4],
+                [5, 6],
+                [7, 8],
+                out _
+            )
+        );
     }
 }

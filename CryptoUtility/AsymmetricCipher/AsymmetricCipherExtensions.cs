@@ -2,10 +2,10 @@
 using System.Text;
 
 namespace CryptoUtility;
-    /// <summary>
-    /// Provides extension methods for simplified asymmetric key encryption and decryption.
-    /// </summary>
 
+/// <summary>
+/// Provides extension methods for simplified asymmetric key encryption and decryption.
+/// </summary>
 public static class AsymmetricCipherExtensions
 {
     /// <summary>
@@ -43,6 +43,7 @@ public static class AsymmetricCipherExtensions
 
         return encryptedBase64;
     }
+
     /// <summary>
     /// Decrypts the specified ciphertext data using Base64-encoded strings.
     /// </summary>
@@ -50,7 +51,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="secretKeyBase64">The Base64-encoded private (secret) key.</param>
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string DecryptBase64(
         this IAsymmetricCipher cipher,
         string secretKeyBase64,
@@ -79,12 +79,12 @@ public static class AsymmetricCipherExtensions
 
         return plaintext;
     }
+
     /// <summary>
     /// Generates a new public/private key pair using Base64-encoded strings.
     /// </summary>
     /// <param name="cipher">The symmetric cipher instance.</param>
     /// <returns>A tuple containing the resulting values.</returns>
-
     public static (string publicKeyBase64, string secretKeyBase64) GenerateKeyPairBase64(
         this IAsymmetricCipher cipher
     )
@@ -109,6 +109,7 @@ public static class AsymmetricCipherExtensions
 
         return (publicKeyBase64, secretKeyBase64);
     }
+
     /// <summary>
     /// Hybrid encrypt.
     /// </summary>
@@ -117,7 +118,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="publicKey">The public key.</param>
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public static byte[] HybridEncrypt(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
@@ -144,10 +144,7 @@ public static class AsymmetricCipherExtensions
                 plaintext
             );
 
-            HybridCipherEnvelope envelope = new(
-                asymmetricEncrypted,
-                symmetricEncrypted
-            );
+            HybridCipherEnvelope envelope = new(asymmetricEncrypted, symmetricEncrypted);
 
             envelopeBytes = envelope.ToBytes();
         }
@@ -160,6 +157,7 @@ public static class AsymmetricCipherExtensions
 
         return envelopeBytes;
     }
+
     /// <summary>
     /// Hybrid decrypt.
     /// </summary>
@@ -168,7 +166,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="secretKey">The private (secret) key.</param>
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public static byte[] HybridDecrypt(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
@@ -182,8 +179,6 @@ public static class AsymmetricCipherExtensions
         {
             throw new InvalidOperationException("Failed to parse Hybrid Cipher Envelope.");
         }
-
-
 
         byte[] asymmetricPlaintextDataEncryptionKey = Array.Empty<byte>();
         byte[] symmetricPlaintext = Array.Empty<byte>();
@@ -207,6 +202,7 @@ public static class AsymmetricCipherExtensions
 
         return symmetricPlaintext;
     }
+
     /// <summary>
     /// Hybrid encrypt using Base64-encoded strings.
     /// </summary>
@@ -215,7 +211,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="publicKeyBase64">The Base64-encoded public key.</param>
     /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string HybridEncryptBase64(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
@@ -251,6 +246,7 @@ public static class AsymmetricCipherExtensions
 
         return encryptedBase64;
     }
+
     /// <summary>
     /// Hybrid decrypt using Base64-encoded strings.
     /// </summary>
@@ -259,7 +255,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="secretKeyBase64">The Base64-encoded private (secret) key.</param>
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string HybridDecryptBase64(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
@@ -295,6 +290,7 @@ public static class AsymmetricCipherExtensions
 
         return plaintext;
     }
+
     /// <summary>
     /// Attempts to encrypts the specified plaintext data.
     /// </summary>
@@ -303,7 +299,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryEncrypt(
         this IAsymmetricCipher cipher,
         byte[] publicKey,
@@ -324,6 +319,7 @@ public static class AsymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to decrypts the specified ciphertext data.
     /// </summary>
@@ -332,7 +328,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDecrypt(
         this IAsymmetricCipher cipher,
         byte[] secretKey,
@@ -353,6 +348,7 @@ public static class AsymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to encrypts the specified plaintext data using base64-encoded strings.
     /// </summary>
@@ -361,7 +357,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryEncryptBase64(
         this IAsymmetricCipher cipher,
         string publicKeyBase64,
@@ -382,6 +377,7 @@ public static class AsymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to decrypts the specified ciphertext data using base64-encoded strings.
     /// </summary>
@@ -390,7 +386,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDecryptBase64(
         this IAsymmetricCipher cipher,
         string secretKeyBase64,
@@ -411,6 +406,7 @@ public static class AsymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to generates a new public/private key pair.
     /// </summary>
@@ -418,7 +414,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="publicKey">The public key.</param>
     /// <param name="secretKey">The private (secret) key.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryGenerateKeyPair(
         this IAsymmetricCipher cipher,
         out byte[] publicKey,
@@ -441,6 +436,7 @@ public static class AsymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to generates a new public/private key pair using base64-encoded strings.
     /// </summary>
@@ -448,7 +444,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="publicKeyBase64">The Base64-encoded public key.</param>
     /// <param name="secretKeyBase64">The Base64-encoded private (secret) key.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryGenerateKeyPairBase64(
         this IAsymmetricCipher cipher,
         out string publicKeyBase64,
@@ -473,6 +468,7 @@ public static class AsymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to hybrid encrypt.
     /// </summary>
@@ -482,7 +478,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryHybridEncrypt(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
@@ -504,6 +499,7 @@ public static class AsymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to hybrid decrypt.
     /// </summary>
@@ -513,7 +509,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryHybridDecrypt(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
@@ -535,6 +530,7 @@ public static class AsymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to hybrid encrypt using base64-encoded strings.
     /// </summary>
@@ -544,7 +540,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryHybridEncryptBase64(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,
@@ -569,6 +564,7 @@ public static class AsymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to hybrid decrypt using base64-encoded strings.
     /// </summary>
@@ -578,7 +574,6 @@ public static class AsymmetricCipherExtensions
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryHybridDecryptBase64(
         this IAsymmetricCipher asymmetricCipher,
         ISymmetricCipher symmetricCipher,

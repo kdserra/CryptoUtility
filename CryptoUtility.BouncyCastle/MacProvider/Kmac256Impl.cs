@@ -20,16 +20,16 @@ public sealed class Kmac256Impl : IMacProvider
     /// <summary>
     /// Initializes a new instance of the <see cref="Kmac256Impl"/> class with defaults.
     /// </summary>
-    public Kmac256Impl() : this(Array.Empty<byte>(), 64)
-    {
-    }
+    public Kmac256Impl()
+        : this(Array.Empty<byte>(), 64) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Kmac256Impl"/> class with custom customization string and tag size.
     /// </summary>
     public Kmac256Impl(byte[] customizationString, int macSize)
     {
-        _customizationString = customizationString ?? throw new ArgumentNullException(nameof(customizationString));
+        _customizationString =
+            customizationString ?? throw new ArgumentNullException(nameof(customizationString));
         _macSize = macSize;
     }
 

@@ -28,7 +28,10 @@ public sealed class Blake3MacImpl : IMacProvider
         LibraryHelper.ThrowIfAnyNull(key, message);
         if (key.Length != RequiredKeySizeInBytes)
         {
-            throw new ArgumentException($"Key size must be exactly {RequiredKeySizeInBytes} bytes.", nameof(key));
+            throw new ArgumentException(
+                $"Key size must be exactly {RequiredKeySizeInBytes} bytes.",
+                nameof(key)
+            );
         }
 
         var parameters = Blake3Parameters.Key(key);

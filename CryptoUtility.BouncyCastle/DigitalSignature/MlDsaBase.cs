@@ -30,8 +30,14 @@ public abstract class MlDsaBase : IDigitalSignature
         generator.Init(keyGenParameters);
         var keyPair = generator.GenerateKeyPair();
 
-        byte[] pubBytes = Org.BouncyCastle.X509.SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair.Public).GetEncoded();
-        byte[] privBytes = Org.BouncyCastle.Pkcs.PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private).GetEncoded();
+        byte[] pubBytes = Org
+            .BouncyCastle.X509.SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(
+                keyPair.Public
+            )
+            .GetEncoded();
+        byte[] privBytes = Org
+            .BouncyCastle.Pkcs.PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private)
+            .GetEncoded();
 
         return (pubBytes, privBytes);
     }
@@ -40,7 +46,8 @@ public abstract class MlDsaBase : IDigitalSignature
     public byte[] Sign(byte[] message, byte[] secretKey)
     {
         LibraryHelper.ThrowIfAnyNull(message, secretKey);
-        var privKey = (MLDsaPrivateKeyParameters)Org.BouncyCastle.Security.PrivateKeyFactory.CreateKey(secretKey);
+        var privKey = (MLDsaPrivateKeyParameters)
+            Org.BouncyCastle.Security.PrivateKeyFactory.CreateKey(secretKey);
 
         var signer = new MLDsaSigner(_parameters, deterministic: true);
         signer.Init(true, privKey);
@@ -53,7 +60,8 @@ public abstract class MlDsaBase : IDigitalSignature
     public bool Verify(byte[] message, byte[] signature, byte[] publicKey)
     {
         LibraryHelper.ThrowIfAnyNull(message, signature, publicKey);
-        var pubKey = (MLDsaPublicKeyParameters)Org.BouncyCastle.Security.PublicKeyFactory.CreateKey(publicKey);
+        var pubKey = (MLDsaPublicKeyParameters)
+            Org.BouncyCastle.Security.PublicKeyFactory.CreateKey(publicKey);
 
         var signer = new MLDsaSigner(_parameters, deterministic: true);
         signer.Init(false, pubKey);

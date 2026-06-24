@@ -11,5 +11,6 @@ public sealed class Hqc128Impl : HqcBase
     /// </summary>
     public static readonly Hqc128Impl Shared = new();
 
-    private Hqc128Impl() : base(Org.BouncyCastle.Pqc.Crypto.Hqc.HqcParameters.hqc128) { }
+    private Hqc128Impl()
+        : base(Org.BouncyCastle.Pqc.Crypto.Hqc.HqcParameters.hqc128) { }
 }

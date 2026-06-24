@@ -24,9 +24,8 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
     /// <summary>
     /// Initializes a new instance of the <see cref="Pbkdf2Impl"/> class with secure defaults.
     /// </summary>
-    public Pbkdf2Impl() : this(600000, 16, 32)
-    {
-    }
+    public Pbkdf2Impl()
+        : this(600000, 16, 32) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Pbkdf2Impl"/> class with custom default parameters.

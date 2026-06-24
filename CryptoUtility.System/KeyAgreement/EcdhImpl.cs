@@ -54,10 +54,7 @@ public sealed class EcdhImpl : IKeyAgreement
     private static readonly ECCurve _defaultECCurve = ECCurve.NamedCurves.nistP256;
 
     /// <inheritdoc cref="IKeyAgreement.DeriveSharedSecret(byte[], byte[])"/>
-    public byte[] DeriveSharedSecret(
-        byte[] secretKey,
-        byte[] peerPublicKey
-    )
+    public byte[] DeriveSharedSecret(byte[] secretKey, byte[] peerPublicKey)
     {
         using var local = ECDiffieHellman.Create(_defaultECCurve);
         local.ImportPkcs8PrivateKey(secretKey, out _);

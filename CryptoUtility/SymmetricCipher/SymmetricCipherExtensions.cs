@@ -2,10 +2,10 @@
 using System.Text;
 
 namespace CryptoUtility;
-    /// <summary>
-    /// Provides extension methods for simplified symmetric key encryption and decryption.
-    /// </summary>
 
+/// <summary>
+/// Provides extension methods for simplified symmetric key encryption and decryption.
+/// </summary>
 public static class SymmetricCipherExtensions
 {
     /// <summary>
@@ -33,6 +33,7 @@ public static class SymmetricCipherExtensions
 
         return encrypted;
     }
+
     /// <summary>
     /// Encrypts the specified plaintext data using Base64-encoded strings.
     /// </summary>
@@ -40,7 +41,6 @@ public static class SymmetricCipherExtensions
     /// <param name="keyBase64">The Base64-encoded symmetric key.</param>
     /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string EncryptBase64(
         this ISymmetricCipher cipher,
         string keyBase64,
@@ -69,6 +69,7 @@ public static class SymmetricCipherExtensions
 
         return encryptedBase64;
     }
+
     /// <summary>
     /// Decrypts the specified ciphertext data using Base64-encoded strings.
     /// </summary>
@@ -76,7 +77,6 @@ public static class SymmetricCipherExtensions
     /// <param name="keyBase64">The Base64-encoded symmetric key.</param>
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string DecryptBase64(
         this ISymmetricCipher cipher,
         string keyBase64,
@@ -105,6 +105,7 @@ public static class SymmetricCipherExtensions
 
         return plaintextUtf8;
     }
+
     /// <summary>
     /// Encrypts the specified plaintext data.
     /// </summary>
@@ -112,7 +113,6 @@ public static class SymmetricCipherExtensions
     /// <param name="keyBase64">The Base64-encoded symmetric key.</param>
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public static byte[] Encrypt(this ISymmetricCipher cipher, string keyBase64, byte[] plaintext)
     {
         byte[] keyBytes = Array.Empty<byte>();
@@ -131,6 +131,7 @@ public static class SymmetricCipherExtensions
 
         return encrypted;
     }
+
     /// <summary>
     /// Decrypts the specified ciphertext data.
     /// </summary>
@@ -138,7 +139,6 @@ public static class SymmetricCipherExtensions
     /// <param name="keyBase64">The Base64-encoded symmetric key.</param>
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public static byte[] Decrypt(this ISymmetricCipher cipher, string keyBase64, byte[] encrypted)
     {
         byte[] keyBytes = Array.Empty<byte>();
@@ -157,6 +157,7 @@ public static class SymmetricCipherExtensions
 
         return plaintext;
     }
+
     /// <summary>
     /// Encrypts the specified plaintext data using Base64-encoded strings.
     /// </summary>
@@ -164,7 +165,6 @@ public static class SymmetricCipherExtensions
     /// <param name="key">The symmetric key.</param>
     /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string EncryptBase64(
         this ISymmetricCipher cipher,
         byte[] key,
@@ -190,6 +190,7 @@ public static class SymmetricCipherExtensions
 
         return encryptedBase64;
     }
+
     /// <summary>
     /// Decrypts the specified ciphertext data using Base64-encoded strings.
     /// </summary>
@@ -197,7 +198,6 @@ public static class SymmetricCipherExtensions
     /// <param name="key">The symmetric key.</param>
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string DecryptBase64(
         this ISymmetricCipher cipher,
         byte[] key,
@@ -223,6 +223,7 @@ public static class SymmetricCipherExtensions
 
         return plaintextUtf8;
     }
+
     /// <summary>
     /// Attempts to encrypts the specified plaintext data.
     /// </summary>
@@ -231,7 +232,6 @@ public static class SymmetricCipherExtensions
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryEncrypt(
         this ISymmetricCipher cipher,
         byte[] key,
@@ -252,6 +252,7 @@ public static class SymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to decrypts the specified ciphertext data.
     /// </summary>
@@ -260,7 +261,6 @@ public static class SymmetricCipherExtensions
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDecrypt(
         this ISymmetricCipher cipher,
         byte[] key,
@@ -281,6 +281,7 @@ public static class SymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to encrypts the specified plaintext data.
     /// </summary>
@@ -289,7 +290,6 @@ public static class SymmetricCipherExtensions
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryEncrypt(
         this ISymmetricCipher cipher,
         string keyBase64,
@@ -310,6 +310,7 @@ public static class SymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to decrypts the specified ciphertext data.
     /// </summary>
@@ -318,7 +319,6 @@ public static class SymmetricCipherExtensions
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDecrypt(
         this ISymmetricCipher cipher,
         string keyBase64,
@@ -339,6 +339,7 @@ public static class SymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to encrypts the specified plaintext data using base64-encoded strings.
     /// </summary>
@@ -347,7 +348,6 @@ public static class SymmetricCipherExtensions
     /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryEncryptBase64(
         this ISymmetricCipher cipher,
         string keyBase64,
@@ -368,6 +368,7 @@ public static class SymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to decrypts the specified ciphertext data using base64-encoded strings.
     /// </summary>
@@ -376,7 +377,6 @@ public static class SymmetricCipherExtensions
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDecryptBase64(
         this ISymmetricCipher cipher,
         string keyBase64,
@@ -397,23 +397,23 @@ public static class SymmetricCipherExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Generate key.
     /// </summary>
     /// <param name="cipher">The symmetric cipher instance.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public static byte[] GenerateKey(this ISymmetricCipher cipher)
     {
         LibraryHelper.ThrowIfAnyNull(cipher);
         return CryptoHelper.GetBytes(cipher.KeySizeBytes);
     }
+
     /// <summary>
     /// Generate key using Base64-encoded strings.
     /// </summary>
     /// <param name="cipher">The symmetric cipher instance.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string GenerateKeyBase64(this ISymmetricCipher cipher)
     {
         LibraryHelper.ThrowIfAnyNull(cipher);
@@ -433,23 +433,23 @@ public static class SymmetricCipherExtensions
 
         return result;
     }
+
     /// <summary>
     /// Generate nonce.
     /// </summary>
     /// <param name="cipher">The symmetric cipher instance.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public static byte[] GenerateNonce(this ISymmetricCipher cipher)
     {
         LibraryHelper.ThrowIfAnyNull(cipher);
         return CryptoHelper.GetBytes(cipher.NonceSizeBytes);
     }
+
     /// <summary>
     /// Generate nonce using Base64-encoded strings.
     /// </summary>
     /// <param name="cipher">The symmetric cipher instance.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string GenerateNonceBase64(this ISymmetricCipher cipher)
     {
         LibraryHelper.ThrowIfAnyNull(cipher);

@@ -55,11 +55,17 @@ public sealed class Poly1305Impl : IMacProvider
         LibraryHelper.ThrowIfAnyNull(key, message, nonce);
         if (key.Length != RequiredKeySizeInBytes)
         {
-            throw new ArgumentException($"Key must be exactly {RequiredKeySizeInBytes} bytes.", nameof(key));
+            throw new ArgumentException(
+                $"Key must be exactly {RequiredKeySizeInBytes} bytes.",
+                nameof(key)
+            );
         }
         if (nonce.Length != NonceSizeBytes)
         {
-            throw new ArgumentException($"Nonce must be exactly {NonceSizeBytes} bytes.", nameof(nonce));
+            throw new ArgumentException(
+                $"Nonce must be exactly {NonceSizeBytes} bytes.",
+                nameof(nonce)
+            );
         }
 
         var mac = new BouncyPoly1305(new Org.BouncyCastle.Crypto.Engines.AesEngine());

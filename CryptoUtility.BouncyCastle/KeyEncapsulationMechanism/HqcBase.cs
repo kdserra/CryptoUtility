@@ -50,8 +50,12 @@ public abstract class HqcBase : IKeyEncapsulationMechanism
         generator.Init(keyGenParameters);
         var keyPair = generator.GenerateKeyPair();
 
-        byte[] pubBytes = PqcSubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair.Public).GetEncoded();
-        byte[] privBytes = PqcPrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private).GetEncoded();
+        byte[] pubBytes = PqcSubjectPublicKeyInfoFactory
+            .CreateSubjectPublicKeyInfo(keyPair.Public)
+            .GetEncoded();
+        byte[] privBytes = PqcPrivateKeyInfoFactory
+            .CreatePrivateKeyInfo(keyPair.Private)
+            .GetEncoded();
 
         return (pubBytes, privBytes);
     }

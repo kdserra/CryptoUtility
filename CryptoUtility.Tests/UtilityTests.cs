@@ -1,6 +1,6 @@
 using System;
-using Xunit;
 using CryptoUtility;
+using Xunit;
 
 namespace CryptoUtility.Tests;
 
@@ -10,7 +10,9 @@ public class UtilityTests
     public void LibraryHelper_ThrowIfAnyNull_ThrowsOnNull()
     {
         Assert.Throws<ArgumentNullException>(() => LibraryHelper.ThrowIfAnyNull(null!));
-        Assert.Throws<ArgumentNullException>(() => LibraryHelper.ThrowIfAnyNull("ok", null!, "fine"));
+        Assert.Throws<ArgumentNullException>(() =>
+            LibraryHelper.ThrowIfAnyNull("ok", null!, "fine")
+        );
     }
 
     [Fact]

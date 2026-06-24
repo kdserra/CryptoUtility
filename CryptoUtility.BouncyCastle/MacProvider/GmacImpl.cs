@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using Org.BouncyCastle.Crypto.Engines;
-using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Macs;
+using Org.BouncyCastle.Crypto.Modes;
 using Org.BouncyCastle.Crypto.Parameters;
 
 namespace CryptoUtility.BouncyCastle;
@@ -57,7 +57,10 @@ public sealed class GmacImpl : IMacProvider
         LibraryHelper.ThrowIfAnyNull(key, message, nonce);
         if (nonce.Length != NonceSizeBytes)
         {
-            throw new ArgumentException($"Nonce must be exactly {NonceSizeBytes} bytes.", nameof(nonce));
+            throw new ArgumentException(
+                $"Nonce must be exactly {NonceSizeBytes} bytes.",
+                nameof(nonce)
+            );
         }
 
         var gmac = new GMac(new GcmBlockCipher(new AesEngine()));

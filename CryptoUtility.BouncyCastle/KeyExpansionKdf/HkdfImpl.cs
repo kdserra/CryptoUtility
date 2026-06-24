@@ -19,20 +19,9 @@ public sealed class HkdfImpl : IKeyExpansionKdf
     private HkdfImpl() { }
 
     /// <inheritdoc />
-    public byte[] DeriveKey(
-        byte[] inputKeyMaterial,
-        int outputLength,
-        byte[] salt,
-        byte[] info
-    )
+    public byte[] DeriveKey(byte[] inputKeyMaterial, int outputLength, byte[] salt, byte[] info)
     {
-        return DeriveKey(
-            inputKeyMaterial,
-            outputLength,
-            salt,
-            info,
-            new Sha256Digest()
-        );
+        return DeriveKey(inputKeyMaterial, outputLength, salt, info, new Sha256Digest());
     }
 
     /// <summary>

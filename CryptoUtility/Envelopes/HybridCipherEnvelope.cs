@@ -26,8 +26,10 @@ public class HybridCipherEnvelope
     /// <param name="symmetricEncrypted">The encrypted symmetric payload.</param>
     public HybridCipherEnvelope(byte[] asymmetricEncrypted, byte[] symmetricEncrypted)
     {
-        AsymmetricEncrypted = asymmetricEncrypted ?? throw new ArgumentNullException(nameof(asymmetricEncrypted));
-        SymmetricEncrypted = symmetricEncrypted ?? throw new ArgumentNullException(nameof(symmetricEncrypted));
+        AsymmetricEncrypted =
+            asymmetricEncrypted ?? throw new ArgumentNullException(nameof(asymmetricEncrypted));
+        SymmetricEncrypted =
+            symmetricEncrypted ?? throw new ArgumentNullException(nameof(symmetricEncrypted));
     }
 
     /// <summary>
@@ -117,7 +119,10 @@ public class HybridCipherEnvelope
         int length = 4 + envelope.AsymmetricEncrypted.Length + envelope.SymmetricEncrypted.Length;
         byte[] result = new byte[length];
 
-        BinaryPrimitives.WriteInt32BigEndian(result.AsSpan(0, 4), envelope.AsymmetricEncrypted.Length);
+        BinaryPrimitives.WriteInt32BigEndian(
+            result.AsSpan(0, 4),
+            envelope.AsymmetricEncrypted.Length
+        );
 
         envelope.AsymmetricEncrypted.CopyTo(result, 4);
         envelope.SymmetricEncrypted.CopyTo(result, 4 + envelope.AsymmetricEncrypted.Length);

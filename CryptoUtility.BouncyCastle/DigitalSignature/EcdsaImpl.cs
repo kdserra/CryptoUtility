@@ -22,11 +22,11 @@ public sealed class EcdsaImpl : IDigitalSignature
 
     private const string Algorithm = "SHA-256withECDSA";
     private const string CurveName = "P-256";
+
     /// <summary>
     /// Generates a new public/private key pair.
     /// </summary>
     /// <returns>A tuple containing the resulting values.</returns>
-
     public (byte[] publicKey, byte[] secretKey) GenerateKeyPair()
     {
         X9ECParameters ecParams = ECNamedCurveTable.GetByName(CurveName);
@@ -51,13 +51,13 @@ public sealed class EcdsaImpl : IDigitalSignature
 
         return (publicKey, privateKey);
     }
+
     /// <summary>
     /// Computes the digital signature for the specified input data.
     /// </summary>
     /// <param name="message">The input data to process.</param>
     /// <param name="secretKey">The private (secret) key.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public byte[] Sign(byte[] message, byte[] secretKey)
     {
         AsymmetricKeyParameter privateKeyParam = PrivateKeyFactory.CreateKey(secretKey);
@@ -69,6 +69,7 @@ public sealed class EcdsaImpl : IDigitalSignature
         byte[] signature = signer.GenerateSignature();
         return signature;
     }
+
     /// <summary>
     /// Verifies the digital signature of the specified input data.
     /// </summary>
@@ -76,7 +77,6 @@ public sealed class EcdsaImpl : IDigitalSignature
     /// <param name="signature">The digital signature to verify.</param>
     /// <param name="publicKey">The public key.</param>
     /// <returns>true if the verification succeeded; otherwise, false.</returns>
-
     public bool Verify(byte[] message, byte[] signature, byte[] publicKey)
     {
         AsymmetricKeyParameter publicKeyParam = PublicKeyFactory.CreateKey(publicKey);

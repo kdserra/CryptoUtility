@@ -32,10 +32,7 @@ public sealed class EcdhImpl : IKeyAgreement
     );
 
     /// <inheritdoc cref="IKeyAgreement.DeriveSharedSecret(byte[], byte[])"/>
-    public byte[] DeriveSharedSecret(
-        byte[] secretKey,
-        byte[] peerPublicKey
-    )
+    public byte[] DeriveSharedSecret(byte[] secretKey, byte[] peerPublicKey)
     {
         var privateKeyParam = (ECPrivateKeyParameters)PrivateKeyFactory.CreateKey(secretKey);
         var publicKeyParam = (ECPublicKeyParameters)PublicKeyFactory.CreateKey(peerPublicKey);

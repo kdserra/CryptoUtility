@@ -20,9 +20,8 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
     /// <summary>
     /// Initializes a new instance of the <see cref="Pbkdf2Impl"/> class with secure defaults.
     /// </summary>
-    public Pbkdf2Impl() : this(600000, 16, 32)
-    {
-    }
+    public Pbkdf2Impl()
+        : this(600000, 16, 32) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Pbkdf2Impl"/> class with custom default parameters.
@@ -37,7 +36,13 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
     /// <inheritdoc />
     public byte[] DeriveKey(string passwordUtf8, byte[] salt, int outputLength)
     {
-        return DeriveKey(passwordUtf8, salt, _defaultIterations, outputLength, HashAlgorithmName.SHA256);
+        return DeriveKey(
+            passwordUtf8,
+            salt,
+            _defaultIterations,
+            outputLength,
+            HashAlgorithmName.SHA256
+        );
     }
 
     /// <summary>
@@ -79,7 +84,13 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
     {
         LibraryHelper.ThrowIfAnyNull(password);
         byte[] salt = CryptoHelper.GetBytes(_defaultSaltLength);
-        byte[] hash = DeriveKey(password, salt, _defaultIterations, _defaultOutputLength, HashAlgorithmName.SHA256);
+        byte[] hash = DeriveKey(
+            password,
+            salt,
+            _defaultIterations,
+            _defaultOutputLength,
+            HashAlgorithmName.SHA256
+        );
 
         string saltB64 = Convert.ToBase64String(salt).TrimEnd('=');
         string hashB64 = Convert.ToBase64String(hash).TrimEnd('=');
@@ -112,7 +123,13 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
             int hashPadding = (4 - (hashB64.Length % 4)) % 4;
             byte[] expectedHash = Convert.FromBase64String(hashB64 + new string('=', hashPadding));
 
-            byte[] computedHash = DeriveKey(password, salt, iterations, expectedHash.Length, HashAlgorithmName.SHA256);
+            byte[] computedHash = DeriveKey(
+                password,
+                salt,
+                iterations,
+                expectedHash.Length,
+                HashAlgorithmName.SHA256
+            );
             try
             {
                 return CryptographicOperations.FixedTimeEquals(computedHash, expectedHash);

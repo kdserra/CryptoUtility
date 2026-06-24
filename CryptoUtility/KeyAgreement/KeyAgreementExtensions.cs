@@ -2,10 +2,10 @@
 using System.Text;
 
 namespace CryptoUtility;
-    /// <summary>
-    /// Provides extension methods for simplified key agreement and shared secret derivation.
-    /// </summary>
 
+/// <summary>
+/// Provides extension methods for simplified key agreement and shared secret derivation.
+/// </summary>
 public static class KeyAgreementExtensions
 {
     /// <summary>
@@ -31,10 +31,7 @@ public static class KeyAgreementExtensions
             secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
             peerPublicKeyBytes = Convert.FromBase64String(peerPublicKeyBase64);
 
-            sharedSecretBytes = keyAgreement.DeriveSharedSecret(
-                secretKeyBytes,
-                peerPublicKeyBytes
-            );
+            sharedSecretBytes = keyAgreement.DeriveSharedSecret(secretKeyBytes, peerPublicKeyBytes);
 
             sharedSecretBase64 = Convert.ToBase64String(sharedSecretBytes);
         }
@@ -47,12 +44,12 @@ public static class KeyAgreementExtensions
 
         return sharedSecretBase64;
     }
+
     /// <summary>
     /// Generates a new public/private key pair using Base64-encoded strings.
     /// </summary>
     /// <param name="keyAgreement">The key agreement instance.</param>
     /// <returns>A tuple containing the resulting values.</returns>
-
     public static (string publicKeyBase64, string secretKeyBase64) GenerateKeyPairBase64(
         this IKeyAgreement keyAgreement
     )
@@ -77,6 +74,7 @@ public static class KeyAgreementExtensions
 
         return (publicKeyBase64, secretKeyBase64);
     }
+
     /// <summary>
     /// Encrypts the specified plaintext data.
     /// </summary>
@@ -88,7 +86,6 @@ public static class KeyAgreementExtensions
     /// <param name="kdfSalt">The salt value for key derivation.</param>
     /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public static byte[] Encrypt(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
@@ -121,6 +118,7 @@ public static class KeyAgreementExtensions
 
         return encrypted;
     }
+
     /// <summary>
     /// Decrypts the specified ciphertext data.
     /// </summary>
@@ -132,7 +130,6 @@ public static class KeyAgreementExtensions
     /// <param name="kdfSalt">The salt value for key derivation.</param>
     /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public static byte[] Decrypt(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
@@ -165,6 +162,7 @@ public static class KeyAgreementExtensions
 
         return decrypted;
     }
+
     /// <summary>
     /// Encrypts the specified plaintext data using Base64-encoded strings.
     /// </summary>
@@ -176,7 +174,6 @@ public static class KeyAgreementExtensions
     /// <param name="kdfSaltBase64">The Base64-encoded salt value for key derivation.</param>
     /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string EncryptBase64(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
@@ -224,6 +221,7 @@ public static class KeyAgreementExtensions
 
         return encryptedBase64;
     }
+
     /// <summary>
     /// Decrypts the specified ciphertext data using Base64-encoded strings.
     /// </summary>
@@ -235,7 +233,6 @@ public static class KeyAgreementExtensions
     /// <param name="kdfSaltBase64">The Base64-encoded salt value for key derivation.</param>
     /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string DecryptBase64(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
@@ -283,6 +280,7 @@ public static class KeyAgreementExtensions
 
         return plaintextUtf8;
     }
+
     /// <summary>
     /// Attempts to derives a shared secret key using a private key and a peer's public key.
     /// </summary>
@@ -291,7 +289,6 @@ public static class KeyAgreementExtensions
     /// <param name="peerPublicKey">The remote peer's public key.</param>
     /// <param name="derivedSharedSecret">The derived shared secret.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDeriveSharedSecret(
         this IKeyAgreement keyAgreement,
         byte[] secretKey,
@@ -312,6 +309,7 @@ public static class KeyAgreementExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to derives a shared secret key using a private key and a peer's public key using base64-encoded strings.
     /// </summary>
@@ -320,7 +318,6 @@ public static class KeyAgreementExtensions
     /// <param name="peerPublicKeyBase64">The remote peer's Base64-encoded public key.</param>
     /// <param name="derivedSharedSecretBase64">The derived shared secret base64.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDeriveSharedSecretBase64(
         this IKeyAgreement keyAgreement,
         string secretKeyBase64,
@@ -344,6 +341,7 @@ public static class KeyAgreementExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to generates a new public/private key pair.
     /// </summary>
@@ -351,7 +349,6 @@ public static class KeyAgreementExtensions
     /// <param name="publicKey">The public key.</param>
     /// <param name="secretKey">The private (secret) key.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryGenerateKeyPair(
         this IKeyAgreement keyAgreement,
         out byte[] publicKey,
@@ -374,6 +371,7 @@ public static class KeyAgreementExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to generates a new public/private key pair using base64-encoded strings.
     /// </summary>
@@ -381,7 +379,6 @@ public static class KeyAgreementExtensions
     /// <param name="publicKeyBase64">The Base64-encoded public key.</param>
     /// <param name="secretKeyBase64">The Base64-encoded private (secret) key.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryGenerateKeyPairBase64(
         this IKeyAgreement keyAgreement,
         out string publicKeyBase64,
@@ -406,6 +403,7 @@ public static class KeyAgreementExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to encrypts the specified plaintext data.
     /// </summary>
@@ -418,7 +416,6 @@ public static class KeyAgreementExtensions
     /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryEncrypt(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
@@ -450,6 +447,7 @@ public static class KeyAgreementExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to decrypts the specified ciphertext data.
     /// </summary>
@@ -462,7 +460,6 @@ public static class KeyAgreementExtensions
     /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDecrypt(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
@@ -494,6 +491,7 @@ public static class KeyAgreementExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to encrypts the specified plaintext data using base64-encoded strings.
     /// </summary>
@@ -506,7 +504,6 @@ public static class KeyAgreementExtensions
     /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryEncryptBase64(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,
@@ -538,6 +535,7 @@ public static class KeyAgreementExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to decrypts the specified ciphertext data using base64-encoded strings.
     /// </summary>
@@ -550,7 +548,6 @@ public static class KeyAgreementExtensions
     /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
     /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDecryptBase64(
         this IKeyAgreement keyAgreement,
         ISymmetricCipher cipher,

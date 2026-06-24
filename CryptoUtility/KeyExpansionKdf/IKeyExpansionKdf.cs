@@ -13,10 +13,5 @@ public interface IKeyExpansionKdf
     /// <param name="salt">The optional salt value.</param>
     /// <param name="info">The optional context/application-specific info string bytes.</param>
     /// <returns>A byte array containing the derived key.</returns>
-    public byte[] DeriveKey(
-        byte[] inputKeyMaterial,
-        int outputLength,
-        byte[] salt,
-        byte[] info
-    );
+    public byte[] DeriveKey(byte[] inputKeyMaterial, int outputLength, byte[] salt, byte[] info);
 }

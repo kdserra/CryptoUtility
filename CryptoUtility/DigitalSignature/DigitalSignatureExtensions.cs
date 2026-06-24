@@ -2,10 +2,10 @@
 using System.Text;
 
 namespace CryptoUtility;
-    /// <summary>
-    /// Provides extension methods for simplified digital signature computation and verification.
-    /// </summary>
 
+/// <summary>
+/// Provides extension methods for simplified digital signature computation and verification.
+/// </summary>
 public static class DigitalSignatureExtensions
 {
     /// <summary>
@@ -43,6 +43,7 @@ public static class DigitalSignatureExtensions
 
         return signatureBase64;
     }
+
     /// <summary>
     /// Verifies the digital signature of the specified input data using Base64-encoded strings.
     /// </summary>
@@ -51,7 +52,6 @@ public static class DigitalSignatureExtensions
     /// <param name="signatureBase64">The Base64-encoded digital signature.</param>
     /// <param name="publicKeyBase64">The Base64-encoded public key.</param>
     /// <returns>true if the verification succeeded; otherwise, false.</returns>
-
     public static bool VerifyBase64(
         this IDigitalSignature digitalSignature,
         string messageUtf8,
@@ -81,12 +81,12 @@ public static class DigitalSignatureExtensions
 
         return isValid;
     }
+
     /// <summary>
     /// Generates a new public/private key pair using Base64-encoded strings.
     /// </summary>
     /// <param name="digitalSignature">The digital signature.</param>
     /// <returns>A tuple containing the resulting values.</returns>
-
     public static (string publicKeyBase64, string secretKeyBase64) GenerateKeyPairBase64(
         this IDigitalSignature digitalSignature
     )
@@ -111,6 +111,7 @@ public static class DigitalSignatureExtensions
 
         return (publicKeyBase64, secretKeyBase64);
     }
+
     /// <summary>
     /// Attempts to computes the digital signature for the specified input data.
     /// </summary>
@@ -119,7 +120,6 @@ public static class DigitalSignatureExtensions
     /// <param name="secretKey">The private (secret) key.</param>
     /// <param name="signature">The digital signature to verify.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TrySign(
         this IDigitalSignature digitalSignature,
         byte[] message,
@@ -140,6 +140,7 @@ public static class DigitalSignatureExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to computes the digital signature for the specified input data using base64-encoded strings.
     /// </summary>
@@ -148,7 +149,6 @@ public static class DigitalSignatureExtensions
     /// <param name="secretKeyBase64">The Base64-encoded private (secret) key.</param>
     /// <param name="signatureBase64">The Base64-encoded digital signature.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TrySignBase64(
         this IDigitalSignature digitalSignature,
         string messageUtf8,
@@ -169,6 +169,7 @@ public static class DigitalSignatureExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to generates a new public/private key pair.
     /// </summary>
@@ -176,7 +177,6 @@ public static class DigitalSignatureExtensions
     /// <param name="publicKey">The public key.</param>
     /// <param name="secretKey">The private (secret) key.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryGenerateKeyPair(
         this IDigitalSignature digitalSignature,
         out byte[] publicKey,
@@ -200,6 +200,7 @@ public static class DigitalSignatureExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to generates a new public/private key pair using base64-encoded strings.
     /// </summary>
@@ -207,7 +208,6 @@ public static class DigitalSignatureExtensions
     /// <param name="publicKeyBase64">The Base64-encoded public key.</param>
     /// <param name="secretKeyBase64">The Base64-encoded private (secret) key.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryGenerateKeyPairBase64(
         this IDigitalSignature digitalSignature,
         out string publicKeyBase64,

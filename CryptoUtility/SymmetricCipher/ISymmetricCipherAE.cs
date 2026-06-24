@@ -1,8 +1,8 @@
 ﻿namespace CryptoUtility;
-    /// <summary>
-    /// Defines the contract for authenticated symmetric key encryption and decryption (AEAD).
-    /// </summary>
 
+/// <summary>
+/// Defines the contract for authenticated symmetric key encryption and decryption (AEAD).
+/// </summary>
 public interface ISymmetricCipherAE : ISymmetricCipher
 {
     /// <summary>

@@ -62,6 +62,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CryptoUtility.CodeGenerator\CryptoUtility.CodeGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <ProjectReference
+      Include="..\CryptoUtility.CodeGenerator\CryptoUtility.CodeGenerator.csproj"
+      OutputItemType="Analyzer"
+      ReferenceOutputAssembly="false"
+    />
   </ItemGroup>
 </Project>

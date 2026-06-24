@@ -13,7 +13,13 @@ public sealed class Argon2dImpl : Argon2Base
     /// </summary>
     public static readonly Argon2dImpl Shared = new();
 
-    private Argon2dImpl() : base(Argon2Parameters.Argon2d, defaultIterations: 3, defaultMemoryKb: 65536, defaultParallelism: 4, defaultSaltLength: 16, defaultOutputLength: 32)
-    {
-    }
+    private Argon2dImpl()
+        : base(
+            Argon2Parameters.Argon2d,
+            defaultIterations: 3,
+            defaultMemoryKb: 65536,
+            defaultParallelism: 4,
+            defaultSaltLength: 16,
+            defaultOutputLength: 32
+        ) { }
 }

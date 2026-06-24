@@ -29,12 +29,7 @@ public abstract class GcmCipherBase : ISymmetricCipherAEAD
         Encrypt(key, plaintext, nonce: nonce, aad: []);
 
     /// <inheritdoc />
-    public byte[] Encrypt(
-        byte[] key,
-        byte[] plaintext,
-        byte[] nonce,
-        byte[] aad
-    )
+    public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce, byte[] aad)
     {
         LibraryHelper.ThrowIfAnyNull(key, plaintext, nonce, aad);
         var cipher = CreateCipher(forEncryption: true, key, nonce, aad);
@@ -56,8 +51,7 @@ public abstract class GcmCipherBase : ISymmetricCipherAEAD
     }
 
     /// <inheritdoc />
-    public byte[] Decrypt(byte[] key, byte[] encrypted) =>
-        Decrypt(key, encrypted, aad: []);
+    public byte[] Decrypt(byte[] key, byte[] encrypted) => Decrypt(key, encrypted, aad: []);
 
     /// <inheritdoc />
     public byte[] Decrypt(byte[] key, byte[] encrypted, byte[] aad)
@@ -78,12 +72,7 @@ public abstract class GcmCipherBase : ISymmetricCipherAEAD
         byte[] input = new byte[inputLen];
         Buffer.BlockCopy(encrypted, nonceLen, input, 0, inputLen);
 
-        var cipher = CreateCipher(
-            forEncryption: false,
-            key,
-            nonce,
-            aad
-        );
+        var cipher = CreateCipher(forEncryption: false, key, nonce, aad);
         byte[] plaintext = new byte[cipher.GetOutputSize(input.Length)];
 
         int outputLength = cipher.ProcessBytes(input, 0, input.Length, plaintext, 0);
@@ -99,12 +88,7 @@ public abstract class GcmCipherBase : ISymmetricCipherAEAD
         return plaintext;
     }
 
-    private GcmBlockCipher CreateCipher(
-        bool forEncryption,
-        byte[] key,
-        byte[] nonce,
-        byte[] aad
-    )
+    private GcmBlockCipher CreateCipher(bool forEncryption, byte[] key, byte[] nonce, byte[] aad)
     {
         var cipher = new GcmBlockCipher(CreateEngine());
         var parameters = new AeadParameters(

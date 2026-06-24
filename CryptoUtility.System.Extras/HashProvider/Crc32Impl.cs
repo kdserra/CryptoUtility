@@ -12,12 +12,12 @@ public sealed class Crc32Impl : IHashProvider
     /// The shared static instance of <see cref="Crc32Impl"/>.
     /// </summary>
     public static readonly Crc32Impl Shared = new();
+
     /// <summary>
     /// Computes the cryptographic hash of the specified input data.
     /// </summary>
     /// <param name="message">The input data to process.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public byte[] Hash(byte[] message)
     {
         LibraryHelper.ThrowIfAnyNull(message);

@@ -25,7 +25,7 @@ public abstract class KeyEncapsulationMechanismTests
         var sharedSecret2 = Kem.Decapsulate(secretKey, ciphertext);
         Assert.NotNull(sharedSecret2);
         Assert.Equal(Kem.SharedSecretSizeBytes, sharedSecret2.Length);
-        
+
         Assert.Equal(sharedSecret1, sharedSecret2);
     }
 

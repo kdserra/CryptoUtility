@@ -1,8 +1,8 @@
 ﻿namespace CryptoUtility;
-    /// <summary>
-    /// Defines the contract for computing cryptographic hashes.
-    /// </summary>
 
+/// <summary>
+/// Defines the contract for computing cryptographic hashes.
+/// </summary>
 public interface IHashProvider
 {
     /// <summary>

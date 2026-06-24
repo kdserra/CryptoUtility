@@ -15,11 +15,11 @@ public abstract class SymmetricCipherAEADTests : SymmetricCipherAETests
         var encrypted = Cipher.Encrypt(key, plaintext);
 
         Assert.NotNull(encrypted);
-        
+
         int nonceLen = CipherAEAD.NonceSizeBytes;
         int tagLen = CipherAEAD.AuthTagSizeBytes;
         Assert.True(encrypted.Length >= nonceLen + tagLen);
-        
+
         byte[] tag = new byte[tagLen];
         Buffer.BlockCopy(encrypted, encrypted.Length - tagLen, tag, 0, tagLen);
 

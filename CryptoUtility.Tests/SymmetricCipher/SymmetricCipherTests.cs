@@ -28,13 +28,13 @@ public abstract class SymmetricCipherTests
         var encrypted = Cipher.Encrypt(key, plaintext);
 
         Assert.NotNull(encrypted);
-        
+
         int nonceLen = Cipher.NonceSizeBytes;
         if (Cipher is ISymmetricCipherAE aeCipher)
         {
             int tagLen = aeCipher.AuthTagSizeBytes;
             Assert.True(encrypted.Length >= nonceLen + tagLen);
-            
+
             byte[] nonce = new byte[nonceLen];
             byte[] tag = new byte[tagLen];
             byte[] ciphertext = new byte[encrypted.Length - nonceLen - tagLen];
@@ -52,7 +52,7 @@ public abstract class SymmetricCipherTests
         else
         {
             Assert.True(encrypted.Length >= nonceLen);
-            
+
             byte[] nonce = new byte[nonceLen];
             byte[] ciphertext = new byte[encrypted.Length - nonceLen];
 
@@ -191,8 +191,6 @@ public abstract class SymmetricCipherTests
         Assert.ThrowsAny<Exception>(() => Cipher.Encrypt(key: null!, plaintext));
     }
 
-
-
     [Fact]
     public void Encrypt_WithInvalidNullNonce_Throws()
     {
@@ -210,7 +208,9 @@ public abstract class SymmetricCipherTests
     [Fact]
     public void Encrypt_WithInvalidNullKeyAndPlaintextAndNonce_Throws()
     {
-        Assert.ThrowsAny<Exception>(() => Cipher.Encrypt(key: null!, plaintext: null!, nonce: null!));
+        Assert.ThrowsAny<Exception>(() =>
+            Cipher.Encrypt(key: null!, plaintext: null!, nonce: null!)
+        );
     }
 
     [Fact]
@@ -228,4 +228,3 @@ public abstract class SymmetricCipherTests
         Assert.Throws<ArgumentNullException>(() => nullSymmetric!.GenerateKeyBase64());
     }
 }
-

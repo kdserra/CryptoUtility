@@ -75,11 +75,7 @@ public static class PasswordKdfExtensions
     {
         try
         {
-            derivedKeyBase64 = kdf.DeriveKeyBase64(
-                passwordUtf8,
-                saltBase64,
-                outputLength
-            );
+            derivedKeyBase64 = kdf.DeriveKeyBase64(passwordUtf8, saltBase64, outputLength);
 
             return true;
         }

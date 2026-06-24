@@ -11,5 +11,6 @@ public sealed class Bike192Impl : BikeBase
     /// </summary>
     public static readonly Bike192Impl Shared = new();
 
-    private Bike192Impl() : base(Org.BouncyCastle.Pqc.Crypto.Bike.BikeParameters.bike192) { }
+    private Bike192Impl()
+        : base(Org.BouncyCastle.Pqc.Crypto.Bike.BikeParameters.bike192) { }
 }

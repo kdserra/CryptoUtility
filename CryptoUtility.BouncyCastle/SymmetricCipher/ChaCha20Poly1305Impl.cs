@@ -30,12 +30,7 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
         Encrypt(key, plaintext, nonce, aad: []);
 
     /// <inheritdoc />
-    public byte[] Encrypt(
-        byte[] key,
-        byte[] plaintext,
-        byte[] nonce,
-        byte[] aad
-    )
+    public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce, byte[] aad)
     {
         LibraryHelper.ThrowIfAnyNull(key, plaintext, nonce, aad);
         var cipher = new BouncyChaCha20Poly1305();
@@ -60,8 +55,7 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
     }
 
     /// <inheritdoc />
-    public byte[] Decrypt(byte[] key, byte[] encrypted) =>
-        Decrypt(key, encrypted, aad: []);
+    public byte[] Decrypt(byte[] key, byte[] encrypted) => Decrypt(key, encrypted, aad: []);
 
     /// <inheritdoc />
     public byte[] Decrypt(byte[] key, byte[] encrypted, byte[] aad)
@@ -83,12 +77,7 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
         Buffer.BlockCopy(encrypted, nonceLen, input, 0, inputLen);
 
         var cipher = new BouncyChaCha20Poly1305();
-        var parameters = new AeadParameters(
-            new KeyParameter(key),
-            tagLen * 8,
-            nonce,
-            aad
-        );
+        var parameters = new AeadParameters(new KeyParameter(key), tagLen * 8, nonce, aad);
 
         cipher.Init(false, parameters);
 

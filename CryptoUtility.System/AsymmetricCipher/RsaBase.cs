@@ -41,11 +41,7 @@ public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
         using RSA rsa = RSA.Create();
         rsa.ImportPkcs8PrivateKey(secretKey, out _);
 
-        byte[] signature = rsa.SignData(
-            input,
-            HashAlgorithmName.SHA256,
-            RSASignaturePadding.Pkcs1
-        );
+        byte[] signature = rsa.SignData(input, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
         return signature;
     }

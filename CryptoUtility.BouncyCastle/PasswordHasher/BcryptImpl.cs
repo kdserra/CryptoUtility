@@ -18,9 +18,8 @@ public sealed class BcryptImpl : IPasswordHasher
     /// <summary>
     /// Initializes a new instance of the <see cref="BcryptImpl"/> class with secure default cost (12).
     /// </summary>
-    public BcryptImpl() : this(12)
-    {
-    }
+    public BcryptImpl()
+        : this(12) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BcryptImpl"/> class with custom cost.
@@ -29,7 +28,10 @@ public sealed class BcryptImpl : IPasswordHasher
     public BcryptImpl(int defaultCost)
     {
         if (defaultCost < 4 || defaultCost > 31)
-            throw new ArgumentOutOfRangeException(nameof(defaultCost), "Cost must be between 4 and 31.");
+            throw new ArgumentOutOfRangeException(
+                nameof(defaultCost),
+                "Cost must be between 4 and 31."
+            );
         _defaultCost = defaultCost;
     }
 

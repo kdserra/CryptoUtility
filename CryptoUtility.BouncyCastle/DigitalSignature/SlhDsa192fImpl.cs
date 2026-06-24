@@ -13,5 +13,6 @@ public sealed class SlhDsa192fImpl : SlhDsaBase
     /// </summary>
     public static readonly SlhDsa192fImpl Shared = new();
 
-    private SlhDsa192fImpl() : base(SlhDsaParameters.slh_dsa_sha2_192f) { }
+    private SlhDsa192fImpl()
+        : base(SlhDsaParameters.slh_dsa_sha2_192f) { }
 }

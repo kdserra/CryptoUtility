@@ -20,7 +20,14 @@ public abstract class Argon2Base : IPasswordKdf, IPasswordHasher
     /// <summary>
     /// Initializes a new instance of the <see cref="Argon2Base"/> class.
     /// </summary>
-    protected Argon2Base(int type, int defaultIterations, int defaultMemoryKb, int defaultParallelism, int defaultSaltLength, int defaultOutputLength)
+    protected Argon2Base(
+        int type,
+        int defaultIterations,
+        int defaultMemoryKb,
+        int defaultParallelism,
+        int defaultSaltLength,
+        int defaultOutputLength
+    )
     {
         _type = type;
         _defaultIterations = defaultIterations;
@@ -34,9 +41,12 @@ public abstract class Argon2Base : IPasswordKdf, IPasswordHasher
     {
         get
         {
-            if (_type == Argon2Parameters.Argon2d) return "argon2d";
-            if (_type == Argon2Parameters.Argon2i) return "argon2i";
-            if (_type == Argon2Parameters.Argon2id) return "argon2id";
+            if (_type == Argon2Parameters.Argon2d)
+                return "argon2d";
+            if (_type == Argon2Parameters.Argon2i)
+                return "argon2i";
+            if (_type == Argon2Parameters.Argon2id)
+                return "argon2id";
             throw new InvalidOperationException();
         }
     }
@@ -44,13 +54,27 @@ public abstract class Argon2Base : IPasswordKdf, IPasswordHasher
     /// <inheritdoc />
     public byte[] DeriveKey(string passwordUtf8, byte[] salt, int outputLength)
     {
-        return DeriveKey(passwordUtf8, salt, _defaultIterations, _defaultMemoryKb, _defaultParallelism, outputLength);
+        return DeriveKey(
+            passwordUtf8,
+            salt,
+            _defaultIterations,
+            _defaultMemoryKb,
+            _defaultParallelism,
+            outputLength
+        );
     }
 
     /// <summary>
     /// Derives a key using custom Argon2 parameters.
     /// </summary>
-    public byte[] DeriveKey(string password, byte[] salt, int iterations, int memoryKb, int parallelism, int outputLength)
+    public byte[] DeriveKey(
+        string password,
+        byte[] salt,
+        int iterations,
+        int memoryKb,
+        int parallelism,
+        int outputLength
+    )
     {
         LibraryHelper.ThrowIfAnyNull(password, salt);
         if (iterations <= 0)
@@ -89,7 +113,14 @@ public abstract class Argon2Base : IPasswordKdf, IPasswordHasher
     {
         LibraryHelper.ThrowIfAnyNull(password);
         byte[] salt = CryptoHelper.GetBytes(_defaultSaltLength);
-        byte[] hash = DeriveKey(password, salt, _defaultIterations, _defaultMemoryKb, _defaultParallelism, _defaultOutputLength);
+        byte[] hash = DeriveKey(
+            password,
+            salt,
+            _defaultIterations,
+            _defaultMemoryKb,
+            _defaultParallelism,
+            _defaultOutputLength
+        );
 
         string saltB64 = Convert.ToBase64String(salt).TrimEnd('=');
         string hashB64 = Convert.ToBase64String(hash).TrimEnd('=');
@@ -146,7 +177,14 @@ public abstract class Argon2Base : IPasswordKdf, IPasswordHasher
             int hashPadding = (4 - (hashB64.Length % 4)) % 4;
             byte[] expectedHash = Convert.FromBase64String(hashB64 + new string('=', hashPadding));
 
-            byte[] computedHash = DeriveKey(password, salt, iterations, memoryKb, parallelism, expectedHash.Length);
+            byte[] computedHash = DeriveKey(
+                password,
+                salt,
+                iterations,
+                memoryKb,
+                parallelism,
+                expectedHash.Length
+            );
             try
             {
                 return CryptographicOperations.FixedTimeEquals(computedHash, expectedHash);

@@ -1,10 +1,10 @@
 ﻿using System.Security.Cryptography;
 
 namespace CryptoUtility;
-    /// <summary>
-    /// Provides extension methods for simplified key encapsulation and post-quantum hybrid encryption.
-    /// </summary>
 
+/// <summary>
+/// Provides extension methods for simplified key encapsulation and post-quantum hybrid encryption.
+/// </summary>
 public static class KeyEncapsulationMechanismExtensions
 {
     /// <summary>
@@ -76,6 +76,7 @@ public static class KeyEncapsulationMechanismExtensions
 
         return decapsulatedBase64;
     }
+
     /// <summary>
     /// Attempts to encapsulates a shared secret using the peer's public key.
     /// </summary>
@@ -84,7 +85,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="sharedSecret">When this method returns, contains the derived shared secret bytes.</param>
     /// <param name="ciphertext">When this method returns, contains the encapsulated shared secret ciphertext.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryEncapsulate(
         this IKeyEncapsulationMechanism kem,
         byte[] peerPublicKey,
@@ -107,6 +107,7 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to encapsulates a shared secret using the peer's public key using base64-encoded strings.
     /// </summary>
@@ -115,7 +116,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="sharedSecretBase64">When this method returns, contains the Base64-encoded derived shared secret.</param>
     /// <param name="ciphertextBase64">When this method returns, contains the Base64-encoded encapsulated shared secret ciphertext.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryEncapsulateBase64(
         this IKeyEncapsulationMechanism kem,
         string peerPublicKeyBase64,
@@ -140,6 +140,7 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to decapsulates the ciphertext using the private key to recover the shared secret.
     /// </summary>
@@ -148,7 +149,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="ciphertext">When this method returns, contains the encapsulated shared secret ciphertext.</param>
     /// <param name="sharedSecret">When this method returns, contains the derived shared secret bytes.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDecapsulate(
         this IKeyEncapsulationMechanism kem,
         byte[] secretKey,
@@ -167,6 +167,7 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to decapsulates the ciphertext using the private key to recover the shared secret using base64-encoded strings.
     /// </summary>
@@ -175,7 +176,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="ciphertextBase64">When this method returns, contains the Base64-encoded encapsulated shared secret ciphertext.</param>
     /// <param name="sharedSecretBase64">When this method returns, contains the Base64-encoded derived shared secret.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDecapsulateBase64(
         this IKeyEncapsulationMechanism kem,
         string secretKeyBase64,
@@ -194,6 +194,7 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Encrypts the specified plaintext data.
     /// </summary>
@@ -205,7 +206,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="kdfSalt">The salt value for key derivation.</param>
     /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public static byte[] Encrypt(
         this IKeyEncapsulationMechanism kem,
         ISymmetricCipher cipher,
@@ -219,8 +219,10 @@ public static class KeyEncapsulationMechanismExtensions
         LibraryHelper.ThrowIfAnyNull(kem);
         LibraryHelper.ThrowIfAnyNull(cipher);
         LibraryHelper.ThrowIfAnyNull(kdf);
-        if (peerPublicKey == null) throw new ArgumentNullException(nameof(peerPublicKey));
-        if (plaintext == null) throw new ArgumentNullException(nameof(plaintext));
+        if (peerPublicKey == null)
+            throw new ArgumentNullException(nameof(peerPublicKey));
+        if (plaintext == null)
+            throw new ArgumentNullException(nameof(plaintext));
 
         byte[] sharedSecret = Array.Empty<byte>();
         byte[] kemCiphertext = Array.Empty<byte>();
@@ -254,6 +256,7 @@ public static class KeyEncapsulationMechanismExtensions
 
         return envelopeBytes;
     }
+
     /// <summary>
     /// Decrypts the specified ciphertext data.
     /// </summary>
@@ -265,7 +268,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="kdfSalt">The salt value for key derivation.</param>
     /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public static byte[] Decrypt(
         this IKeyEncapsulationMechanism kem,
         ISymmetricCipher cipher,
@@ -279,8 +281,10 @@ public static class KeyEncapsulationMechanismExtensions
         LibraryHelper.ThrowIfAnyNull(kem);
         LibraryHelper.ThrowIfAnyNull(cipher);
         LibraryHelper.ThrowIfAnyNull(kdf);
-        if (secretKey == null) throw new ArgumentNullException(nameof(secretKey));
-        if (encrypted == null) throw new ArgumentNullException(nameof(encrypted));
+        if (secretKey == null)
+            throw new ArgumentNullException(nameof(secretKey));
+        if (encrypted == null)
+            throw new ArgumentNullException(nameof(encrypted));
 
         HybridCipherEnvelope? envelope = HybridCipherEnvelope.FromBytes(encrypted);
         if (envelope == null)
@@ -313,6 +317,7 @@ public static class KeyEncapsulationMechanismExtensions
 
         return decrypted;
     }
+
     /// <summary>
     /// Encrypts the specified plaintext data using Base64-encoded strings.
     /// </summary>
@@ -324,7 +329,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="kdfSaltBase64">The Base64-encoded salt value for key derivation.</param>
     /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string EncryptBase64(
         this IKeyEncapsulationMechanism kem,
         ISymmetricCipher cipher,
@@ -346,8 +350,14 @@ public static class KeyEncapsulationMechanismExtensions
         {
             peerPublicKeyBytes = Convert.FromBase64String(peerPublicKeyBase64);
             plaintextBytes = System.Text.Encoding.UTF8.GetBytes(plaintextUtf8);
-            kdfSaltBytes = kdfSaltBase64 != null ? Convert.FromBase64String(kdfSaltBase64) : Array.Empty<byte>();
-            kdfInfoBytes = kdfInfoBase64 != null ? Convert.FromBase64String(kdfInfoBase64) : Array.Empty<byte>();
+            kdfSaltBytes =
+                kdfSaltBase64 != null
+                    ? Convert.FromBase64String(kdfSaltBase64)
+                    : Array.Empty<byte>();
+            kdfInfoBytes =
+                kdfInfoBase64 != null
+                    ? Convert.FromBase64String(kdfInfoBase64)
+                    : Array.Empty<byte>();
 
             encryptedBytes = Encrypt(
                 kem,
@@ -372,6 +382,7 @@ public static class KeyEncapsulationMechanismExtensions
 
         return encryptedBase64;
     }
+
     /// <summary>
     /// Decrypts the specified ciphertext data using Base64-encoded strings.
     /// </summary>
@@ -383,7 +394,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="kdfSaltBase64">The Base64-encoded salt value for key derivation.</param>
     /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
     /// <returns>A string containing the result.</returns>
-
     public static string DecryptBase64(
         this IKeyEncapsulationMechanism kem,
         ISymmetricCipher cipher,
@@ -405,8 +415,14 @@ public static class KeyEncapsulationMechanismExtensions
         {
             secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
             encryptedBytes = Convert.FromBase64String(encryptedBase64);
-            kdfSaltBytes = kdfSaltBase64 != null ? Convert.FromBase64String(kdfSaltBase64) : Array.Empty<byte>();
-            kdfInfoBytes = kdfInfoBase64 != null ? Convert.FromBase64String(kdfInfoBase64) : Array.Empty<byte>();
+            kdfSaltBytes =
+                kdfSaltBase64 != null
+                    ? Convert.FromBase64String(kdfSaltBase64)
+                    : Array.Empty<byte>();
+            kdfInfoBytes =
+                kdfInfoBase64 != null
+                    ? Convert.FromBase64String(kdfInfoBase64)
+                    : Array.Empty<byte>();
 
             plaintextBytes = Decrypt(
                 kem,
@@ -431,6 +447,7 @@ public static class KeyEncapsulationMechanismExtensions
 
         return plaintextUtf8;
     }
+
     /// <summary>
     /// Attempts to encrypts the specified plaintext data.
     /// </summary>
@@ -443,9 +460,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
     /// <param name="encrypted">The encrypted ciphertext bytes.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
-
-
     public static bool TryEncrypt(
         this IKeyEncapsulationMechanism kem,
         ISymmetricCipher cipher,
@@ -468,6 +482,7 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to decrypts the specified ciphertext data.
     /// </summary>
@@ -480,7 +495,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="kdfInfo">The application-specific context info for key derivation.</param>
     /// <param name="plaintext">The plaintext bytes to encrypt.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDecrypt(
         this IKeyEncapsulationMechanism kem,
         ISymmetricCipher cipher,
@@ -503,6 +517,7 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to encrypts the specified plaintext data using base64-encoded strings.
     /// </summary>
@@ -515,7 +530,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
     /// <param name="encryptedBase64">The Base64-encoded encrypted ciphertext.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryEncryptBase64(
         this IKeyEncapsulationMechanism kem,
         ISymmetricCipher cipher,
@@ -529,7 +543,14 @@ public static class KeyEncapsulationMechanismExtensions
     {
         try
         {
-            encryptedBase64 = kem.EncryptBase64(cipher, kdf, peerPublicKeyBase64, plaintextUtf8, kdfSaltBase64, kdfInfoBase64);
+            encryptedBase64 = kem.EncryptBase64(
+                cipher,
+                kdf,
+                peerPublicKeyBase64,
+                plaintextUtf8,
+                kdfSaltBase64,
+                kdfInfoBase64
+            );
             return true;
         }
         catch
@@ -538,6 +559,7 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to decrypts the specified ciphertext data using base64-encoded strings.
     /// </summary>
@@ -550,7 +572,6 @@ public static class KeyEncapsulationMechanismExtensions
     /// <param name="kdfInfoBase64">The Base64-encoded application-specific context info for key derivation.</param>
     /// <param name="plaintextUtf8">The plaintext string to encrypt.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryDecryptBase64(
         this IKeyEncapsulationMechanism kem,
         ISymmetricCipher cipher,
@@ -564,7 +585,14 @@ public static class KeyEncapsulationMechanismExtensions
     {
         try
         {
-            plaintextUtf8 = kem.DecryptBase64(cipher, kdf, secretKeyBase64, encryptedBase64, kdfSaltBase64, kdfInfoBase64);
+            plaintextUtf8 = kem.DecryptBase64(
+                cipher,
+                kdf,
+                secretKeyBase64,
+                encryptedBase64,
+                kdfSaltBase64,
+                kdfInfoBase64
+            );
             return true;
         }
         catch
@@ -573,5 +601,4 @@ public static class KeyEncapsulationMechanismExtensions
             return false;
         }
     }
-
 }

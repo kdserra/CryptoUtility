@@ -12,12 +12,12 @@ public sealed class Sha384Impl : IHashProvider
     /// Gets the shared instance.
     /// </summary>
     public static readonly Sha384Impl Shared = new();
+
     /// <summary>
     /// Computes the cryptographic hash of the specified input data.
     /// </summary>
     /// <param name="message">The input data to process.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public byte[] Hash(byte[] message)
     {
         LibraryHelper.ThrowIfAnyNull(message);

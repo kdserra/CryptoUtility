@@ -13,5 +13,6 @@ public sealed class MlKem1024Impl : MlKemBase
     /// </summary>
     public static readonly MlKem1024Impl Shared = new();
 
-    private MlKem1024Impl() : base(MLKemParameters.ml_kem_1024) { }
+    private MlKem1024Impl()
+        : base(MLKemParameters.ml_kem_1024) { }
 }

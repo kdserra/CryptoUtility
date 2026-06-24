@@ -21,12 +21,7 @@ public abstract class AesGcmBase : ISymmetricCipherAEAD
         Encrypt(key, plaintext, nonce: nonce, aad: []);
 
     /// <inheritdoc />
-    public byte[] Encrypt(
-        byte[] key,
-        byte[] plaintext,
-        byte[] nonce,
-        byte[] aad
-    )
+    public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce, byte[] aad)
     {
         LibraryHelper.ThrowIfAnyNull(key, plaintext, nonce, aad);
         byte[] ciphertext = new byte[plaintext.Length];
@@ -48,8 +43,7 @@ public abstract class AesGcmBase : ISymmetricCipherAEAD
     }
 
     /// <inheritdoc />
-    public byte[] Decrypt(byte[] key, byte[] encrypted) =>
-        Decrypt(key, encrypted, aad: []);
+    public byte[] Decrypt(byte[] key, byte[] encrypted) => Decrypt(key, encrypted, aad: []);
 
     /// <inheritdoc />
     public byte[] Decrypt(byte[] key, byte[] encrypted, byte[] aad)

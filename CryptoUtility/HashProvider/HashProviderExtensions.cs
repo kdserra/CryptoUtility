@@ -2,10 +2,10 @@
 using System.Text;
 
 namespace CryptoUtility;
-    /// <summary>
-    /// Provides extension methods for simplified cryptographic hashing operations.
-    /// </summary>
 
+/// <summary>
+/// Provides extension methods for simplified cryptographic hashing operations.
+/// </summary>
 public static class HashProviderExtensions
 {
     /// <summary>
@@ -37,6 +37,7 @@ public static class HashProviderExtensions
 
         return hashBase64;
     }
+
     /// <summary>
     /// Attempts to computes the cryptographic hash of the specified input data.
     /// </summary>
@@ -44,7 +45,6 @@ public static class HashProviderExtensions
     /// <param name="message">The input data to process.</param>
     /// <param name="hash">When this method returns, contains the computed hash.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryHash(this IHashProvider hashProvider, byte[] message, out byte[] hash)
     {
         try
@@ -60,6 +60,7 @@ public static class HashProviderExtensions
             return false;
         }
     }
+
     /// <summary>
     /// Attempts to computes the cryptographic hash of the specified input data using base64-encoded strings.
     /// </summary>
@@ -67,7 +68,6 @@ public static class HashProviderExtensions
     /// <param name="messageUtf8">The input UTF-8 encoded string.</param>
     /// <param name="hashBase64">When this method returns, contains the Base64-encoded hash.</param>
     /// <returns>true if the operation succeeded; otherwise, false.</returns>
-
     public static bool TryHashBase64(
         this IHashProvider hashProvider,
         string messageUtf8,

@@ -441,7 +441,9 @@ void RunPostQuantumShowcase()
     if (isKemEncapsulateSuccess)
     {
         Console.WriteLine($"  - KEM Ciphertext (Base64):\n    {kemCiphertext.Truncate(80)}");
-        Console.WriteLine($"  - Sender Shared Secret (Base64):\n    {senderSharedSecret.Truncate(80)}");
+        Console.WriteLine(
+            $"  - Sender Shared Secret (Base64):\n    {senderSharedSecret.Truncate(80)}"
+        );
 
         bool isKemDecapsulateSuccess = kem.TryDecapsulateBase64(
             kemPriv,
@@ -449,8 +451,12 @@ void RunPostQuantumShowcase()
             out string recipientSharedSecret
         );
 
-        Console.WriteLine($"  - Decapsulation {(isKemDecapsulateSuccess ? "Succeeded!" : "Failed!")}");
-        Console.WriteLine($"  - Recipient Recovered Secret (Base64):\n    {recipientSharedSecret.Truncate(80)}");
+        Console.WriteLine(
+            $"  - Decapsulation {(isKemDecapsulateSuccess ? "Succeeded!" : "Failed!")}"
+        );
+        Console.WriteLine(
+            $"  - Recipient Recovered Secret (Base64):\n    {recipientSharedSecret.Truncate(80)}"
+        );
         bool secretsMatch = senderSharedSecret == recipientSharedSecret;
         Console.WriteLine($"  - Do shared secrets match? {secretsMatch}");
     }
@@ -486,7 +492,9 @@ void RunPostQuantumShowcase()
         kdfSalt,
         kdfInfo
     );
-    Console.WriteLine($"  - Encrypted Symmetric Payload (Bytes): {encryptedSymmetric.ToHexString(30)}");
+    Console.WriteLine(
+        $"  - Encrypted Symmetric Payload (Bytes): {encryptedSymmetric.ToHexString(30)}"
+    );
 
     // Recipient decrypts using KEM-only Decrypt utility
     byte[] decryptedSymmetricBytes = kem.Decrypt(
@@ -499,9 +507,7 @@ void RunPostQuantumShowcase()
     );
     string decryptedSymmetric = Encoding.UTF8.GetString(decryptedSymmetricBytes);
     Console.WriteLine($"  - Decrypted Symmetric Payload: \"{decryptedSymmetric}\"");
-
 }
-
 
 static void PrintHeader(string title)
 {

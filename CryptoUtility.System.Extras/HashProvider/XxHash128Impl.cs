@@ -12,12 +12,12 @@ public sealed class XxHash128Impl : IHashProvider
     /// The shared static instance of <see cref="XxHash128Impl"/>.
     /// </summary>
     public static readonly XxHash128Impl Shared = new();
+
     /// <summary>
     /// Computes the cryptographic hash of the specified input data.
     /// </summary>
     /// <param name="message">The input data to process.</param>
     /// <returns>A byte array containing the result.</returns>
-
     public byte[] Hash(byte[] message)
     {
         LibraryHelper.ThrowIfAnyNull(message);

@@ -13,5 +13,6 @@ public sealed class MlKem768Impl : MlKemBase
     /// </summary>
     public static readonly MlKem768Impl Shared = new();
 
-    private MlKem768Impl() : base(MLKemParameters.ml_kem_768) { }
+    private MlKem768Impl()
+        : base(MLKemParameters.ml_kem_768) { }
 }

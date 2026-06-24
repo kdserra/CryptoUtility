@@ -13,5 +13,6 @@ public sealed class SlhDsa128sImpl : SlhDsaBase
     /// </summary>
     public static readonly SlhDsa128sImpl Shared = new();
 
-    private SlhDsa128sImpl() : base(SlhDsaParameters.slh_dsa_sha2_128s) { }
+    private SlhDsa128sImpl()
+        : base(SlhDsaParameters.slh_dsa_sha2_128s) { }
 }

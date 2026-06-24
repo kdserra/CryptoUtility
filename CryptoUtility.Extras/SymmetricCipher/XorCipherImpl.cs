@@ -29,7 +29,10 @@ public sealed class XorCipherImpl : ISymmetricCipher
         if (key.Length == 0)
             throw new ArgumentException("Key cannot be empty.", nameof(key));
         if (nonce.Length != NonceSizeBytes)
-            throw new ArgumentException($"Nonce must be exactly {NonceSizeBytes} bytes.", nameof(nonce));
+            throw new ArgumentException(
+                $"Nonce must be exactly {NonceSizeBytes} bytes.",
+                nameof(nonce)
+            );
 
         byte[] keyStreamKey = new byte[key.Length];
         for (int i = 0; i < key.Length; i++)

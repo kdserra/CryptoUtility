@@ -24,14 +24,19 @@ public sealed class ScryptImpl : IPasswordKdf, IPasswordHasher
     /// <summary>
     /// Initializes a new instance of the <see cref="ScryptImpl"/> class with secure defaults.
     /// </summary>
-    public ScryptImpl() : this(16384, 8, 1, 16, 32)
-    {
-    }
+    public ScryptImpl()
+        : this(16384, 8, 1, 16, 32) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ScryptImpl"/> class with custom default parameters.
     /// </summary>
-    public ScryptImpl(int defaultN, int defaultR, int defaultP, int defaultSaltLength, int defaultOutputLength)
+    public ScryptImpl(
+        int defaultN,
+        int defaultR,
+        int defaultP,
+        int defaultSaltLength,
+        int defaultOutputLength
+    )
     {
         _defaultN = defaultN;
         _defaultR = defaultR;
@@ -77,7 +82,14 @@ public sealed class ScryptImpl : IPasswordKdf, IPasswordHasher
     {
         LibraryHelper.ThrowIfAnyNull(password);
         byte[] salt = CryptoHelper.GetBytes(_defaultSaltLength);
-        byte[] hash = DeriveKey(password, salt, _defaultN, _defaultR, _defaultP, _defaultOutputLength);
+        byte[] hash = DeriveKey(
+            password,
+            salt,
+            _defaultN,
+            _defaultR,
+            _defaultP,
+            _defaultOutputLength
+        );
 
         int ln = (int)Math.Round(Math.Log(_defaultN, 2));
 

@@ -11,5 +11,6 @@ public sealed class Falcon512Impl : FalconBase
     /// </summary>
     public static readonly Falcon512Impl Shared = new();
 
-    private Falcon512Impl() : base(Org.BouncyCastle.Pqc.Crypto.Falcon.FalconParameters.falcon_512) { }
+    private Falcon512Impl()
+        : base(Org.BouncyCastle.Pqc.Crypto.Falcon.FalconParameters.falcon_512) { }
 }
