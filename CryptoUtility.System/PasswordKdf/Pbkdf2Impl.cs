@@ -92,8 +92,8 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
             HashAlgorithmName.SHA256
         );
 
-        string saltB64 = Convert.ToBase64String(salt).TrimEnd('=');
-        string hashB64 = Convert.ToBase64String(hash).TrimEnd('=');
+        string saltB64 = PhcB64.ToB64String(salt);
+        string hashB64 = PhcB64.ToB64String(hash);
 
         return $"$pbkdf2-sha256$i={_defaultIterations}${saltB64}${hashB64}";
     }
@@ -116,12 +116,10 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
             int iterations = int.Parse(paramsPart.Substring(2));
 
             var saltB64 = parts[3];
-            int saltPadding = (4 - (saltB64.Length % 4)) % 4;
-            byte[] salt = Convert.FromBase64String(saltB64 + new string('=', saltPadding));
+            byte[] salt = PhcB64.FromB64String(saltB64);
 
             var hashB64 = parts[4];
-            int hashPadding = (4 - (hashB64.Length % 4)) % 4;
-            byte[] expectedHash = Convert.FromBase64String(hashB64 + new string('=', hashPadding));
+            byte[] expectedHash = PhcB64.FromB64String(hashB64);
 
             byte[] computedHash = DeriveKey(
                 password,

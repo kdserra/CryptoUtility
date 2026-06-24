@@ -122,8 +122,8 @@ public abstract class Argon2Base : IPasswordKdf, IPasswordHasher
             _defaultOutputLength
         );
 
-        string saltB64 = Convert.ToBase64String(salt).TrimEnd('=');
-        string hashB64 = Convert.ToBase64String(hash).TrimEnd('=');
+        string saltB64 = PhcB64.ToB64String(salt);
+        string hashB64 = PhcB64.ToB64String(hash);
 
         return $"${TypeString}$v=19$m={_defaultMemoryKb},t={_defaultIterations},p={_defaultParallelism}${saltB64}${hashB64}";
     }
@@ -170,12 +170,10 @@ public abstract class Argon2Base : IPasswordKdf, IPasswordHasher
             }
 
             var saltB64 = parts[4];
-            int saltPadding = (4 - (saltB64.Length % 4)) % 4;
-            byte[] salt = Convert.FromBase64String(saltB64 + new string('=', saltPadding));
+            byte[] salt = PhcB64.FromB64String(saltB64);
 
             var hashB64 = parts[5];
-            int hashPadding = (4 - (hashB64.Length % 4)) % 4;
-            byte[] expectedHash = Convert.FromBase64String(hashB64 + new string('=', hashPadding));
+            byte[] expectedHash = PhcB64.FromB64String(hashB64);
 
             byte[] computedHash = DeriveKey(
                 password,
