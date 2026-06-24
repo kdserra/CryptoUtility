@@ -541,14 +541,22 @@ CryptoUtility provides consistent raw byte structures across all packages for se
 +---------------------------------+------------------------+------------------------+
 ```
 
-### 3. Nonce-Based MAC Tag Layout (GMAC, Poly1305)
+### 3. Hybrid Post-Quantum Asymmetric Encryption Layout
+Used by `HybridPostQuantumCipherEnvelope` to package both classical and post-quantum payloads:
+```
++----------------------+------------------------+-------------------+------------------------+----------------------+
+| KEM Length (4 bytes) | Asym Length (4 bytes)  | KEM Ciphertext    | AsymEncrypted Payload  | SymEncrypted Payload |
++----------------------+------------------------+-------------------+------------------------+----------------------+
+```
+
+### 4. Nonce-Based MAC Tag Layout (GMAC, Poly1305)
 ```
 +-------------------+-----------------------------+
 |   Nonce (N bytes) |   Auth Tag (T bytes)        |
 +-------------------+-----------------------------+
 ```
 
-### 4. Password Hashing PHC Formats
+### 5. Password Hashing PHC Formats
 
 CryptoUtility formats hashed passwords into standard PHC strings for database storage:
 
