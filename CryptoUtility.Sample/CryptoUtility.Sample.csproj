@@ -11,5 +11,6 @@
     <ProjectReference Include="..\CryptoUtility.System\CryptoUtility.System.csproj" />
     <ProjectReference Include="..\CryptoUtility\CryptoUtility.csproj" />
     <ProjectReference Include="..\CryptoUtility.Extras\CryptoUtility.Extras.csproj" />
+    <ProjectReference Include="..\CryptoUtility.BouncyCastle\CryptoUtility.BouncyCastle.csproj" />
   </ItemGroup>
 </Project>

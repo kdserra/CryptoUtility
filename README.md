@@ -88,8 +88,9 @@ byte[] encrypted = Aes256Gcm.Encrypt(key, plaintext);
 byte[] decrypted = Aes256Gcm.Decrypt(key, encrypted);
 ```
 
-## 2️⃣ Asymmetric Encryption/Decryption (RSA-4096)
+## 2️⃣ Asymmetric Encryption/Decryption
 
+### 🔤 Static-based Workflow (RSA-4096)
 ```csharp
 using CryptoUtility.System;
 
@@ -104,8 +105,28 @@ byte[] encrypted = Rsa4096.Encrypt(publicKey, plaintext);
 byte[] decrypted = Rsa4096.Decrypt(privateKey, encrypted);
 ```
 
-## 3️⃣ Hybrid Asymmetric Encryption (RSA-4096 + AES)
+### 🧩 Interface-based Workflow (IAsymmetricCipher)
+```csharp
+using CryptoUtility;
+using CryptoUtility.System;
 
+// 1. Resolve implementation instance (e.g. RSA-2048)
+IAsymmetricCipher asymmetric = Rsa2048.Shared;
+
+// 2. Generate a key pair
+var (publicKey, privateKey) = asymmetric.GenerateKeyPair();
+
+// 3. Encrypt data with the public key
+byte[] plaintext = "Confidential data payload"u8.ToArray();
+byte[] encrypted = asymmetric.Encrypt(publicKey, plaintext);
+
+// 4. Decrypt data with the private key
+byte[] decrypted = asymmetric.Decrypt(privateKey, encrypted);
+```
+
+## 3️⃣ Hybrid Asymmetric Encryption (Classical & Post-Quantum)
+
+### 🔤 Classical Hybrid Encryption (RSA-4096 + AES)
 ```csharp
 using CryptoUtility.System;
 
@@ -120,8 +141,50 @@ string encrypted = Rsa4096.HybridEncryptBase64(Aes256Gcm.Shared, publicKey, larg
 string decrypted = Rsa4096.HybridDecryptBase64(Aes256Gcm.Shared, privateKey, encrypted);
 ```
 
-## 4️⃣ Digital Signatures (ECDSA)
+### 🛡️ Hybrid Post-Quantum Asymmetric Encryption (ML-KEM-768 + RSA-2048 + AES-256-GCM)
+Because classical asymmetric algorithms like RSA-2048 are vulnerable to Shor's algorithm, a hybrid post-quantum approach combines a classical asymmetric cipher with a post-quantum KEM. This ensures that the system remains secure even if one of the underlying mathematical problems is solved.
 
+```csharp
+using CryptoUtility;
+using CryptoUtility.BouncyCastle;
+
+// 1. Recipient generates both RSA-2048 and ML-KEM-768 key pairs
+IAsymmetricCipher rsa = Rsa2048.Shared;
+IKeyEncapsulationMechanism kem = MlKem768.Shared;
+
+var (rsaPub, rsaPriv) = rsa.GenerateKeyPair();
+var (kemPub, kemPriv) = kem.GenerateKeyPair();
+
+// 2. Sender side: Encrypt a message to recipient
+byte[] plaintext = "Highly secure hybrid PQ-classical message."u8.ToArray();
+byte[] hybridInfo = "PQ-Asymmetric-RSA-2048-Hybrid"u8.ToArray();
+
+// Perform hybrid encryption
+byte[] encrypted = kem.HybridEncrypt(
+    rsa,
+    Aes256Gcm.Shared,
+    Hkdf.Shared,
+    kemPub,
+    rsaPub,
+    plaintext,
+    hybridInfo
+);
+
+// 3. Recipient side: Decrypt the message
+byte[] decrypted = kem.HybridDecrypt(
+    rsa,
+    Aes256Gcm.Shared,
+    Hkdf.Shared,
+    kemPriv,
+    rsaPriv,
+    encrypted,
+    hybridInfo
+);
+```
+
+## 4️⃣ Digital Signatures (ECDSA & ML-DSA)
+
+### 🔤 Static-based Workflow (ECDSA)
 ```csharp
 using CryptoUtility.System;
 
@@ -134,6 +197,25 @@ byte[] signature = Ecdsa.Sign(message, privateKey);
 
 // 3. Verify signature with the public key
 bool isValid = Ecdsa.Verify(message, signature, publicKey);
+```
+
+### 🧩 Interface-based Workflow (IDigitalSignature - ML-DSA)
+```csharp
+using CryptoUtility;
+using CryptoUtility.BouncyCastle;
+
+// 1. Get the digital signature instance (e.g. ML-DSA-44 or Falcon-512)
+IDigitalSignature dsa = MlDsa44.Shared;
+
+// 2. Generate a key pair
+var (publicKey, privateKey) = dsa.GenerateKeyPair();
+
+// 3. Sign the message
+byte[] message = "Verify this message authenticity"u8.ToArray();
+byte[] signature = dsa.Sign(message, privateKey);
+
+// 4. Verify the signature
+bool isValid = dsa.Verify(message, signature, publicKey);
 ```
 
 ## 5️⃣ Key Agreement (ECDH)
@@ -211,6 +293,65 @@ byte[] salt = "user-specific-salt"u8.ToArray();
 
 // Derive a 32-byte key using secure defaults
 byte[] derivedKey = Pbkdf2.DeriveKey(password, salt, outputLength: 32);
+```
+
+## 9️⃣ Post-Quantum Key Encapsulation (ML-KEM)
+
+### 🧩 Key Encapsulation Mechanism (IKeyEncapsulationMechanism)
+```csharp
+using CryptoUtility;
+using CryptoUtility.BouncyCastle;
+
+// 1. Get the KEM instance (e.g. ML-KEM-768)
+IKeyEncapsulationMechanism kem = MlKem768.Shared;
+
+// 2. Generate a key pair for the recipient
+var (publicKey, secretKey) = kem.GenerateKeyPair();
+
+// 3. Sender encapsulates a shared secret using the recipient's public key
+var (senderSecret, ciphertext) = kem.Encapsulate(publicKey);
+
+// 4. Recipient decapsulates the ciphertext using their private key to recover the shared secret
+byte[] recipientSecret = kem.Decapsulate(secretKey, ciphertext);
+
+// Both senderSecret and recipientSecret are identical 256-bit symmetric keys
+```
+
+### 🔐 Post-Quantum Symmetric Encryption (KEM + AES-256-GCM)
+AES-256-GCM is symmetric encryption, which is quantum-safe. To perform post-quantum symmetric encryption/decryption, we first use a post-quantum KEM (like ML-KEM-768) to establish a 256-bit shared key, and then use that key to encrypt the payload with AES-256-GCM:
+
+```csharp
+using CryptoUtility;
+using CryptoUtility.BouncyCastle;
+using CryptoUtility.System;
+
+// 1. Recipient generates a post-quantum ML-KEM key pair
+IKeyEncapsulationMechanism kem = MlKem768.Shared;
+var (publicKey, secretKey) = kem.GenerateKeyPair();
+
+byte[] salt = "KEM-Salt"u8.ToArray();
+byte[] info = "KEM-Info"u8.ToArray();
+byte[] plaintext = "Post-quantum secure message payload"u8.ToArray();
+
+// 2. Sender encrypts the message using recipient's public key
+byte[] encrypted = kem.Encrypt(
+    Aes256Gcm.Shared,
+    Hkdf.Shared,
+    publicKey,
+    plaintext,
+    salt,
+    info
+);
+
+// 3. Recipient decrypts the message using their private key
+byte[] decrypted = kem.Decrypt(
+    Aes256Gcm.Shared,
+    Hkdf.Shared,
+    secretKey,
+    encrypted,
+    salt,
+    info
+);
 ```
 
 ---

@@ -25,6 +25,7 @@ RunDigitalSignatureShowcase();
 RunKeyAgreementShowcase();
 RunKdfShowcase();
 RunHashAndHmacShowcase();
+RunPostQuantumShowcase();
 
 Console.ForegroundColor = ConsoleColor.Green;
 Console.WriteLine(
@@ -414,6 +415,124 @@ void RunHashAndHmacShowcase()
     bool isHmacValid = HmacSha256.VerifyBase64(hmacKey, message, hmac);
     Console.WriteLine($"  - HMAC is valid?     {isHmacValid}");
 }
+
+void RunPostQuantumShowcase()
+{
+    PrintHeader("7. Post-Quantum Cryptography (PQC)");
+
+    string secretPayload = "This is a post-quantum confidential transmission.";
+    Console.WriteLine($"  - Original Payload: \"{secretPayload}\"\n");
+
+    // 1. Post-Quantum KEM
+    Console.WriteLine("[Post-Quantum Key Encapsulation Mechanism (ML-KEM-768)]");
+    IKeyEncapsulationMechanism kem = CryptoUtility.BouncyCastle.MlKem768Impl.Shared;
+    var (kemPubBytes, kemPrivBytes) = kem.GenerateKeyPair();
+    string kemPub = Convert.ToBase64String(kemPubBytes);
+    string kemPriv = Convert.ToBase64String(kemPrivBytes);
+    Console.WriteLine($"  - ML-KEM-768 Public Key (Base64):\n    {kemPub.Truncate(80)}");
+    Console.WriteLine($"  - ML-KEM-768 Private Key (Base64):\n    {kemPriv.Truncate(80)}");
+
+    bool isKemEncapsulateSuccess = kem.TryEncapsulateBase64(
+        kemPub,
+        out string senderSharedSecret,
+        out string kemCiphertext
+    );
+
+    if (isKemEncapsulateSuccess)
+    {
+        Console.WriteLine($"  - KEM Ciphertext (Base64):\n    {kemCiphertext.Truncate(80)}");
+        Console.WriteLine($"  - Sender Shared Secret (Base64):\n    {senderSharedSecret.Truncate(80)}");
+
+        bool isKemDecapsulateSuccess = kem.TryDecapsulateBase64(
+            kemPriv,
+            kemCiphertext,
+            out string recipientSharedSecret
+        );
+
+        Console.WriteLine($"  - Decapsulation {(isKemDecapsulateSuccess ? "Succeeded!" : "Failed!")}");
+        Console.WriteLine($"  - Recipient Recovered Secret (Base64):\n    {recipientSharedSecret.Truncate(80)}");
+        bool secretsMatch = senderSharedSecret == recipientSharedSecret;
+        Console.WriteLine($"  - Do shared secrets match? {secretsMatch}");
+    }
+
+    // 2. Post-Quantum Digital Signature
+    Console.WriteLine("\n[Post-Quantum Digital Signatures (ML-DSA-44)]");
+    IDigitalSignature dsa = CryptoUtility.BouncyCastle.MlDsa44Impl.Shared;
+    var (dsaPub, dsaPriv) = dsa.GenerateKeyPairBase64();
+    string message = "Transaction Approval: Pay Bob $1000.00 in PQ-Era";
+    Console.WriteLine($"  - Message to Sign: \"{message}\"");
+
+    bool dsaSignSuccess = dsa.TrySignBase64(message, dsaPriv, out string dsaSig);
+    if (dsaSignSuccess)
+    {
+        Console.WriteLine($"  - ML-DSA-44 Signature (Base64):\n    {dsaSig.Truncate(80)}");
+        bool isDsaValid = dsa.VerifyBase64(message, dsaSig, dsaPub);
+        Console.WriteLine($"  - Signature is valid? {isDsaValid}");
+    }
+
+    // 3. Post-Quantum Symmetric Encryption (AES-256-GCM)
+    Console.WriteLine("\n[Post-Quantum Symmetric Encryption (KEM + AES-256-GCM)]");
+    // Recipient generates ML-KEM key pair
+    var (kemRecipientPub, kemRecipientPriv) = kem.GenerateKeyPair();
+    byte[] kdfSalt = "KEM-AES-GCM-Salt"u8.ToArray();
+    byte[] kdfInfo = "KEM-AES-GCM-Info"u8.ToArray();
+
+    // Use KEM-only Encrypt utility
+    byte[] encryptedSymmetric = kem.Encrypt(
+        CryptoUtility.System.Aes256GcmImpl.Shared,
+        CryptoUtility.System.Hkdf.Shared,
+        kemRecipientPub,
+        Encoding.UTF8.GetBytes(secretPayload),
+        kdfSalt,
+        kdfInfo
+    );
+    Console.WriteLine($"  - Encrypted Symmetric Payload (Bytes): {encryptedSymmetric.ToHexString(30)}");
+
+    // Recipient decrypts using KEM-only Decrypt utility
+    byte[] decryptedSymmetricBytes = kem.Decrypt(
+        CryptoUtility.System.Aes256GcmImpl.Shared,
+        CryptoUtility.System.Hkdf.Shared,
+        kemRecipientPriv,
+        encryptedSymmetric,
+        kdfSalt,
+        kdfInfo
+    );
+    string decryptedSymmetric = Encoding.UTF8.GetString(decryptedSymmetricBytes);
+    Console.WriteLine($"  - Decrypted Symmetric Payload: \"{decryptedSymmetric}\"");
+
+    // 4. Hybrid Post-Quantum Asymmetric Encryption (ML-KEM-768 + RSA-2048 + AES-256-GCM)
+    Console.WriteLine("\n[Hybrid PQ Asymmetric Encryption (ML-KEM-768 + RSA-2048 + AES-256-GCM)]");
+    IAsymmetricCipher rsa = CryptoUtility.System.Rsa2048Impl.Shared;
+    var (rsaPub, rsaPriv) = rsa.GenerateKeyPair();
+    var (kemHybridPub, kemHybridPriv) = kem.GenerateKeyPair();
+    byte[] hybridInfo = "PQ-Asymmetric-RSA-2048-Hybrid"u8.ToArray();
+
+    // Use HybridEncrypt utility
+    byte[] encryptedHybrid = kem.HybridEncrypt(
+        rsa,
+        CryptoUtility.System.Aes256GcmImpl.Shared,
+        CryptoUtility.System.Hkdf.Shared,
+        kemHybridPub,
+        rsaPub,
+        Encoding.UTF8.GetBytes(secretPayload),
+        hybridInfo
+    );
+    Console.WriteLine($"  - Encrypted Hybrid Payload (Bytes): {encryptedHybrid.ToHexString(30)}");
+
+    // Recipient decrypts using HybridDecrypt utility
+    byte[] decryptedHybridBytes = kem.HybridDecrypt(
+        rsa,
+        CryptoUtility.System.Aes256GcmImpl.Shared,
+        CryptoUtility.System.Hkdf.Shared,
+        kemHybridPriv,
+        rsaPriv,
+        encryptedHybrid,
+        hybridInfo
+    );
+    string decryptedHybrid = Encoding.UTF8.GetString(decryptedHybridBytes);
+    Console.WriteLine($"  - Decrypted Hybrid Payload: \"{decryptedHybrid}\"");
+}
+
 
 static void PrintHeader(string title)
 {
