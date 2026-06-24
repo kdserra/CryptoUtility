@@ -1,0 +1,40 @@
+name: Format Code
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  format:
+    name: Format C# Code
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install CSharpier
+        run: dotnet tool install --global csharpier
+
+      - name: Format Code
+        run: csharpier format .
+
+      - name: Commit and Push Formatted Code
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "style: format code with csharpier"
+            git push origin dev
+          else
+            echo "No formatting changes detected."
+          fi
