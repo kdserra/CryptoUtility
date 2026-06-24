@@ -27,6 +27,10 @@ public abstract class BikeBase : IKeyEncapsulationMechanism
     /// Initializes a new instance of the <see cref="BikeBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The BIKE parameters to use.</param>
+    /// <param name="publicKeySizeBytes">The public key size in bytes.</param>
+    /// <param name="secretKeySizeBytes">The secret key size in bytes.</param>
+    /// <param name="ciphertextSizeBytes">The ciphertext size in bytes.</param>
+    /// <param name="sharedSecretSizeBytes">The shared secret size in bytes.</param>
     protected BikeBase(
         BikeParameters parameters,
         int publicKeySizeBytes,

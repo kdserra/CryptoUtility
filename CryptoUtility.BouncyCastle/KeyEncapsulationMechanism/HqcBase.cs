@@ -27,6 +27,10 @@ public abstract class HqcBase : IKeyEncapsulationMechanism
     /// Initializes a new instance of the <see cref="HqcBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The HQC parameters to use.</param>
+    /// <param name="publicKeySizeBytes">The public key size in bytes.</param>
+    /// <param name="secretKeySizeBytes">The secret key size in bytes.</param>
+    /// <param name="ciphertextSizeBytes">The ciphertext size in bytes.</param>
+    /// <param name="sharedSecretSizeBytes">The shared secret size in bytes.</param>
     protected HqcBase(
         HqcParameters parameters,
         int publicKeySizeBytes,

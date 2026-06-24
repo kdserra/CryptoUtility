@@ -28,6 +28,10 @@ public abstract class MlKemBase : IKeyEncapsulationMechanism
     /// Initializes a new instance of the <see cref="MlKemBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The ML-KEM parameters to use.</param>
+    /// <param name="publicKeySizeBytes">The public key size in bytes.</param>
+    /// <param name="secretKeySizeBytes">The secret key size in bytes.</param>
+    /// <param name="ciphertextSizeBytes">The ciphertext size in bytes.</param>
+    /// <param name="sharedSecretSizeBytes">The shared secret size in bytes.</param>
     protected MlKemBase(
         MLKemParameters parameters,
         int publicKeySizeBytes,
