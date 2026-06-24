@@ -21,7 +21,7 @@ This keeps your focus where it belongs: writing your application.
 With CryptoUtility, executing high-security authenticated encryption (AEAD) like **AES-256-GCM** or **ChaCha20-Poly1305** is just as straightforward as running a stateless cipher. All complex logic—such as secure nonce generation, authentication tag handling, and associated data verification—is managed automatically.
 
 ## 🧩 Unified Interfaces
-We define clean, unified interfaces like `ISymmetricCipher`, `IAsymmetricCipher`, `IKeyEncapsulationMechanism`, `IKeyAgreement`, `IDigitalSignature`, `IPasswordHasher`, `IChecksumProvider`, `IHashProvider`, `IMacProvider`, `IKeyExpansionKdf`, and `IPasswordKdf`.
+We define clean, unified interfaces like `ISymmetricCipher`, `IAsymmetricCipher`, `IKeyEncapsulationMechanism`, `IKeyAgreement`, `IDigitalSignature`, `IPasswordHasher`, `IHashProvider`, `IMacProvider`, `IKeyExpansionKdf`, and `IPasswordKdf`.
 
 This is incredibly powerful for building modular application systems (such as a `SaveManager` or a networking layer). Your high-level managers can depend directly on `ISymmetricCipher` without being bound to a concrete implementation. You can swap your entire encryption algorithm from AES to ChaCha20 with a single line of code, without rewriting your business logic.
 
@@ -340,15 +340,15 @@ View the [sample](https://github.com/kdserra/CryptoUtility/blob/master/CryptoUti
 | Sha1 | CryptoUtility.System / CryptoUtility.BouncyCastle | IHashProvider | Legacy hash function. Insecure for secure applications. |
 | Md5 | CryptoUtility.System / CryptoUtility.BouncyCastle | IHashProvider | Legacy hash function. Insecure for secure applications. |
 
-### Non-Cryptographic Checksums (`IChecksumProvider`)
+### Non-Cryptographic Hashes & Checksums
 
 | Algorithm | Package | Interfaces | Notes |
 |------------|----------|------------|------|
-| Crc32 | CryptoUtility.System.Extras | IChecksumProvider | Fast non-cryptographic Cyclic Redundancy Check checksum to detect accidental data corruption or transmission errors. |
-| Crc64 | CryptoUtility.System.Extras | IChecksumProvider | Fast non-cryptographic Cyclic Redundancy Check checksum with 64-bit output size. |
-| XxHash32 | CryptoUtility.System.Extras | IChecksumProvider | Extremely fast non-cryptographic hash running near RAM speed limits, producing 32-bit output. |
-| XxHash64 | CryptoUtility.System.Extras | IChecksumProvider | Extremely fast non-cryptographic hash producing 64-bit output. |
-| XxHash128 | CryptoUtility.System.Extras | IChecksumProvider | Extremely fast non-cryptographic hash producing 128-bit output. |
+| Crc32 | CryptoUtility.System.Extras | IHashProvider | Fast non-cryptographic Cyclic Redundancy Check checksum to detect accidental data corruption or transmission errors. |
+| Crc64 | CryptoUtility.System.Extras | IHashProvider | Fast non-cryptographic Cyclic Redundancy Check checksum with 64-bit output size. |
+| XxHash32 | CryptoUtility.System.Extras | IHashProvider | Extremely fast non-cryptographic hash running near RAM speed limits, producing 32-bit output. |
+| XxHash64 | CryptoUtility.System.Extras | IHashProvider | Extremely fast non-cryptographic hash producing 64-bit output. |
+| XxHash128 | CryptoUtility.System.Extras | IHashProvider | Extremely fast non-cryptographic hash producing 128-bit output. |
 
 ### Message Authentication Code (MAC)
 

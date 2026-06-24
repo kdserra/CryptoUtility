@@ -175,11 +175,21 @@ void RunAsymmetricAndHybridShowcase()
     Console.WriteLine($"  - RSA Private Key (Base64 PKCS8):\n    {privKey.Truncate(80)}");
 
     string smallMessage = "Meet at midnight.";
-    bool isRsaEncryptionSuccess = Rsa2048.TryEncryptBase64(pubKey, smallMessage, out string encryptedRsaBytes);
+    bool isRsaEncryptionSuccess = Rsa2048.TryEncryptBase64(
+        pubKey,
+        smallMessage,
+        out string encryptedRsaBytes
+    );
     if (isRsaEncryptionSuccess)
     {
-        Console.WriteLine($"  - Encrypted Asymmetric Ciphertext:\n    {encryptedRsaBytes.Truncate(80)}");
-        bool isRsaDecryptionSuccess = Rsa2048.TryDecryptBase64(privKey, encryptedRsaBytes, out string decryptedRsaText);
+        Console.WriteLine(
+            $"  - Encrypted Asymmetric Ciphertext:\n    {encryptedRsaBytes.Truncate(80)}"
+        );
+        bool isRsaDecryptionSuccess = Rsa2048.TryDecryptBase64(
+            privKey,
+            encryptedRsaBytes,
+            out string decryptedRsaText
+        );
         Console.WriteLine($"  - Decrypted Asymmetric Text: \"{decryptedRsaText}\"");
     }
 
@@ -247,8 +257,16 @@ void RunKeyAgreementShowcase()
     Console.WriteLine($"  - Alice's Public Key: {alicePub.ToHexString(40)}");
     Console.WriteLine($"  - Bob's Public Key:   {bobPub.ToHexString(40)}\n");
 
-    bool isAliceSecretDerived = Ecdh.TryDeriveSharedSecret(alicePriv, bobPub, out byte[] aliceSharedSecret);
-    bool isBobSecretDerived = Ecdh.TryDeriveSharedSecret(bobPriv, alicePub, out byte[] bobSharedSecret);
+    bool isAliceSecretDerived = Ecdh.TryDeriveSharedSecret(
+        alicePriv,
+        bobPub,
+        out byte[] aliceSharedSecret
+    );
+    bool isBobSecretDerived = Ecdh.TryDeriveSharedSecret(
+        bobPriv,
+        alicePub,
+        out byte[] bobSharedSecret
+    );
 
     if (isAliceSecretDerived && isBobSecretDerived)
     {
@@ -326,7 +344,13 @@ void RunKdfShowcase()
     int iterations = 10000;
     int outputKeyBytes = 32;
 
-    byte[] derivedPasswordKey = Pbkdf2.DeriveKey(password, salt, iterations, outputKeyBytes, System.Security.Cryptography.HashAlgorithmName.SHA256);
+    byte[] derivedPasswordKey = Pbkdf2.DeriveKey(
+        password,
+        salt,
+        iterations,
+        outputKeyBytes,
+        System.Security.Cryptography.HashAlgorithmName.SHA256
+    );
     Console.WriteLine($"  - Input Password: \"{password}\"");
     Console.WriteLine($"  - Random Salt:     {salt.ToHexString()}");
     Console.WriteLine($"  - Iterations:      {iterations}");
@@ -374,11 +398,11 @@ void RunHashAndHmacShowcase()
     Console.WriteLine($"  - SHA3-256 Hash:     {sha3Hash.ToHexString()}");
 
     Console.WriteLine("\n[xxHash64 Fast Hash (Non-cryptographic)]");
-    byte[] xxHash = XxHash64.ComputeChecksum(messageBytes);
+    byte[] xxHash = XxHash64.Hash(messageBytes);
     Console.WriteLine($"  - xxHash64 Hash:     {xxHash.ToHexString()}");
 
     Console.WriteLine("\n[CRC-32 Checksum]");
-    byte[] crcBytes = Crc32.ComputeChecksum(messageBytes);
+    byte[] crcBytes = Crc32.Hash(messageBytes);
     Console.WriteLine($"  - CRC-32 Checksum:   {crcBytes.ToHexString()}");
 
     Console.WriteLine("\n[HMAC Hashing Signatures]");
