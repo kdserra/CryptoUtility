@@ -54,12 +54,20 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
         if (outputLength <= 0)
             throw new ArgumentOutOfRangeException(nameof(outputLength));
 
-        var gen = new Pkcs5S2ParametersGenerator(new Sha256Digest());
-        byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-        gen.Init(passwordBytes, salt, iterations);
-        var keyParam = (KeyParameter)gen.GenerateDerivedMacParameters(outputLength * 8);
+        KeyParameter keyParam;
+        byte[] passwordBytes = Array.Empty<byte>();
 
-        CryptographicOperations.ZeroMemory(passwordBytes);
+        try
+        {
+            var gen = new Pkcs5S2ParametersGenerator(new Sha256Digest());
+            passwordBytes = Encoding.UTF8.GetBytes(password);
+            gen.Init(passwordBytes, salt, iterations);
+            keyParam = (KeyParameter)gen.GenerateDerivedMacParameters(outputLength * 8);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(passwordBytes);
+        }
 
         return keyParam.GetKey();
     }
