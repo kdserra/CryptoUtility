@@ -216,9 +216,9 @@ public static class KeyEncapsulationMechanismExtensions
         byte[] kdfInfo
     )
     {
-        LibraryHelper.ThrowIfAnyNull(kem);
-        LibraryHelper.ThrowIfAnyNull(cipher);
-        LibraryHelper.ThrowIfAnyNull(kdf);
+        LibraryHelper.ThrowIfNull(kem);
+        LibraryHelper.ThrowIfNull(cipher);
+        LibraryHelper.ThrowIfNull(kdf);
         if (peerPublicKey == null)
             throw new ArgumentNullException(nameof(peerPublicKey));
         if (plaintext == null)
@@ -278,9 +278,9 @@ public static class KeyEncapsulationMechanismExtensions
         byte[] kdfInfo
     )
     {
-        LibraryHelper.ThrowIfAnyNull(kem);
-        LibraryHelper.ThrowIfAnyNull(cipher);
-        LibraryHelper.ThrowIfAnyNull(kdf);
+        LibraryHelper.ThrowIfNull(kem);
+        LibraryHelper.ThrowIfNull(cipher);
+        LibraryHelper.ThrowIfNull(kdf);
         if (secretKey == null)
             throw new ArgumentNullException(nameof(secretKey));
         if (encrypted == null)

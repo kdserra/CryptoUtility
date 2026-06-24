@@ -96,7 +96,7 @@ public static class KeyAgreementExtensions
         byte[] kdfInfo
     )
     {
-        LibraryHelper.ThrowIfAnyNull(keyAgreement);
+        LibraryHelper.ThrowIfNull(keyAgreement);
         byte[] key = Array.Empty<byte>();
         byte[] encrypted = Array.Empty<byte>();
 
@@ -140,7 +140,7 @@ public static class KeyAgreementExtensions
         byte[] kdfInfo
     )
     {
-        LibraryHelper.ThrowIfAnyNull(keyAgreement);
+        LibraryHelper.ThrowIfNull(keyAgreement);
         byte[] key = Array.Empty<byte>();
         byte[] decrypted = Array.Empty<byte>();
 

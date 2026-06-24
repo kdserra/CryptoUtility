@@ -20,7 +20,7 @@ public sealed class Crc64Impl : IHashProvider
     /// <returns>A byte array containing the result.</returns>
     public byte[] Hash(byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(message);
+        LibraryHelper.ThrowIfNull(message);
         return SystemCrc64.Hash(message);
     }
 }

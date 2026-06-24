@@ -18,7 +18,7 @@ public sealed class Blake2sImpl : IHashProvider
     /// <inheritdoc />
     public byte[] Hash(byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(message);
+        LibraryHelper.ThrowIfNull(message);
 
         var digest = new Blake2sDigest();
         digest.BlockUpdate(message, 0, message.Length);

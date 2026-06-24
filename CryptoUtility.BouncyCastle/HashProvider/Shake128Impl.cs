@@ -29,7 +29,7 @@ public sealed class Shake128Impl : IHashProvider
     /// <returns>The computed hash bytes.</returns>
     public byte[] Hash(byte[] message, int outputLength)
     {
-        LibraryHelper.ThrowIfAnyNull(message);
+        LibraryHelper.ThrowIfNull(message);
 
         var digest = new ShakeDigest(128);
         digest.BlockUpdate(message, 0, message.Length);

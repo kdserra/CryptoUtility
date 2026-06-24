@@ -18,7 +18,7 @@ public sealed class Ripemd160Impl : IHashProvider
     /// <inheritdoc />
     public byte[] Hash(byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(message);
+        LibraryHelper.ThrowIfNull(message);
 
         var digest = new RipeMD160Digest();
         digest.BlockUpdate(message, 0, message.Length);

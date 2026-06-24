@@ -25,7 +25,8 @@ public sealed class Blake3MacImpl : IMacProvider
     /// <inheritdoc />
     public byte[] ComputeMac(byte[] key, byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(key, message);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(message);
         if (key.Length != RequiredKeySizeInBytes)
         {
             throw new ArgumentException(

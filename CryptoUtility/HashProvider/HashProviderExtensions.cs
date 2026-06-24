@@ -16,7 +16,8 @@ public static class HashProviderExtensions
     /// <returns>A string containing the result.</returns>
     public static string HashBase64(this IHashProvider hashProvider, string messageUtf8)
     {
-        LibraryHelper.ThrowIfAnyNull(hashProvider, messageUtf8);
+        LibraryHelper.ThrowIfNull(hashProvider);
+        LibraryHelper.ThrowIfNull(messageUtf8);
 
         byte[] messageBytes = Array.Empty<byte>();
         byte[] hashBytes = Array.Empty<byte>();

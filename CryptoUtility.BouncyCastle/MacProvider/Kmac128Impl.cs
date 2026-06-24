@@ -55,7 +55,9 @@ public sealed class Kmac128Impl : IMacProvider
     /// <returns>The computed KMAC tag.</returns>
     public byte[] ComputeMac(byte[] key, byte[] message, byte[] customizationString, int macSize)
     {
-        LibraryHelper.ThrowIfAnyNull(key, message, customizationString);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(message);
+        LibraryHelper.ThrowIfNull(customizationString);
 
         var kmac = new KMac(128, customizationString);
         kmac.Init(new KeyParameter(key));

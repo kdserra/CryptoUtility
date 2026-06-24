@@ -52,7 +52,9 @@ public sealed class Poly1305Impl : IMacProvider
     /// <returns>A byte array containing the concatenated nonce and MAC tag.</returns>
     public byte[] ComputeMac(byte[] key, byte[] message, byte[] nonce)
     {
-        LibraryHelper.ThrowIfAnyNull(key, message, nonce);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(message);
+        LibraryHelper.ThrowIfNull(nonce);
         if (key.Length != RequiredKeySizeInBytes)
         {
             throw new ArgumentException(
@@ -85,7 +87,9 @@ public sealed class Poly1305Impl : IMacProvider
     /// <inheritdoc />
     public bool VerifyMac(byte[] key, byte[] message, byte[] mac)
     {
-        LibraryHelper.ThrowIfAnyNull(key, message, mac);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(message);
+        LibraryHelper.ThrowIfNull(mac);
         if (mac.Length < NonceSizeBytes + MacSizeInBytes)
         {
             return false;

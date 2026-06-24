@@ -20,7 +20,7 @@ public sealed class Sha256Impl : IHashProvider
     /// <returns>A byte array containing the result.</returns>
     public byte[] Hash(byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(message);
+        LibraryHelper.ThrowIfNull(message);
 
         Sha256Digest digest = new();
         digest.BlockUpdate(message, 0, message.Length);

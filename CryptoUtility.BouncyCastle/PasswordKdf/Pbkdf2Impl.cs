@@ -48,7 +48,8 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
     /// </summary>
     public byte[] DeriveKey(string password, byte[] salt, int iterations, int outputLength)
     {
-        LibraryHelper.ThrowIfAnyNull(password, salt);
+        LibraryHelper.ThrowIfNull(password);
+        LibraryHelper.ThrowIfNull(salt);
         if (iterations <= 0)
             throw new ArgumentOutOfRangeException(nameof(iterations));
         if (outputLength <= 0)
@@ -75,7 +76,7 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
     /// <inheritdoc />
     public string HashPassword(string password)
     {
-        LibraryHelper.ThrowIfAnyNull(password);
+        LibraryHelper.ThrowIfNull(password);
         byte[] salt = CryptoHelper.GetBytes(_defaultSaltLength);
         byte[] hash = DeriveKey(password, salt, _defaultIterations, _defaultOutputLength);
 
@@ -88,7 +89,8 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
     /// <inheritdoc />
     public bool VerifyPassword(string password, string hashedPasswordString)
     {
-        LibraryHelper.ThrowIfAnyNull(password, hashedPasswordString);
+        LibraryHelper.ThrowIfNull(password);
+        LibraryHelper.ThrowIfNull(hashedPasswordString);
         try
         {
             var parts = hashedPasswordString.Split('$');

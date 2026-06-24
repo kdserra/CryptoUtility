@@ -21,7 +21,7 @@ public sealed class Sha3_512Impl : IHashProvider
     /// <returns>A byte array containing the result.</returns>
     public byte[] Hash(byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(message);
+        LibraryHelper.ThrowIfNull(message);
         using var alg = SHA3_512.Create();
         byte[] hash = alg.ComputeHash(message);
         return hash;

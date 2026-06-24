@@ -24,7 +24,8 @@ public sealed class Blake2sMacImpl : IMacProvider
     /// <inheritdoc />
     public byte[] ComputeMac(byte[] key, byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(key, message);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(message);
 
         var digest = new Blake2sDigest(key);
         digest.BlockUpdate(message, 0, message.Length);

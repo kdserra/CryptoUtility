@@ -64,7 +64,7 @@ public abstract class HqcBase : IKeyEncapsulationMechanism
     /// <inheritdoc />
     public (byte[] sharedSecret, byte[] ciphertext) Encapsulate(byte[] peerPublicKey)
     {
-        LibraryHelper.ThrowIfAnyNull(peerPublicKey);
+        LibraryHelper.ThrowIfNull(peerPublicKey);
         var pubKey = (HqcPublicKeyParameters)PqcPublicKeyFactory.CreateKey(peerPublicKey);
 
         var random = new SecureRandom();
@@ -77,7 +77,8 @@ public abstract class HqcBase : IKeyEncapsulationMechanism
     /// <inheritdoc />
     public byte[] Decapsulate(byte[] secretKey, byte[] ciphertext)
     {
-        LibraryHelper.ThrowIfAnyNull(secretKey, ciphertext);
+        LibraryHelper.ThrowIfNull(secretKey);
+        LibraryHelper.ThrowIfNull(ciphertext);
         var privKey = (HqcPrivateKeyParameters)PqcPrivateKeyFactory.CreateKey(secretKey);
 
         var extractor = new HqcKemExtractor(privKey);

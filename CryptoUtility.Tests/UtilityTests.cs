@@ -7,18 +7,19 @@ namespace CryptoUtility.Tests;
 public class UtilityTests
 {
     [Fact]
-    public void LibraryHelper_ThrowIfAnyNull_ThrowsOnNull()
+    public void LibraryHelper_ThrowIfNull_ThrowsOnNullWithParamName()
     {
-        Assert.Throws<ArgumentNullException>(() => LibraryHelper.ThrowIfAnyNull(null!));
-        Assert.Throws<ArgumentNullException>(() =>
-            LibraryHelper.ThrowIfAnyNull("ok", null!, "fine")
-        );
+        object? myValue = null;
+        var ex = Assert.Throws<ArgumentNullException>(() => LibraryHelper.ThrowIfNull(myValue));
+        Assert.Equal("myValue", ex.ParamName);
     }
 
     [Fact]
-    public void LibraryHelper_ThrowIfAnyNull_DoesNotThrowOnNonNull()
+    public void LibraryHelper_ThrowIfNull_DoesNotThrowOnNonNull()
     {
-        LibraryHelper.ThrowIfAnyNull("test", 123, new object());
+        LibraryHelper.ThrowIfNull("test");
+        LibraryHelper.ThrowIfNull(123);
+        LibraryHelper.ThrowIfNull(new object());
     }
 
     [Fact]

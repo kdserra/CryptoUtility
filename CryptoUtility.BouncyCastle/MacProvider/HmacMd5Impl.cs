@@ -33,7 +33,8 @@ public sealed class HmacMd5Impl : IMacProvider
     /// <returns>A byte array containing the result.</returns>
     public byte[] ComputeMac(byte[] key, byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(key, message);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(message);
 
         var hmac = new BouncyHmac(new BouncyMd5Digest());
         hmac.Init(new KeyParameter(key));

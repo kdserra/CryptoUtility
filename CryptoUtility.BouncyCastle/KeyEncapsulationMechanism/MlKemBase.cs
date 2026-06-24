@@ -67,7 +67,7 @@ public abstract class MlKemBase : IKeyEncapsulationMechanism
     /// <inheritdoc />
     public (byte[] sharedSecret, byte[] ciphertext) Encapsulate(byte[] peerPublicKey)
     {
-        LibraryHelper.ThrowIfAnyNull(peerPublicKey);
+        LibraryHelper.ThrowIfNull(peerPublicKey);
         var pubKey = (MLKemPublicKeyParameters)
             Org.BouncyCastle.Security.PublicKeyFactory.CreateKey(peerPublicKey);
 
@@ -91,7 +91,8 @@ public abstract class MlKemBase : IKeyEncapsulationMechanism
     /// <inheritdoc />
     public byte[] Decapsulate(byte[] secretKey, byte[] ciphertext)
     {
-        LibraryHelper.ThrowIfAnyNull(secretKey, ciphertext);
+        LibraryHelper.ThrowIfNull(secretKey);
+        LibraryHelper.ThrowIfNull(ciphertext);
         var privKey = (MLKemPrivateKeyParameters)
             Org.BouncyCastle.Security.PrivateKeyFactory.CreateKey(secretKey);
 

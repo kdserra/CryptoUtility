@@ -20,7 +20,7 @@ public sealed class Sha3_384Impl : IHashProvider
     /// <returns>A byte array containing the result.</returns>
     public byte[] Hash(byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(message);
+        LibraryHelper.ThrowIfNull(message);
 
         Sha3Digest digest = new(384);
         digest.BlockUpdate(message, 0, message.Length);

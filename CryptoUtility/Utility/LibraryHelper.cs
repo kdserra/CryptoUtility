@@ -1,25 +1,18 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
+
 namespace CryptoUtility;
 
 internal static class LibraryHelper
 {
-    internal static void ThrowIfAnyNull(params object?[] objects)
+    internal static void ThrowIfNull(
+        [NotNull] object? argument,
+        [CallerArgumentExpression(nameof(argument))] string? paramName = null
+    )
     {
-        if (objects == null)
+        if (argument is null)
         {
-            throw new ArgumentNullException();
+            throw new ArgumentNullException(paramName);
         }
-
-        foreach (object? obj in objects)
-        {
-            if (obj == null)
-            {
-                throw new ArgumentNullException();
-            }
-        }
-    }
-
-    internal static bool IsNullOrEmpty<T>(this ICollection<T> collection)
-    {
-        return collection == null || collection.Count == 0;
     }
 }

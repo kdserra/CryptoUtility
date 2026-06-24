@@ -405,7 +405,7 @@ public static class SymmetricCipherExtensions
     /// <returns>A byte array containing the result.</returns>
     public static byte[] GenerateKey(this ISymmetricCipher cipher)
     {
-        LibraryHelper.ThrowIfAnyNull(cipher);
+        LibraryHelper.ThrowIfNull(cipher);
         return CryptoHelper.GetBytes(cipher.KeySizeBytes);
     }
 
@@ -416,7 +416,7 @@ public static class SymmetricCipherExtensions
     /// <returns>A string containing the result.</returns>
     public static string GenerateKeyBase64(this ISymmetricCipher cipher)
     {
-        LibraryHelper.ThrowIfAnyNull(cipher);
+        LibraryHelper.ThrowIfNull(cipher);
         byte[] key = Array.Empty<byte>();
         string result = string.Empty;
 
@@ -441,7 +441,7 @@ public static class SymmetricCipherExtensions
     /// <returns>A byte array containing the result.</returns>
     public static byte[] GenerateNonce(this ISymmetricCipher cipher)
     {
-        LibraryHelper.ThrowIfAnyNull(cipher);
+        LibraryHelper.ThrowIfNull(cipher);
         return CryptoHelper.GetBytes(cipher.NonceSizeBytes);
     }
 
@@ -452,7 +452,7 @@ public static class SymmetricCipherExtensions
     /// <returns>A string containing the result.</returns>
     public static string GenerateNonceBase64(this ISymmetricCipher cipher)
     {
-        LibraryHelper.ThrowIfAnyNull(cipher);
+        LibraryHelper.ThrowIfNull(cipher);
         byte[] nonce = Array.Empty<byte>();
         string nonceBase64 = string.Empty;
 

@@ -39,7 +39,8 @@ public sealed class HkdfImpl : IKeyExpansionKdf
         HashAlgorithmName hashAlgorithm
     )
     {
-        LibraryHelper.ThrowIfAnyNull(inputKeyMaterial, salt);
+        LibraryHelper.ThrowIfNull(inputKeyMaterial);
+        LibraryHelper.ThrowIfNull(salt);
         if (outputLength <= 0)
             throw new ArgumentOutOfRangeException(nameof(outputLength));
 

@@ -57,7 +57,7 @@ public class HybridCipherEnvelope
     /// <returns>A Base64-encoded string that represents the serialized form of the envelope.</returns>
     public static string ToBase64(HybridCipherEnvelope envelope)
     {
-        LibraryHelper.ThrowIfAnyNull(envelope);
+        LibraryHelper.ThrowIfNull(envelope);
         byte[] envelopeBytes = Array.Empty<byte>();
         string envelopeBase64 = string.Empty;
 
@@ -114,7 +114,7 @@ public class HybridCipherEnvelope
     /// <returns>A byte array containing the serialized representation of the envelope.</returns>
     public static byte[] ToBytes(HybridCipherEnvelope envelope)
     {
-        LibraryHelper.ThrowIfAnyNull(envelope);
+        LibraryHelper.ThrowIfNull(envelope);
 
         int length = 4 + envelope.AsymmetricEncrypted.Length + envelope.SymmetricEncrypted.Length;
         byte[] result = new byte[length];

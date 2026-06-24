@@ -41,7 +41,8 @@ public sealed class HkdfImpl : IKeyExpansionKdf
         IDigest digest
     )
     {
-        LibraryHelper.ThrowIfAnyNull(inputKeyMaterial, salt);
+        LibraryHelper.ThrowIfNull(inputKeyMaterial);
+        LibraryHelper.ThrowIfNull(salt);
         if (outputLength <= 0)
             throw new ArgumentOutOfRangeException(nameof(outputLength));
 

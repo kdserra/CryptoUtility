@@ -26,7 +26,8 @@ public sealed class HmacSm3Impl : IMacProvider
     /// <inheritdoc />
     public byte[] ComputeMac(byte[] key, byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(key, message);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(message);
 
         var hmac = new BouncyHmac(new SM3Digest());
         hmac.Init(new KeyParameter(key));

@@ -38,7 +38,7 @@ public sealed class BcryptImpl : IPasswordHasher
     /// <inheritdoc />
     public string HashPassword(string password)
     {
-        LibraryHelper.ThrowIfAnyNull(password);
+        LibraryHelper.ThrowIfNull(password);
         byte[] salt = CryptoHelper.GetBytes(16); // Bcrypt requires exactly 16 bytes of salt
         char[] passwordChars = password.ToCharArray();
         try
@@ -54,7 +54,8 @@ public sealed class BcryptImpl : IPasswordHasher
     /// <inheritdoc />
     public bool VerifyPassword(string password, string hashedPasswordString)
     {
-        LibraryHelper.ThrowIfAnyNull(password, hashedPasswordString);
+        LibraryHelper.ThrowIfNull(password);
+        LibraryHelper.ThrowIfNull(hashedPasswordString);
         char[] passwordChars = password.ToCharArray();
         try
         {

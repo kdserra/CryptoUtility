@@ -24,7 +24,9 @@ public sealed class ChaCha20Impl : ISymmetricCipher
     /// <inheritdoc />
     public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce)
     {
-        LibraryHelper.ThrowIfAnyNull(key, plaintext, nonce);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(plaintext);
+        LibraryHelper.ThrowIfNull(nonce);
         byte[] ciphertext = new byte[plaintext.Length];
         using var chacha = new global::NaCl.Core.ChaCha20(key, initialCounter: 0);
         chacha.Encrypt(plaintext, nonce, ciphertext);
@@ -39,7 +41,8 @@ public sealed class ChaCha20Impl : ISymmetricCipher
     /// <inheritdoc />
     public byte[] Decrypt(byte[] key, byte[] encrypted)
     {
-        LibraryHelper.ThrowIfAnyNull(key, encrypted);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(encrypted);
         int nonceLen = NonceSizeBytes;
         if (encrypted.Length < nonceLen)
         {

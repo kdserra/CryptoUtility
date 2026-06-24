@@ -33,7 +33,8 @@ public sealed class HmacSha384Impl : IMacProvider
     /// <returns>A byte array containing the result.</returns>
     public byte[] ComputeMac(byte[] key, byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(key, message);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(message);
 
         HMac hmac = new(new Sha384Digest());
         hmac.Init(new KeyParameter(key));

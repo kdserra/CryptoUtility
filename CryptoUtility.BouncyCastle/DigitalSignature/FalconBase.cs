@@ -42,7 +42,8 @@ public abstract class FalconBase : IDigitalSignature
     /// <inheritdoc />
     public byte[] Sign(byte[] message, byte[] secretKey)
     {
-        LibraryHelper.ThrowIfAnyNull(message, secretKey);
+        LibraryHelper.ThrowIfNull(message);
+        LibraryHelper.ThrowIfNull(secretKey);
         var privKey = (FalconPrivateKeyParameters)PqcPrivateKeyFactory.CreateKey(secretKey);
 
         var signer = new FalconSigner();
@@ -54,7 +55,9 @@ public abstract class FalconBase : IDigitalSignature
     /// <inheritdoc />
     public bool Verify(byte[] message, byte[] signature, byte[] publicKey)
     {
-        LibraryHelper.ThrowIfAnyNull(message, signature, publicKey);
+        LibraryHelper.ThrowIfNull(message);
+        LibraryHelper.ThrowIfNull(signature);
+        LibraryHelper.ThrowIfNull(publicKey);
         var pubKey = (FalconPublicKeyParameters)PqcPublicKeyFactory.CreateKey(publicKey);
 
         var signer = new FalconSigner();

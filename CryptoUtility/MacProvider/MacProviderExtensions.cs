@@ -111,7 +111,9 @@ public static class MacProviderExtensions
         byte[] mac
     )
     {
-        LibraryHelper.ThrowIfAnyNull(key, message, mac);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(message);
+        LibraryHelper.ThrowIfNull(mac);
 
         byte[] computedMac = Array.Empty<byte>();
         bool isValid = false;

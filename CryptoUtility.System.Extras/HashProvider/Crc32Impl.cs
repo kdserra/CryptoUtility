@@ -20,7 +20,7 @@ public sealed class Crc32Impl : IHashProvider
     /// <returns>A byte array containing the result.</returns>
     public byte[] Hash(byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(message);
+        LibraryHelper.ThrowIfNull(message);
         return SystemCrc32.Hash(message);
     }
 }

@@ -31,7 +31,10 @@ public abstract class GcmCipherBase : ISymmetricCipherAEAD
     /// <inheritdoc />
     public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce, byte[] aad)
     {
-        LibraryHelper.ThrowIfAnyNull(key, plaintext, nonce, aad);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(plaintext);
+        LibraryHelper.ThrowIfNull(nonce);
+        LibraryHelper.ThrowIfNull(aad);
         var cipher = CreateCipher(forEncryption: true, key, nonce, aad);
         byte[] output = new byte[cipher.GetOutputSize(plaintext.Length)];
 
@@ -56,7 +59,9 @@ public abstract class GcmCipherBase : ISymmetricCipherAEAD
     /// <inheritdoc />
     public byte[] Decrypt(byte[] key, byte[] encrypted, byte[] aad)
     {
-        LibraryHelper.ThrowIfAnyNull(key, encrypted, aad);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(encrypted);
+        LibraryHelper.ThrowIfNull(aad);
         int nonceLen = NonceSizeBytes;
         int tagLen = AuthTagSizeBytes;
 

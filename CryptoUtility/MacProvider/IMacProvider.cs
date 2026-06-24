@@ -34,7 +34,9 @@ public interface IMacProvider
     /// <returns><c>true</c> if the MAC tag is valid; otherwise, <c>false</c>.</returns>
     public bool VerifyMac(byte[] key, byte[] message, byte[] mac)
     {
-        LibraryHelper.ThrowIfAnyNull(key, message, mac);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(message);
+        LibraryHelper.ThrowIfNull(mac);
         byte[] computedMac = ComputeMac(key, message);
         try
         {

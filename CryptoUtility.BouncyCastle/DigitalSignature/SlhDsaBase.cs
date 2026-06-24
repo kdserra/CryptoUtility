@@ -45,7 +45,8 @@ public abstract class SlhDsaBase : IDigitalSignature
     /// <inheritdoc />
     public byte[] Sign(byte[] message, byte[] secretKey)
     {
-        LibraryHelper.ThrowIfAnyNull(message, secretKey);
+        LibraryHelper.ThrowIfNull(message);
+        LibraryHelper.ThrowIfNull(secretKey);
         var privKey = (SlhDsaPrivateKeyParameters)
             Org.BouncyCastle.Security.PrivateKeyFactory.CreateKey(secretKey);
 
@@ -59,7 +60,9 @@ public abstract class SlhDsaBase : IDigitalSignature
     /// <inheritdoc />
     public bool Verify(byte[] message, byte[] signature, byte[] publicKey)
     {
-        LibraryHelper.ThrowIfAnyNull(message, signature, publicKey);
+        LibraryHelper.ThrowIfNull(message);
+        LibraryHelper.ThrowIfNull(signature);
+        LibraryHelper.ThrowIfNull(publicKey);
         var pubKey = (SlhDsaPublicKeyParameters)
             Org.BouncyCastle.Security.PublicKeyFactory.CreateKey(publicKey);
 

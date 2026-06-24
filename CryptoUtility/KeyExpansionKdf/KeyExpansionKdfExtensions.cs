@@ -18,7 +18,10 @@ public static class KeyExpansionKdfExtensions
         string infoBase64
     )
     {
-        LibraryHelper.ThrowIfAnyNull(kdf, inputKeyMaterialBase64, saltBase64, infoBase64);
+        LibraryHelper.ThrowIfNull(kdf);
+        LibraryHelper.ThrowIfNull(inputKeyMaterialBase64);
+        LibraryHelper.ThrowIfNull(saltBase64);
+        LibraryHelper.ThrowIfNull(infoBase64);
 
         byte[] inputKeyMaterialBytes = Array.Empty<byte>();
         byte[] saltBytes = Array.Empty<byte>();
@@ -58,7 +61,10 @@ public static class KeyExpansionKdfExtensions
         byte[] info
     )
     {
-        LibraryHelper.ThrowIfAnyNull(kdf, inputKeyMaterial, salt, info);
+        LibraryHelper.ThrowIfNull(kdf);
+        LibraryHelper.ThrowIfNull(inputKeyMaterial);
+        LibraryHelper.ThrowIfNull(salt);
+        LibraryHelper.ThrowIfNull(info);
 
         byte[] keyBytes = Array.Empty<byte>();
         string keyBase64 = string.Empty;

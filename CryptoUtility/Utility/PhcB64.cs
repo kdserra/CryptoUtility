@@ -35,7 +35,7 @@ public static class PhcB64
     /// </summary>
     public static string ToB64String(byte[] data)
     {
-        LibraryHelper.ThrowIfAnyNull(data);
+        LibraryHelper.ThrowIfNull(data);
         if (data.Length == 0)
             return string.Empty;
 
@@ -58,7 +58,7 @@ public static class PhcB64
     /// </summary>
     public static byte[] FromB64String(string text)
     {
-        LibraryHelper.ThrowIfAnyNull(text);
+        LibraryHelper.ThrowIfNull(text);
         if (text.Length == 0)
             return Array.Empty<byte>();
 

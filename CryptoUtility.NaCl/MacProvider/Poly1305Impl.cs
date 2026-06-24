@@ -31,7 +31,8 @@ public sealed class Poly1305Impl : IMacProvider
     /// <returns>A byte array containing the result.</returns>
     public byte[] ComputeMac(byte[] key, byte[] message)
     {
-        LibraryHelper.ThrowIfAnyNull(key, message);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(message);
 
         return NaClPoly1305.ComputeMac(key, message);
     }

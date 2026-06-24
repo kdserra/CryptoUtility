@@ -33,7 +33,10 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
     /// <inheritdoc />
     public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce, byte[] aad)
     {
-        LibraryHelper.ThrowIfAnyNull(key, plaintext, nonce, aad);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(plaintext);
+        LibraryHelper.ThrowIfNull(nonce);
+        LibraryHelper.ThrowIfNull(aad);
         byte[] ciphertext = new byte[plaintext.Length];
         byte[] tag = new byte[AuthTagSizeBytes];
 
@@ -60,7 +63,9 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
     /// <inheritdoc />
     public byte[] Decrypt(byte[] key, byte[] encrypted, byte[] aad)
     {
-        LibraryHelper.ThrowIfAnyNull(key, encrypted, aad);
+        LibraryHelper.ThrowIfNull(key);
+        LibraryHelper.ThrowIfNull(encrypted);
+        LibraryHelper.ThrowIfNull(aad);
         int nonceLen = NonceSizeBytes;
         int tagLen = AuthTagSizeBytes;
 

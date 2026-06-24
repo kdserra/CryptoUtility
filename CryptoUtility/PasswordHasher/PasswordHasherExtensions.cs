@@ -18,7 +18,7 @@ public static class PasswordHasherExtensions
         out string hashedPasswordString
     )
     {
-        LibraryHelper.ThrowIfAnyNull(hasher);
+        LibraryHelper.ThrowIfNull(hasher);
         try
         {
             hashedPasswordString = hasher.HashPassword(password);
@@ -44,7 +44,7 @@ public static class PasswordHasherExtensions
         string hashedPasswordString
     )
     {
-        LibraryHelper.ThrowIfAnyNull(hasher);
+        LibraryHelper.ThrowIfNull(hasher);
         try
         {
             return hasher.VerifyPassword(password, hashedPasswordString);
