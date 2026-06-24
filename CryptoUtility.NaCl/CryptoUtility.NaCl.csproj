@@ -55,7 +55,6 @@
     <InternalsVisibleTo Include="CryptoUtility.Tests" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MemoryPack" Version="1.21.4" />
     <PackageReference Include="NaCl.Core" Version="2.1.0" />
   </ItemGroup>
   <ItemGroup>

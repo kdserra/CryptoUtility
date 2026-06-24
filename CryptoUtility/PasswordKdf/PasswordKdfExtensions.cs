@@ -2,13 +2,18 @@ using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
+/// <summary>
+/// Provides extension methods for the <see cref="IPasswordKdf"/> interface.
+/// </summary>
 public static class PasswordKdfExtensions
 {
+    /// <summary>
+    /// Derives a key as a Base64-encoded string using a Base64-encoded salt.
+    /// </summary>
     public static string DeriveKeyBase64(
         this IPasswordKdf kdf,
         string passwordUtf8,
         string saltBase64,
-        int iterations,
         int outputLength
     )
     {
@@ -19,7 +24,7 @@ public static class PasswordKdfExtensions
         try
         {
             saltBytes = Convert.FromBase64String(saltBase64);
-            keyBytes = kdf.DeriveKey(passwordUtf8, saltBytes, iterations, outputLength);
+            keyBytes = kdf.DeriveKey(passwordUtf8, saltBytes, outputLength);
 
             keyBase64 = Convert.ToBase64String(keyBytes);
         }
@@ -32,18 +37,20 @@ public static class PasswordKdfExtensions
         return keyBase64;
     }
 
+    /// <summary>
+    /// Attempts to derive a key, returning a boolean indicating success.
+    /// </summary>
     public static bool TryDeriveKey(
         this IPasswordKdf kdf,
         string passwordUtf8,
         byte[] salt,
-        int iterations,
         int outputLength,
         out byte[] derivedKey
     )
     {
         try
         {
-            derivedKey = kdf.DeriveKey(passwordUtf8, salt, iterations, outputLength);
+            derivedKey = kdf.DeriveKey(passwordUtf8, salt, outputLength);
 
             return true;
         }
@@ -55,11 +62,13 @@ public static class PasswordKdfExtensions
         }
     }
 
+    /// <summary>
+    /// Attempts to derive a key as a Base64-encoded string using a Base64-encoded salt.
+    /// </summary>
     public static bool TryDeriveKeyBase64(
         this IPasswordKdf kdf,
         string passwordUtf8,
         string saltBase64,
-        int iterations,
         int outputLength,
         out string derivedKeyBase64
     )
@@ -69,7 +78,6 @@ public static class PasswordKdfExtensions
             derivedKeyBase64 = kdf.DeriveKeyBase64(
                 passwordUtf8,
                 saltBase64,
-                iterations,
                 outputLength
             );
 

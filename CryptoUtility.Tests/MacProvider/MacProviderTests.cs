@@ -35,7 +35,16 @@ public abstract class MacProviderTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(Mac.MacSizeInBytes, result.Length);
+
+        var nonceSizeProp = Mac.GetType().GetProperty("NonceSizeBytes");
+        int expectedLength = Mac.MacSizeInBytes;
+        if (nonceSizeProp != null)
+        {
+            int nonceSize = (int)nonceSizeProp.GetValue(Mac)!;
+            expectedLength += nonceSize;
+        }
+
+        Assert.Equal(expectedLength, result.Length);
     }
 
     [Fact]

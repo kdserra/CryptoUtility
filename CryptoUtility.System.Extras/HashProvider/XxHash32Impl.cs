@@ -2,13 +2,26 @@ using SystemXxHash32 = System.IO.Hashing.XxHash32;
 
 namespace CryptoUtility.System.Extras;
 
+/// <summary>
+/// Provides a XxHash32 checksum implementation by wrapping <see cref="System.IO.Hashing.XxHash32"/>.
+/// </summary>
 [GenerateStaticApi]
-public sealed class XxHash32Impl : IHashProvider
+public sealed class XxHash32Impl : IChecksumProvider
 {
+    /// <summary>
+    /// The shared static instance of <see cref="XxHash32Impl"/>.
+    /// </summary>
     public static readonly XxHash32Impl Shared = new();
 
-    public byte[] Hash(byte[] message)
+    private XxHash32Impl() { }
+
+    /// <inheritdoc />
+    public int ChecksumSizeInBytes => 4;
+
+    /// <inheritdoc />
+    public byte[] ComputeChecksum(byte[] data)
     {
-        return SystemXxHash32.Hash(message);
+        LibraryHelper.ThrowIfAnyNull(data);
+        return SystemXxHash32.Hash(data);
     }
 }

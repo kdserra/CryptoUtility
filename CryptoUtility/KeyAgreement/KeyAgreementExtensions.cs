@@ -81,7 +81,6 @@ public static class KeyAgreementExtensions
         {
             key = kdf.DeriveKey(
                 inputKeyMaterial: sharedSecret,
-                iterations: 1,
                 cipher.KeySizeBytes,
                 kdfSalt,
                 kdfInfo
@@ -115,7 +114,6 @@ public static class KeyAgreementExtensions
         {
             key = kdf.DeriveKey(
                 inputKeyMaterial: sharedSecret,
-                iterations: 1,
                 cipher.KeySizeBytes,
                 kdfSalt,
                 kdfInfo

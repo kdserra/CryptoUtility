@@ -62,14 +62,22 @@ void RunSymmetricShowcase()
         Console.WriteLine($"  - Encrypted Payload:       {encryptedData}");
 
         var payloadBytes = Convert.FromBase64String(encryptedData);
-        var cipherPayload = SymmetricCipherEnvelope.FromBytes(payloadBytes);
-        if (cipherPayload != null)
+        int nonceLen = 12;
+        int tagLen = 16;
+        if (payloadBytes.Length >= nonceLen + tagLen)
         {
-            Console.WriteLine($"    * Package Version:       {cipherPayload.Version}");
-            Console.WriteLine($"    * Nonce:                 {cipherPayload.Nonce.ToHexString()}");
-            Console.WriteLine($"    * Auth Tag:              {cipherPayload.Tag.ToHexString()}");
-            Console.WriteLine($"    * Associated Data (AAD): {cipherPayload.Aad.ToHexString()}");
-            Console.WriteLine($"    * Ciphertext:            {cipherPayload.Ciphertext.ToHexString()}");
+            byte[] nonce = new byte[nonceLen];
+            byte[] tag = new byte[tagLen];
+            byte[] ciphertext = new byte[payloadBytes.Length - nonceLen - tagLen];
+
+            Buffer.BlockCopy(payloadBytes, 0, nonce, 0, nonceLen);
+            Buffer.BlockCopy(payloadBytes, nonceLen, ciphertext, 0, ciphertext.Length);
+            Buffer.BlockCopy(payloadBytes, nonceLen + ciphertext.Length, tag, 0, tagLen);
+
+            Console.WriteLine($"    * Raw Format:            [Nonce][Ciphertext][Auth Tag]");
+            Console.WriteLine($"    * Nonce:                 {nonce.ToHexString()}");
+            Console.WriteLine($"    * Auth Tag:              {tag.ToHexString()}");
+            Console.WriteLine($"    * Ciphertext:            {ciphertext.ToHexString()}");
         }
 
         bool isDecryptionSuccess = Aes256Gcm.TryDecryptBase64(
@@ -118,7 +126,7 @@ void RunSymmetricShowcase()
         bool isByteDecryptionSuccess = false;
         try
         {
-            byteDecryptedBytes = Aes256Gcm.Decrypt(byteKey, encryptedBytePayload);
+            byteDecryptedBytes = Aes256Gcm.Decrypt(byteKey, encryptedBytePayload, aad);
             isByteDecryptionSuccess = true;
         }
         catch
@@ -318,7 +326,7 @@ void RunKdfShowcase()
     int iterations = 10000;
     int outputKeyBytes = 32;
 
-    byte[] derivedPasswordKey = Pbkdf2.DeriveKey(password, salt, iterations, outputKeyBytes);
+    byte[] derivedPasswordKey = Pbkdf2.DeriveKey(password, salt, iterations, outputKeyBytes, System.Security.Cryptography.HashAlgorithmName.SHA256);
     Console.WriteLine($"  - Input Password: \"{password}\"");
     Console.WriteLine($"  - Random Salt:     {salt.ToHexString()}");
     Console.WriteLine($"  - Iterations:      {iterations}");
@@ -333,7 +341,6 @@ void RunKdfShowcase()
 
     byte[] encryptionSubKey = Hkdf.DeriveKey(
         masterSecret,
-        1,
         32,
         hkdfSalt,
         info: "CryptoUtility.Sample:DemoEncryptionKey:0"u8.ToArray()
@@ -341,7 +348,6 @@ void RunKdfShowcase()
 
     byte[] signatureSubKey = Hkdf.DeriveKey(
         masterSecret,
-        1,
         32,
         hkdfSalt,
         info: "CryptoUtility.Sample:DemoMacSignature:0"u8.ToArray()
@@ -368,11 +374,11 @@ void RunHashAndHmacShowcase()
     Console.WriteLine($"  - SHA3-256 Hash:     {sha3Hash.ToHexString()}");
 
     Console.WriteLine("\n[xxHash64 Fast Hash (Non-cryptographic)]");
-    byte[] xxHash = XxHash64.Hash(messageBytes);
+    byte[] xxHash = XxHash64.ComputeChecksum(messageBytes);
     Console.WriteLine($"  - xxHash64 Hash:     {xxHash.ToHexString()}");
 
     Console.WriteLine("\n[CRC-32 Checksum]");
-    byte[] crcBytes = Crc32.Hash(messageBytes);
+    byte[] crcBytes = Crc32.ComputeChecksum(messageBytes);
     Console.WriteLine($"  - CRC-32 Checksum:   {crcBytes.ToHexString()}");
 
     Console.WriteLine("\n[HMAC Hashing Signatures]");

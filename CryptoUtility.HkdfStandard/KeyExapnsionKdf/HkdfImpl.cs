@@ -9,11 +9,16 @@ namespace CryptoUtility.HkdfStandard;
 [GenerateStaticApi]
 public class HkdfImpl : IKeyExpansionKdf
 {
+    /// <summary>
+    /// Shared static instance of <see cref="HkdfImpl"/>.
+    /// </summary>
     public static readonly HkdfImpl Shared = new();
 
+    private HkdfImpl() { }
+
+    /// <inheritdoc />
     public byte[] DeriveKey(
         byte[] inputKeyMaterial,
-        int iterations,
         int outputLength,
         byte[] salt,
         byte[] info
@@ -21,7 +26,6 @@ public class HkdfImpl : IKeyExpansionKdf
     {
         return DeriveKey(
             inputKeyMaterial,
-            iterations,
             outputLength,
             salt,
             info,
@@ -29,9 +33,17 @@ public class HkdfImpl : IKeyExpansionKdf
         );
     }
 
+    /// <summary>
+    /// Derives a key of the specified length using a custom hash algorithm.
+    /// </summary>
+    /// <param name="inputKeyMaterial">The input key material.</param>
+    /// <param name="outputLength">The output key length in bytes.</param>
+    /// <param name="salt">The salt value.</param>
+    /// <param name="info">The context info bytes.</param>
+    /// <param name="hashAlgorithm">The hash algorithm to use.</param>
+    /// <returns>A byte array containing the derived key.</returns>
     public byte[] DeriveKey(
         byte[] inputKeyMaterial,
-        int iterations,
         int outputLength,
         byte[] salt,
         byte[] info,
@@ -39,9 +51,6 @@ public class HkdfImpl : IKeyExpansionKdf
     )
     {
         LibraryHelper.ThrowIfAnyNull(inputKeyMaterial, salt);
-
-        if (iterations <= 0)
-            throw new ArgumentOutOfRangeException(nameof(iterations));
         if (outputLength <= 0)
             throw new ArgumentOutOfRangeException(nameof(outputLength));
 

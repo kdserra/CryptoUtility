@@ -10,22 +10,27 @@ namespace CryptoUtility.System;
 [GenerateStaticApi]
 public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
 {
+    /// <summary>
+    /// Shared static instance of <see cref="ChaCha20Poly1305Impl"/>.
+    /// </summary>
     public static readonly ChaCha20Poly1305Impl Shared = new();
 
-    /// <inheritdoc cref="ISymmetricCipher.KeySizeBytes" />
+    private ChaCha20Poly1305Impl() { }
+
+    /// <inheritdoc />
     public int KeySizeBytes => 32;
 
-    /// <inheritdoc cref="ISymmetricCipher.NonceSizeBytes" />
+    /// <inheritdoc />
     public int NonceSizeBytes => 12;
 
-    /// <inheritdoc cref="ISymmetricCipherAE.AuthTagSizeBytes" />
+    /// <inheritdoc />
     public int AuthTagSizeBytes => 16;
 
-    /// <inheritdoc cref="ISymmetricCipherAEAD.Encrypt" />
+    /// <inheritdoc />
     public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce) =>
         Encrypt(key, plaintext, nonce, aad: []);
 
-    /// <inheritdoc cref="ISymmetricCipherAEAD.Encrypt" />
+    /// <inheritdoc />
     public byte[] Encrypt(
         byte[] key,
         byte[] plaintext,
@@ -33,11 +38,11 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
         byte[] aad
     )
     {
+        LibraryHelper.ThrowIfAnyNull(key, plaintext, nonce, aad);
         byte[] ciphertext = new byte[plaintext.Length];
         byte[] tag = new byte[AuthTagSizeBytes];
 
         using var chacha = new SystemChaCha20Poly1305(key);
-
         chacha.Encrypt(
             nonce: nonce,
             plaintext: plaintext,
@@ -46,35 +51,48 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
             associatedData: aad
         );
 
-        var envelope = new SymmetricCipherEnvelope(
-            version: 1,
-            nonce: nonce,
-            tag: tag,
-            aad: aad,
-            ciphertext: ciphertext
-        );
+        byte[] result = new byte[nonce.Length + ciphertext.Length + tag.Length];
+        Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
+        Buffer.BlockCopy(ciphertext, 0, result, nonce.Length, ciphertext.Length);
+        Buffer.BlockCopy(tag, 0, result, nonce.Length + ciphertext.Length, tag.Length);
 
-        return envelope.ToBytes();
+        return result;
     }
 
-    public byte[] Decrypt(byte[] key, byte[] encrypted)
+    /// <inheritdoc />
+    public byte[] Decrypt(byte[] key, byte[] encrypted) =>
+        Decrypt(key, encrypted, aad: []);
+
+    /// <inheritdoc />
+    public byte[] Decrypt(byte[] key, byte[] encrypted, byte[] aad)
     {
-        SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
-        if (envelope == null)
+        LibraryHelper.ThrowIfAnyNull(key, encrypted, aad);
+        int nonceLen = NonceSizeBytes;
+        int tagLen = AuthTagSizeBytes;
+
+        if (encrypted.Length < nonceLen + tagLen)
         {
-            throw new ArgumentException("Invalid envelope format");
+            throw new ArgumentException("Encrypted payload is too short.");
         }
 
-        byte[] plaintext = new byte[envelope.Ciphertext.Length];
+        byte[] nonce = new byte[nonceLen];
+        byte[] tag = new byte[tagLen];
+        int ciphertextLen = encrypted.Length - nonceLen - tagLen;
+        byte[] ciphertext = new byte[ciphertextLen];
+
+        Buffer.BlockCopy(encrypted, 0, nonce, 0, nonceLen);
+        Buffer.BlockCopy(encrypted, nonceLen, ciphertext, 0, ciphertextLen);
+        Buffer.BlockCopy(encrypted, nonceLen + ciphertextLen, tag, 0, tagLen);
+
+        byte[] plaintext = new byte[ciphertextLen];
 
         using var chacha = new SystemChaCha20Poly1305(key);
-
         chacha.Decrypt(
-            nonce: envelope.Nonce,
-            ciphertext: envelope.Ciphertext,
-            tag: envelope.Tag,
+            nonce: nonce,
+            ciphertext: ciphertext,
+            tag: tag,
             plaintext: plaintext,
-            associatedData: envelope.Aad
+            associatedData: aad
         );
 
         return plaintext;

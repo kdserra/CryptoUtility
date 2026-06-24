@@ -12,20 +12,16 @@ public abstract class SymmetricCipherAETests : SymmetricCipherTests
 
         var encrypted = Cipher.Encrypt(key, plaintext);
 
-        var envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
+        Assert.NotNull(encrypted);
+        
+        int nonceLen = CipherAE.NonceSizeBytes;
+        int tagLen = CipherAE.AuthTagSizeBytes;
+        Assert.True(encrypted.Length >= nonceLen + tagLen);
+        
+        byte[] tag = new byte[tagLen];
+        Buffer.BlockCopy(encrypted, encrypted.Length - tagLen, tag, 0, tagLen);
 
-        Assert.NotNull(envelope);
-        Assert.Equal(SymmetricCipherEnvelope.LatestVersion, envelope.Version);
-
-        Assert.NotNull(envelope.Ciphertext);
-        Assert.NotEmpty(envelope.Ciphertext);
-
-        Assert.NotNull(envelope.Nonce);
-        Assert.NotEmpty(envelope.Nonce);
-
-        Assert.NotNull(envelope.Tag);
-        Assert.NotEmpty(envelope.Tag);
-
-        Assert.NotNull(envelope.Aad);
+        Assert.NotEmpty(tag);
+        Assert.Equal(tagLen, tag.Length);
     }
 }

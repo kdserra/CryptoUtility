@@ -9,17 +9,27 @@ namespace CryptoUtility.BouncyCastle;
 [GenerateStaticApi]
 public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
 {
+    /// <summary>
+    /// Shared static instance of <see cref="ChaCha20Poly1305Impl"/>.
+    /// </summary>
     public static readonly ChaCha20Poly1305Impl Shared = new();
 
+    private ChaCha20Poly1305Impl() { }
+
+    /// <inheritdoc />
     public int KeySizeBytes => 32;
 
+    /// <inheritdoc />
     public int NonceSizeBytes => 12;
 
+    /// <inheritdoc />
     public int AuthTagSizeBytes => 16;
 
+    /// <inheritdoc />
     public byte[] Encrypt(byte[] key, byte[] plaintext, byte[] nonce) =>
         Encrypt(key, plaintext, nonce, aad: []);
 
+    /// <inheritdoc />
     public byte[] Encrypt(
         byte[] key,
         byte[] plaintext,
@@ -27,6 +37,7 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
         byte[] aad
     )
     {
+        LibraryHelper.ThrowIfAnyNull(key, plaintext, nonce, aad);
         var cipher = new BouncyChaCha20Poly1305();
         var parameters = new AeadParameters(
             new KeyParameter(key),
@@ -41,55 +52,48 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
         int len = cipher.ProcessBytes(plaintext, 0, plaintext.Length, outBuffer, 0);
         cipher.DoFinal(outBuffer, len);
 
-        // BouncyCastle appends the tag directly to the end of the ciphertext outBuffer
-        byte[] ciphertext = new byte[plaintext.Length];
-        byte[] tag = new byte[AuthTagSizeBytes];
+        byte[] result = new byte[nonce.Length + outBuffer.Length];
+        Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
+        Buffer.BlockCopy(outBuffer, 0, result, nonce.Length, outBuffer.Length);
 
-        Buffer.BlockCopy(outBuffer, 0, ciphertext, 0, ciphertext.Length);
-        Buffer.BlockCopy(outBuffer, ciphertext.Length, tag, 0, tag.Length);
-
-        var envelope = new SymmetricCipherEnvelope(
-            version: 1,
-            nonce: nonce,
-            tag: tag,
-            aad: aad,
-            ciphertext: ciphertext
-        );
-
-        return envelope.ToBytes();
+        return result;
     }
 
-    public byte[] Decrypt(byte[] key, byte[] encrypted)
+    /// <inheritdoc />
+    public byte[] Decrypt(byte[] key, byte[] encrypted) =>
+        Decrypt(key, encrypted, aad: []);
+
+    /// <inheritdoc />
+    public byte[] Decrypt(byte[] key, byte[] encrypted, byte[] aad)
     {
-        SymmetricCipherEnvelope? envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
-        if (envelope == null)
+        LibraryHelper.ThrowIfAnyNull(key, encrypted, aad);
+        int nonceLen = NonceSizeBytes;
+        int tagLen = AuthTagSizeBytes;
+
+        if (encrypted.Length < nonceLen + tagLen)
         {
-            throw new ArgumentException("Invalid envelope format");
+            throw new ArgumentException("Encrypted payload is too short.");
         }
+
+        byte[] nonce = new byte[nonceLen];
+        Buffer.BlockCopy(encrypted, 0, nonce, 0, nonceLen);
+
+        int inputLen = encrypted.Length - nonceLen;
+        byte[] input = new byte[inputLen];
+        Buffer.BlockCopy(encrypted, nonceLen, input, 0, inputLen);
 
         var cipher = new BouncyChaCha20Poly1305();
         var parameters = new AeadParameters(
             new KeyParameter(key),
-            envelope.Tag.Length * 8,
-            envelope.Nonce,
-            envelope.Aad
+            tagLen * 8,
+            nonce,
+            aad
         );
 
         cipher.Init(false, parameters);
 
-        // BouncyCastle expects the ciphertext and tag concatenated together for processing
-        byte[] inputBuffer = new byte[envelope.Ciphertext.Length + envelope.Tag.Length];
-        Buffer.BlockCopy(envelope.Ciphertext, 0, inputBuffer, 0, envelope.Ciphertext.Length);
-        Buffer.BlockCopy(
-            envelope.Tag,
-            0,
-            inputBuffer,
-            envelope.Ciphertext.Length,
-            envelope.Tag.Length
-        );
-
-        byte[] plaintext = new byte[cipher.GetOutputSize(inputBuffer.Length)];
-        int len = cipher.ProcessBytes(inputBuffer, 0, inputBuffer.Length, plaintext, 0);
+        byte[] plaintext = new byte[cipher.GetOutputSize(input.Length)];
+        int len = cipher.ProcessBytes(input, 0, input.Length, plaintext, 0);
         cipher.DoFinal(plaintext, len);
 
         return plaintext;

@@ -27,19 +27,43 @@ public abstract class SymmetricCipherTests
 
         var encrypted = Cipher.Encrypt(key, plaintext);
 
-        var envelope = SymmetricCipherEnvelope.FromBytes(encrypted);
+        Assert.NotNull(encrypted);
+        
+        int nonceLen = Cipher.NonceSizeBytes;
+        if (Cipher is ISymmetricCipherAE aeCipher)
+        {
+            int tagLen = aeCipher.AuthTagSizeBytes;
+            Assert.True(encrypted.Length >= nonceLen + tagLen);
+            
+            byte[] nonce = new byte[nonceLen];
+            byte[] tag = new byte[tagLen];
+            byte[] ciphertext = new byte[encrypted.Length - nonceLen - tagLen];
 
-        Assert.NotNull(envelope);
-        Assert.Equal(SymmetricCipherEnvelope.LatestVersion, envelope.Version);
+            Buffer.BlockCopy(encrypted, 0, nonce, 0, nonceLen);
+            Buffer.BlockCopy(encrypted, nonceLen, ciphertext, 0, ciphertext.Length);
+            Buffer.BlockCopy(encrypted, nonceLen + ciphertext.Length, tag, 0, tagLen);
 
-        Assert.NotNull(envelope.Ciphertext);
-        Assert.NotEmpty(envelope.Ciphertext);
+            if (nonceLen > 0)
+            {
+                Assert.NotEmpty(nonce);
+            }
+            Assert.NotEmpty(tag);
+        }
+        else
+        {
+            Assert.True(encrypted.Length >= nonceLen);
+            
+            byte[] nonce = new byte[nonceLen];
+            byte[] ciphertext = new byte[encrypted.Length - nonceLen];
 
-        Assert.NotNull(envelope.Nonce);
-        Assert.NotEmpty(envelope.Nonce);
+            Buffer.BlockCopy(encrypted, 0, nonce, 0, nonceLen);
+            Buffer.BlockCopy(encrypted, nonceLen, ciphertext, 0, ciphertext.Length);
 
-        Assert.NotNull(envelope.Tag);
-        Assert.NotNull(envelope.Aad);
+            if (nonceLen > 0)
+            {
+                Assert.NotEmpty(nonce);
+            }
+        }
     }
 
     [Fact]

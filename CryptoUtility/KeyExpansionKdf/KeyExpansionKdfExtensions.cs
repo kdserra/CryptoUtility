@@ -2,12 +2,17 @@ using System.Security.Cryptography;
 
 namespace CryptoUtility;
 
+/// <summary>
+/// Provides extension methods for the <see cref="IKeyExpansionKdf"/> interface.
+/// </summary>
 public static class KeyExpansionKdfExtensions
 {
+    /// <summary>
+    /// Derives a key as a Base64-encoded string using Base64-encoded inputs.
+    /// </summary>
     public static string DeriveKeyBase64(
         this IKeyExpansionKdf kdf,
         string inputKeyMaterialBase64,
-        int iterations,
         int outputLength,
         string saltBase64,
         string infoBase64
@@ -29,7 +34,6 @@ public static class KeyExpansionKdfExtensions
 
             keyBytes = kdf.DeriveKey(
                 inputKeyMaterialBytes,
-                iterations,
                 outputLength,
                 saltBytes,
                 infoBytes
@@ -48,10 +52,12 @@ public static class KeyExpansionKdfExtensions
         return keyBase64;
     }
 
+    /// <summary>
+    /// Derives a key as a Base64-encoded string using byte array inputs.
+    /// </summary>
     public static string DeriveKeyBase64(
         this IKeyExpansionKdf kdf,
         byte[] inputKeyMaterial,
-        int iterations,
         int outputLength,
         byte[] salt,
         byte[] info
@@ -64,7 +70,7 @@ public static class KeyExpansionKdfExtensions
 
         try
         {
-            keyBytes = kdf.DeriveKey(inputKeyMaterial, iterations, outputLength, salt, info);
+            keyBytes = kdf.DeriveKey(inputKeyMaterial, outputLength, salt, info);
 
             keyBase64 = Convert.ToBase64String(keyBytes);
         }
@@ -76,10 +82,12 @@ public static class KeyExpansionKdfExtensions
         return keyBase64;
     }
 
+    /// <summary>
+    /// Attempts to derive a key, returning a boolean indicating success.
+    /// </summary>
     public static bool TryDeriveKey(
         this IKeyExpansionKdf kdf,
         byte[] inputKeyMaterial,
-        int iterations,
         int outputLength,
         byte[] salt,
         byte[] info,
@@ -88,7 +96,7 @@ public static class KeyExpansionKdfExtensions
     {
         try
         {
-            derivedKey = kdf.DeriveKey(inputKeyMaterial, iterations, outputLength, salt, info);
+            derivedKey = kdf.DeriveKey(inputKeyMaterial, outputLength, salt, info);
 
             return true;
         }
@@ -100,10 +108,12 @@ public static class KeyExpansionKdfExtensions
         }
     }
 
+    /// <summary>
+    /// Attempts to derive a key as a Base64-encoded string using Base64-encoded inputs.
+    /// </summary>
     public static bool TryDeriveKeyBase64(
         this IKeyExpansionKdf kdf,
         string inputKeyMaterialBase64,
-        int iterations,
         int outputLength,
         string saltBase64,
         string infoBase64,
@@ -114,7 +124,6 @@ public static class KeyExpansionKdfExtensions
         {
             derivedKeyBase64 = kdf.DeriveKeyBase64(
                 inputKeyMaterialBase64,
-                iterations,
                 outputLength,
                 saltBase64,
                 infoBase64
@@ -130,10 +139,12 @@ public static class KeyExpansionKdfExtensions
         }
     }
 
+    /// <summary>
+    /// Attempts to derive a key as a Base64-encoded string using byte array inputs.
+    /// </summary>
     public static bool TryDeriveKeyBase64(
         this IKeyExpansionKdf kdf,
         byte[] inputKeyMaterial,
-        int iterations,
         int outputLength,
         byte[] salt,
         byte[] info,
@@ -144,7 +155,6 @@ public static class KeyExpansionKdfExtensions
         {
             derivedKeyBase64 = kdf.DeriveKeyBase64(
                 inputKeyMaterial,
-                iterations,
                 outputLength,
                 salt,
                 info

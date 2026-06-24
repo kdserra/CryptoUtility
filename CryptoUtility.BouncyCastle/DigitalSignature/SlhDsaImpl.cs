@@ -1,0 +1,78 @@
+using Org.BouncyCastle.Crypto.Generators;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.Crypto.Signers;
+using Org.BouncyCastle.Pqc.Crypto.Utilities;
+using Org.BouncyCastle.Security;
+
+namespace CryptoUtility.BouncyCastle;
+
+/// <summary>
+/// Bouncy Castle SLH-DSA Digital Signature implementation.
+/// </summary>
+[GenerateStaticApi]
+public sealed class SlhDsaImpl : IDigitalSignature
+{
+    /// <summary>
+    /// The default SLH-DSA parameters used by the shared instance (sha2_128s).
+    /// </summary>
+    public static readonly SlhDsaImpl Shared = new(SlhDsaParameters.slh_dsa_sha2_128s);
+
+    private readonly SlhDsaParameters _parameters;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SlhDsaImpl"/> class with default parameters (sha2_128s).
+    /// </summary>
+    public SlhDsaImpl() : this(SlhDsaParameters.slh_dsa_sha2_128s)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SlhDsaImpl"/> class with specified parameters.
+    /// </summary>
+    /// <param name="parameters">The SLH-DSA parameters to use.</param>
+    public SlhDsaImpl(SlhDsaParameters parameters)
+    {
+        _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+    }
+
+    /// <inheritdoc />
+    public (byte[] publicKey, byte[] secretKey) GenerateKeyPair()
+    {
+        var random = new SecureRandom();
+        var keyGenParameters = new SlhDsaKeyGenerationParameters(random, _parameters);
+        var generator = new SlhDsaKeyPairGenerator();
+        generator.Init(keyGenParameters);
+        var keyPair = generator.GenerateKeyPair();
+
+        byte[] pubBytes = Org.BouncyCastle.X509.SubjectPublicKeyInfoFactory.CreateSubjectPublicKeyInfo(keyPair.Public).GetEncoded();
+        byte[] privBytes = Org.BouncyCastle.Pkcs.PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private).GetEncoded();
+
+        return (pubBytes, privBytes);
+    }
+
+    /// <inheritdoc />
+    public byte[] Sign(byte[] message, byte[] secretKey)
+    {
+        LibraryHelper.ThrowIfAnyNull(message, secretKey);
+        var privKey = (SlhDsaPrivateKeyParameters)Org.BouncyCastle.Security.PrivateKeyFactory.CreateKey(secretKey);
+
+        var signer = new SlhDsaSigner(_parameters, deterministic: true);
+        signer.Init(true, privKey);
+        signer.BlockUpdate(message, 0, message.Length);
+
+        return signer.GenerateSignature();
+    }
+
+    /// <inheritdoc />
+    public bool Verify(byte[] message, byte[] signature, byte[] publicKey)
+    {
+        LibraryHelper.ThrowIfAnyNull(message, signature, publicKey);
+        var pubKey = (SlhDsaPublicKeyParameters)Org.BouncyCastle.Security.PublicKeyFactory.CreateKey(publicKey);
+
+        var signer = new SlhDsaSigner(_parameters, deterministic: true);
+        signer.Init(false, pubKey);
+        signer.BlockUpdate(message, 0, message.Length);
+
+        return signer.VerifySignature(signature);
+    }
+}

@@ -115,7 +115,6 @@ public static class AsymmetricCipherExtensions
             );
 
             HybridCipherEnvelope envelope = new(
-                HybridCipherEnvelope.LatestVersion,
                 asymmetricEncrypted,
                 symmetricEncrypted
             );
@@ -145,6 +144,8 @@ public static class AsymmetricCipherExtensions
         {
             throw new InvalidOperationException("Failed to parse Hybrid Cipher Envelope.");
         }
+
+
 
         byte[] asymmetricPlaintextDataEncryptionKey = Array.Empty<byte>();
         byte[] symmetricPlaintext = Array.Empty<byte>();
