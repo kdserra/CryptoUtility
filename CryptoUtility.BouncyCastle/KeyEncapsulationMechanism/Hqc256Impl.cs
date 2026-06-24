@@ -12,5 +12,11 @@ public sealed class Hqc256Impl : HqcBase
     public static readonly Hqc256Impl Shared = new();
 
     private Hqc256Impl()
-        : base(Org.BouncyCastle.Pqc.Crypto.Hqc.HqcParameters.hqc256) { }
+        : base(
+            Org.BouncyCastle.Pqc.Crypto.Hqc.HqcParameters.hqc256,
+            publicKeySizeBytes: 7269,
+            secretKeySizeBytes: 7347,
+            ciphertextSizeBytes: 14421,
+            sharedSecretSizeBytes: 64
+        ) { }
 }

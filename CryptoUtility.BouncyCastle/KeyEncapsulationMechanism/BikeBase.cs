@@ -27,18 +27,19 @@ public abstract class BikeBase : IKeyEncapsulationMechanism
     /// Initializes a new instance of the <see cref="BikeBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The BIKE parameters to use.</param>
-    protected BikeBase(BikeParameters parameters)
+    protected BikeBase(
+        BikeParameters parameters,
+        int publicKeySizeBytes,
+        int secretKeySizeBytes,
+        int ciphertextSizeBytes,
+        int sharedSecretSizeBytes
+    )
     {
         _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-
-        // Measure sizes dynamically
-        var (pub, priv) = GenerateKeyPair();
-        PublicKeySizeBytes = pub.Length;
-        SecretKeySizeBytes = priv.Length;
-
-        var (secret, ct) = Encapsulate(pub);
-        CiphertextSizeBytes = ct.Length;
-        SharedSecretSizeBytes = secret.Length;
+        PublicKeySizeBytes = publicKeySizeBytes;
+        SecretKeySizeBytes = secretKeySizeBytes;
+        CiphertextSizeBytes = ciphertextSizeBytes;
+        SharedSecretSizeBytes = sharedSecretSizeBytes;
     }
 
     /// <inheritdoc />

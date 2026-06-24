@@ -12,5 +12,11 @@ public sealed class Hqc128Impl : HqcBase
     public static readonly Hqc128Impl Shared = new();
 
     private Hqc128Impl()
-        : base(Org.BouncyCastle.Pqc.Crypto.Hqc.HqcParameters.hqc128) { }
+        : base(
+            Org.BouncyCastle.Pqc.Crypto.Hqc.HqcParameters.hqc128,
+            publicKeySizeBytes: 2273,
+            secretKeySizeBytes: 2335,
+            ciphertextSizeBytes: 4433,
+            sharedSecretSizeBytes: 64
+        ) { }
 }

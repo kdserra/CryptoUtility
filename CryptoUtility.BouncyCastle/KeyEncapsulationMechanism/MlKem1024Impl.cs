@@ -14,5 +14,11 @@ public sealed class MlKem1024Impl : MlKemBase
     public static readonly MlKem1024Impl Shared = new();
 
     private MlKem1024Impl()
-        : base(MLKemParameters.ml_kem_1024) { }
+        : base(
+            MLKemParameters.ml_kem_1024,
+            publicKeySizeBytes: 1590,
+            secretKeySizeBytes: 3266,
+            ciphertextSizeBytes: 1568,
+            sharedSecretSizeBytes: 32
+        ) { }
 }

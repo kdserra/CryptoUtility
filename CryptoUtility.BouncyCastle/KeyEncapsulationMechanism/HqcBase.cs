@@ -27,18 +27,19 @@ public abstract class HqcBase : IKeyEncapsulationMechanism
     /// Initializes a new instance of the <see cref="HqcBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The HQC parameters to use.</param>
-    protected HqcBase(HqcParameters parameters)
+    protected HqcBase(
+        HqcParameters parameters,
+        int publicKeySizeBytes,
+        int secretKeySizeBytes,
+        int ciphertextSizeBytes,
+        int sharedSecretSizeBytes
+    )
     {
         _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-
-        // Measure sizes dynamically
-        var (pub, priv) = GenerateKeyPair();
-        PublicKeySizeBytes = pub.Length;
-        SecretKeySizeBytes = priv.Length;
-
-        var (secret, ct) = Encapsulate(pub);
-        CiphertextSizeBytes = ct.Length;
-        SharedSecretSizeBytes = secret.Length;
+        PublicKeySizeBytes = publicKeySizeBytes;
+        SecretKeySizeBytes = secretKeySizeBytes;
+        CiphertextSizeBytes = ciphertextSizeBytes;
+        SharedSecretSizeBytes = sharedSecretSizeBytes;
     }
 
     /// <inheritdoc />

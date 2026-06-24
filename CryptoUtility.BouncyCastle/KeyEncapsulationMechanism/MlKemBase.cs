@@ -28,18 +28,19 @@ public abstract class MlKemBase : IKeyEncapsulationMechanism
     /// Initializes a new instance of the <see cref="MlKemBase"/> class with the specified parameters.
     /// </summary>
     /// <param name="parameters">The ML-KEM parameters to use.</param>
-    protected MlKemBase(MLKemParameters parameters)
+    protected MlKemBase(
+        MLKemParameters parameters,
+        int publicKeySizeBytes,
+        int secretKeySizeBytes,
+        int ciphertextSizeBytes,
+        int sharedSecretSizeBytes
+    )
     {
         _parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-
-        // Measure sizes dynamically
-        var (pub, priv) = GenerateKeyPair();
-        PublicKeySizeBytes = pub.Length;
-        SecretKeySizeBytes = priv.Length;
-
-        var (secret, ct) = Encapsulate(pub);
-        CiphertextSizeBytes = ct.Length;
-        SharedSecretSizeBytes = secret.Length;
+        PublicKeySizeBytes = publicKeySizeBytes;
+        SecretKeySizeBytes = secretKeySizeBytes;
+        CiphertextSizeBytes = ciphertextSizeBytes;
+        SharedSecretSizeBytes = sharedSecretSizeBytes;
     }
 
     /// <inheritdoc />

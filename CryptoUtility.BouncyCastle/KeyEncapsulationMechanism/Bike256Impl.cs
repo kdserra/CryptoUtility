@@ -12,5 +12,11 @@ public sealed class Bike256Impl : BikeBase
     public static readonly Bike256Impl Shared = new();
 
     private Bike256Impl()
-        : base(Org.BouncyCastle.Pqc.Crypto.Bike.BikeParameters.bike256) { }
+        : base(
+            Org.BouncyCastle.Pqc.Crypto.Bike.BikeParameters.bike256,
+            publicKeySizeBytes: 5146,
+            secretKeySizeBytes: 10306,
+            ciphertextSizeBytes: 5154,
+            sharedSecretSizeBytes: 32
+        ) { }
 }

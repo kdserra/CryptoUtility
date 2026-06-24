@@ -14,5 +14,11 @@ public sealed class MlKem768Impl : MlKemBase
     public static readonly MlKem768Impl Shared = new();
 
     private MlKem768Impl()
-        : base(MLKemParameters.ml_kem_768) { }
+        : base(
+            MLKemParameters.ml_kem_768,
+            publicKeySizeBytes: 1206,
+            secretKeySizeBytes: 2498,
+            ciphertextSizeBytes: 1088,
+            sharedSecretSizeBytes: 32
+        ) { }
 }
