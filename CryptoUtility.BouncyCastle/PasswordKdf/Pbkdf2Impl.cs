@@ -58,6 +58,9 @@ public sealed class Pbkdf2Impl : IPasswordKdf, IPasswordHasher
         byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
         gen.Init(passwordBytes, salt, iterations);
         var keyParam = (KeyParameter)gen.GenerateDerivedMacParameters(outputLength * 8);
+
+        CryptographicOperations.ZeroMemory(passwordBytes);
+
         return keyParam.GetKey();
     }
 
