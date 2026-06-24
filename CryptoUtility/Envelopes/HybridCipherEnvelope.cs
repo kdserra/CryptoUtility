@@ -1,51 +1,33 @@
-﻿using System.Security.Cryptography;
-using CryptoUtility;
-using MemoryPack;
+using System.Buffers.Binary;
+using System.Security.Cryptography;
+
+namespace CryptoUtility;
 
 /// <summary>
-/// Defines a version-tolerant envelope format for storing data encrypted with mixed ciphers.
-/// Encapsulates all required parameters for decryption.
+/// Defines an envelope format for storing data encrypted with hybrid ciphers.
+/// Encapsulates all required parameters for decryption in a raw binary format.
 /// </summary>
-[MemoryPackable(GenerateType.VersionTolerant)]
-public partial class HybridCipherEnvelope
+public class HybridCipherEnvelope
 {
-    [MemoryPackIgnore]
-    public const int LatestVersion = 1;
+    /// <summary>
+    /// Gets the encrypted data produced by the asymmetric cipher.
+    /// </summary>
+    public byte[] AsymmetricEncrypted { get; }
 
     /// <summary>
-    /// Protocol version used to interpret this encrypted payload.
+    /// Gets the encrypted data produced by the symmetric cipher.
     /// </summary>
-    [MemoryPackOrder(0)]
-    public readonly int Version;
+    public byte[] SymmetricEncrypted { get; }
 
     /// <summary>
-    /// The encrypted data produced by the asymmetric cipher, containing the ciphertext.
+    /// Initializes a new instance of the <see cref="HybridCipherEnvelope"/> class.
     /// </summary>
-    /// <remarks>
-    /// This is the bytes of the <see cref="AsymmetricCipherEnvelope"/>, which itself contains the asymmetric ciphertext.
-    /// It may be an empty byte array if the payload is invalid, but it will never be null.
-    /// </remarks>
-    [MemoryPackOrder(1)]
-    public readonly byte[] AsymmetricEncrypted;
-
-    /// <summary>
-    /// The encrypted data produced by the symmetric cipher, containing the ciphertext.
-    /// </summary>
-    /// <remarks>
-    /// This is the bytes of the <see cref="SymmetricCipherEnvelope"/>, which itself contains the symmetric ciphertext.
-    /// It may be an empty byte array if the payload is invalid, but it will never be null.
-    /// </remarks>
-    [MemoryPackOrder(2)]
-    public readonly byte[] SymmetricEncrypted;
-
-    [MemoryPackConstructor]
-    public HybridCipherEnvelope(int version, byte[] asymmetricEncrypted, byte[] symmetricEncrypted)
+    /// <param name="asymmetricEncrypted">The encrypted asymmetric payload.</param>
+    /// <param name="symmetricEncrypted">The encrypted symmetric payload.</param>
+    public HybridCipherEnvelope(byte[] asymmetricEncrypted, byte[] symmetricEncrypted)
     {
-        Version = version;
-        AsymmetricEncrypted = asymmetricEncrypted;
-        SymmetricEncrypted = symmetricEncrypted;
-
-        LibraryHelper.ThrowIfAnyNull(version, asymmetricEncrypted, symmetricEncrypted);
+        AsymmetricEncrypted = asymmetricEncrypted ?? throw new ArgumentNullException(nameof(asymmetricEncrypted));
+        SymmetricEncrypted = symmetricEncrypted ?? throw new ArgumentNullException(nameof(symmetricEncrypted));
     }
 
     /// <summary>
@@ -54,8 +36,7 @@ public partial class HybridCipherEnvelope
     /// <returns>A byte array containing the serialized data of the current instance.</returns>
     public byte[] ToBytes()
     {
-        byte[] bytes = ToBytes(this);
-        return bytes;
+        return ToBytes(this);
     }
 
     /// <summary>
@@ -64,8 +45,7 @@ public partial class HybridCipherEnvelope
     /// <returns>A Base64-encoded string that represents the current instance.</returns>
     public string ToBase64()
     {
-        string base64 = ToBase64(this);
-        return base64;
+        return ToBase64(this);
     }
 
     /// <summary>
@@ -75,13 +55,13 @@ public partial class HybridCipherEnvelope
     /// <returns>A Base64-encoded string that represents the serialized form of the envelope.</returns>
     public static string ToBase64(HybridCipherEnvelope envelope)
     {
+        LibraryHelper.ThrowIfAnyNull(envelope);
         byte[] envelopeBytes = Array.Empty<byte>();
         string envelopeBase64 = string.Empty;
 
         try
         {
             envelopeBytes = ToBytes(envelope);
-
             envelopeBase64 = Convert.ToBase64String(envelopeBytes);
         }
         finally
@@ -95,19 +75,26 @@ public partial class HybridCipherEnvelope
     /// <summary>
     /// Creates a new instance of the HybridCipherEnvelope class from a Base64-encoded string representation.
     /// </summary>
-    /// <param name="envelopeBase64">The Base64-encoded string that represents a serialized HybridCipherEnvelope. This value must be a valid Base64
-    /// string.</param>
+    /// <param name="envelopeBase64">The Base64-encoded string that represents a serialized HybridCipherEnvelope. This value must be a valid Base64 string.</param>
     /// <returns>A HybridCipherEnvelope object if the input string is valid and conversion succeeds; otherwise, null.</returns>
     public static HybridCipherEnvelope? FromBase64(string envelopeBase64)
     {
+        if (string.IsNullOrEmpty(envelopeBase64))
+        {
+            return null;
+        }
+
         byte[] envelopeBytes = Array.Empty<byte>();
         HybridCipherEnvelope? envelope = null;
 
         try
         {
             envelopeBytes = Convert.FromBase64String(envelopeBase64);
-
             envelope = FromBytes(envelopeBytes);
+        }
+        catch
+        {
+            return null;
         }
         finally
         {
@@ -119,12 +106,22 @@ public partial class HybridCipherEnvelope
 
     /// <summary>
     /// Serializes the specified HybridCipherEnvelope instance to a byte array.
+    /// Layout: [4-byte AsymEncrypted Length][AsymEncrypted Payload][SymEncrypted Payload]
     /// </summary>
     /// <param name="envelope">The HybridCipherEnvelope to serialize. This parameter must not be null.</param>
     /// <returns>A byte array containing the serialized representation of the envelope.</returns>
     public static byte[] ToBytes(HybridCipherEnvelope envelope)
     {
-        byte[] result = MemoryPackSerializer.Serialize(envelope);
+        LibraryHelper.ThrowIfAnyNull(envelope);
+
+        int length = 4 + envelope.AsymmetricEncrypted.Length + envelope.SymmetricEncrypted.Length;
+        byte[] result = new byte[length];
+
+        BinaryPrimitives.WriteInt32BigEndian(result.AsSpan(0, 4), envelope.AsymmetricEncrypted.Length);
+
+        envelope.AsymmetricEncrypted.CopyTo(result, 4);
+        envelope.SymmetricEncrypted.CopyTo(result, 4 + envelope.AsymmetricEncrypted.Length);
+
         return result;
     }
 
@@ -135,13 +132,28 @@ public partial class HybridCipherEnvelope
     /// <returns>A HybridCipherEnvelope instance if deserialization is successful; otherwise, null.</returns>
     public static HybridCipherEnvelope? FromBytes(byte[] envelopeBytes)
     {
+        if (envelopeBytes == null || envelopeBytes.Length < 4)
+        {
+            return null;
+        }
+
         try
         {
-            HybridCipherEnvelope? result = MemoryPackSerializer.Deserialize<HybridCipherEnvelope>(
-                envelopeBytes
-            );
+            int asymLength = BinaryPrimitives.ReadInt32BigEndian(envelopeBytes.AsSpan(0, 4));
 
-            return result;
+            if (asymLength < 0 || 4 + asymLength > envelopeBytes.Length)
+            {
+                return null;
+            }
+
+            byte[] asymmetricEncrypted = new byte[asymLength];
+            Array.Copy(envelopeBytes, 4, asymmetricEncrypted, 0, asymLength);
+
+            int symLength = envelopeBytes.Length - 4 - asymLength;
+            byte[] symmetricEncrypted = new byte[symLength];
+            Array.Copy(envelopeBytes, 4 + asymLength, symmetricEncrypted, 0, symLength);
+
+            return new HybridCipherEnvelope(asymmetricEncrypted, symmetricEncrypted);
         }
         catch
         {
