@@ -124,7 +124,7 @@ byte[] encrypted = asymmetric.Encrypt(publicKey, plaintext);
 byte[] decrypted = asymmetric.Decrypt(privateKey, encrypted);
 ```
 
-## 3️⃣ Hybrid Asymmetric Encryption (Classical & Post-Quantum)
+## 3️⃣ Hybrid Encryption
 
 ### 🔤 Classical Hybrid Encryption (RSA-4096 + AES)
 ```csharp
@@ -141,46 +141,6 @@ string encrypted = Rsa4096.HybridEncryptBase64(Aes256Gcm.Shared, publicKey, larg
 string decrypted = Rsa4096.HybridDecryptBase64(Aes256Gcm.Shared, privateKey, encrypted);
 ```
 
-### 🛡️ Hybrid Post-Quantum Asymmetric Encryption (ML-KEM-768 + RSA-2048 + AES-256-GCM)
-Because classical asymmetric algorithms like RSA-2048 are vulnerable to Shor's algorithm, a hybrid post-quantum approach combines a classical asymmetric cipher with a post-quantum KEM. This ensures that the system remains secure even if one of the underlying mathematical problems is solved.
-
-```csharp
-using CryptoUtility;
-using CryptoUtility.BouncyCastle;
-
-// 1. Recipient generates both RSA-2048 and ML-KEM-768 key pairs
-IAsymmetricCipher rsa = Rsa2048.Shared;
-IKeyEncapsulationMechanism kem = MlKem768.Shared;
-
-var (rsaPub, rsaPriv) = rsa.GenerateKeyPair();
-var (kemPub, kemPriv) = kem.GenerateKeyPair();
-
-// 2. Sender side: Encrypt a message to recipient
-byte[] plaintext = "Highly secure hybrid PQ-classical message."u8.ToArray();
-byte[] hybridInfo = "PQ-Asymmetric-RSA-2048-Hybrid"u8.ToArray();
-
-// Perform hybrid encryption
-byte[] encrypted = kem.HybridEncrypt(
-    rsa,
-    Aes256Gcm.Shared,
-    Hkdf.Shared,
-    kemPub,
-    rsaPub,
-    plaintext,
-    hybridInfo
-);
-
-// 3. Recipient side: Decrypt the message
-byte[] decrypted = kem.HybridDecrypt(
-    rsa,
-    Aes256Gcm.Shared,
-    Hkdf.Shared,
-    kemPriv,
-    rsaPriv,
-    encrypted,
-    hybridInfo
-);
-```
 
 ## 4️⃣ Digital Signatures (ECDSA & ML-DSA)
 
@@ -541,22 +501,14 @@ CryptoUtility provides consistent raw byte structures across all packages for se
 +---------------------------------+------------------------+------------------------+
 ```
 
-### 3. Hybrid Post-Quantum Asymmetric Encryption Layout
-Used by `HybridPostQuantumCipherEnvelope` to package both classical and post-quantum payloads:
-```
-+----------------------+------------------------+-------------------+------------------------+----------------------+
-| KEM Length (4 bytes) | Asym Length (4 bytes)  | KEM Ciphertext    | AsymEncrypted Payload  | SymEncrypted Payload |
-+----------------------+------------------------+-------------------+------------------------+----------------------+
-```
-
-### 4. Nonce-Based MAC Tag Layout (GMAC, Poly1305)
+### 3. Nonce-Based MAC Tag Layout (GMAC, Poly1305)
 ```
 +-------------------+-----------------------------+
 |   Nonce (N bytes) |   Auth Tag (T bytes)        |
 +-------------------+-----------------------------+
 ```
 
-### 5. Password Hashing PHC Formats
+### 4. Password Hashing PHC Formats
 
 CryptoUtility formats hashed passwords into standard PHC strings for database storage:
 

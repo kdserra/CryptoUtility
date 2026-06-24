@@ -500,37 +500,6 @@ void RunPostQuantumShowcase()
     string decryptedSymmetric = Encoding.UTF8.GetString(decryptedSymmetricBytes);
     Console.WriteLine($"  - Decrypted Symmetric Payload: \"{decryptedSymmetric}\"");
 
-    // 4. Hybrid Post-Quantum Asymmetric Encryption (ML-KEM-768 + RSA-2048 + AES-256-GCM)
-    Console.WriteLine("\n[Hybrid PQ Asymmetric Encryption (ML-KEM-768 + RSA-2048 + AES-256-GCM)]");
-    IAsymmetricCipher rsa = CryptoUtility.System.Rsa2048Impl.Shared;
-    var (rsaPub, rsaPriv) = rsa.GenerateKeyPair();
-    var (kemHybridPub, kemHybridPriv) = kem.GenerateKeyPair();
-    byte[] hybridInfo = "PQ-Asymmetric-RSA-2048-Hybrid"u8.ToArray();
-
-    // Use HybridEncrypt utility
-    byte[] encryptedHybrid = kem.HybridEncrypt(
-        rsa,
-        CryptoUtility.System.Aes256GcmImpl.Shared,
-        CryptoUtility.System.Hkdf.Shared,
-        kemHybridPub,
-        rsaPub,
-        Encoding.UTF8.GetBytes(secretPayload),
-        hybridInfo
-    );
-    Console.WriteLine($"  - Encrypted Hybrid Payload (Bytes): {encryptedHybrid.ToHexString(30)}");
-
-    // Recipient decrypts using HybridDecrypt utility
-    byte[] decryptedHybridBytes = kem.HybridDecrypt(
-        rsa,
-        CryptoUtility.System.Aes256GcmImpl.Shared,
-        CryptoUtility.System.Hkdf.Shared,
-        kemHybridPriv,
-        rsaPriv,
-        encryptedHybrid,
-        hybridInfo
-    );
-    string decryptedHybrid = Encoding.UTF8.GetString(decryptedHybridBytes);
-    Console.WriteLine($"  - Decrypted Hybrid Payload: \"{decryptedHybrid}\"");
 }
 
 
