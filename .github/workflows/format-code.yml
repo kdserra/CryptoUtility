@@ -34,7 +34,7 @@ jobs:
           git add -A
           if ! git diff --cached --quiet; then
             git commit -m "style: format code with csharpier"
-            git push origin dev
+            git push origin $GITHUB_REF_NAME
           else
             echo "No formatting changes detected."
           fi
