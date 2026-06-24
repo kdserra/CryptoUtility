@@ -44,4 +44,28 @@ public abstract class KeyEncapsulationMechanismTests
         Assert.ThrowsAny<Exception>(() => Kem.Decapsulate(null!, ciphertext));
         Assert.ThrowsAny<Exception>(() => Kem.Decapsulate(sec, null!));
     }
+
+    [Fact]
+    public void Kem_Sizes_MatchLiveImplementation()
+    {
+        var (publicKey, secretKey) = Kem.GenerateKeyPair();
+        var (sharedSecret, ciphertext) = Kem.Encapsulate(publicKey);
+
+        Assert.True(
+            Kem.PublicKeySizeBytes == publicKey.Length,
+            $"PublicKeySizeBytes mismatch for {Kem.GetType().Name}. Expected (Hardcoded): {Kem.PublicKeySizeBytes}, Actual (Live): {publicKey.Length}"
+        );
+        Assert.True(
+            Kem.SecretKeySizeBytes == secretKey.Length,
+            $"SecretKeySizeBytes mismatch for {Kem.GetType().Name}. Expected (Hardcoded): {Kem.SecretKeySizeBytes}, Actual (Live): {secretKey.Length}"
+        );
+        Assert.True(
+            Kem.CiphertextSizeBytes == ciphertext.Length,
+            $"CiphertextSizeBytes mismatch for {Kem.GetType().Name}. Expected (Hardcoded): {Kem.CiphertextSizeBytes}, Actual (Live): {ciphertext.Length}"
+        );
+        Assert.True(
+            Kem.SharedSecretSizeBytes == sharedSecret.Length,
+            $"SharedSecretSizeBytes mismatch for {Kem.GetType().Name}. Expected (Hardcoded): {Kem.SharedSecretSizeBytes}, Actual (Live): {sharedSecret.Length}"
+        );
+    }
 }
