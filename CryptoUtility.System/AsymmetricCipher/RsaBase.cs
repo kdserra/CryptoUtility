@@ -5,7 +5,7 @@ namespace CryptoUtility.System;
 
 /// <summary>
 /// .NET implementation for RSA operations, handling key pair generation, OAEP-SHA256 encryption/decryption,
-/// and SHA256-PKCS1 signing/verification.
+/// and SHA256-PSS signing/verification.
 /// </summary>
 public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
 {
@@ -41,7 +41,7 @@ public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
         using RSA rsa = RSA.Create();
         rsa.ImportPkcs8PrivateKey(secretKey, out _);
 
-        byte[] signature = rsa.SignData(input, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        byte[] signature = rsa.SignData(input, HashAlgorithmName.SHA256, RSASignaturePadding.Pss);
 
         return signature;
     }
@@ -56,7 +56,7 @@ public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
             input,
             signature,
             HashAlgorithmName.SHA256,
-            RSASignaturePadding.Pkcs1
+            RSASignaturePadding.Pss
         );
     }
 

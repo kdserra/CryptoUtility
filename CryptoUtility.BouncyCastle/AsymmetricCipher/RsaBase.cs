@@ -1,4 +1,4 @@
-﻿using Org.BouncyCastle.Crypto;
+using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
@@ -12,7 +12,7 @@ namespace CryptoUtility.BouncyCastle;
 
 /// <summary>
 /// Bouncy Castle implementation for RSA operations, handling key pair generation, OAEP-SHA256 encryption/decryption,
-/// and SHA256-PKCS1 signing/verification.
+/// and SHA256-PSS signing/verification.
 /// </summary>
 public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
 {
@@ -70,7 +70,7 @@ public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
     {
         AsymmetricKeyParameter asymmetricKeyParameter = PrivateKeyFactory.CreateKey(secretKey);
 
-        var signer = new RsaDigestSigner(new Sha256Digest());
+        var signer = new PssSigner(new RsaBlindedEngine(), new Sha256Digest(), 32);
         signer.Init(true, asymmetricKeyParameter);
         signer.BlockUpdate(message, 0, message.Length);
 
@@ -89,7 +89,7 @@ public abstract class RsaBase : IAsymmetricCipher, IDigitalSignature
     {
         AsymmetricKeyParameter asymmetricKeyParameter = PublicKeyFactory.CreateKey(publicKey);
 
-        var signer = new RsaDigestSigner(new Sha256Digest());
+        var signer = new PssSigner(new RsaBlindedEngine(), new Sha256Digest(), 32);
         signer.Init(false, asymmetricKeyParameter);
         signer.BlockUpdate(message, 0, message.Length);
 
