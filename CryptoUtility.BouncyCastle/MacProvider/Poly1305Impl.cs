@@ -101,20 +101,28 @@ public sealed class Poly1305Impl : IMacProvider
         byte[] expectedTag = new byte[MacSizeInBytes];
         Buffer.BlockCopy(mac, NonceSizeBytes, expectedTag, 0, MacSizeInBytes);
 
-        var macEngine = new BouncyPoly1305(new Org.BouncyCastle.Crypto.Engines.AesEngine());
-        macEngine.Init(new ParametersWithIV(new KeyParameter(key), nonce));
-        macEngine.BlockUpdate(message, 0, message.Length);
-
-        byte[] computedTag = new byte[MacSizeInBytes];
-        macEngine.DoFinal(computedTag, 0);
-
         try
         {
-            return CryptographicOperations.FixedTimeEquals(computedTag, expectedTag);
+            var macEngine = new BouncyPoly1305(new Org.BouncyCastle.Crypto.Engines.AesEngine());
+            macEngine.Init(new ParametersWithIV(new KeyParameter(key), nonce));
+            macEngine.BlockUpdate(message, 0, message.Length);
+
+            byte[] computedTag = new byte[MacSizeInBytes];
+            macEngine.DoFinal(computedTag, 0);
+
+            try
+            {
+                return CryptographicOperations.FixedTimeEquals(computedTag, expectedTag);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(computedTag);
+            }
         }
         finally
         {
-            CryptographicOperations.ZeroMemory(computedTag);
+            CryptographicOperations.ZeroMemory(nonce);
+            CryptographicOperations.ZeroMemory(expectedTag);
         }
     }
 }

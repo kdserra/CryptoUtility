@@ -30,19 +30,27 @@ public abstract class AesGcmBase : ISymmetricCipherAEAD
         byte[] ciphertext = new byte[plaintext.Length];
         byte[] tag = new byte[AuthTagSizeBytes];
 
+        try
+        {
 #if NET8_0_OR_GREATER
-        using var aes = new AesGcm(key, AuthTagSizeBytes);
+            using var aes = new AesGcm(key, AuthTagSizeBytes);
 #else
-        using var aes = new AesGcm(key);
+            using var aes = new AesGcm(key);
 #endif
-        aes.Encrypt(nonce, plaintext, ciphertext, tag, aad);
+            aes.Encrypt(nonce, plaintext, ciphertext, tag, aad);
 
-        byte[] result = new byte[nonce.Length + ciphertext.Length + tag.Length];
-        Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
-        Buffer.BlockCopy(ciphertext, 0, result, nonce.Length, ciphertext.Length);
-        Buffer.BlockCopy(tag, 0, result, nonce.Length + ciphertext.Length, tag.Length);
+            byte[] result = new byte[nonce.Length + ciphertext.Length + tag.Length];
+            Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
+            Buffer.BlockCopy(ciphertext, 0, result, nonce.Length, ciphertext.Length);
+            Buffer.BlockCopy(tag, 0, result, nonce.Length + ciphertext.Length, tag.Length);
 
-        return result;
+            return result;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(ciphertext);
+            CryptographicOperations.ZeroMemory(tag);
+        }
     }
 
     /// <inheritdoc />
@@ -72,14 +80,22 @@ public abstract class AesGcmBase : ISymmetricCipherAEAD
         Buffer.BlockCopy(encrypted, nonceLen + ciphertextLen, tag, 0, tagLen);
 
         byte[] plaintext = new byte[ciphertextLen];
-
+        try
+        {
 #if NET8_0_OR_GREATER
-        using var aes = new AesGcm(key, AuthTagSizeBytes);
+            using var aes = new AesGcm(key, AuthTagSizeBytes);
 #else
-        using var aes = new AesGcm(key);
+            using var aes = new AesGcm(key);
 #endif
-        aes.Decrypt(nonce, ciphertext, tag, plaintext, aad);
+            aes.Decrypt(nonce, ciphertext, tag, plaintext, aad);
 
-        return plaintext;
+            return plaintext;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(nonce);
+            CryptographicOperations.ZeroMemory(ciphertext);
+            CryptographicOperations.ZeroMemory(tag);
+        }
     }
 }

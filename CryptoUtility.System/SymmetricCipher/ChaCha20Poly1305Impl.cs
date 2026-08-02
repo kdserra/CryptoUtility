@@ -40,21 +40,29 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
         byte[] ciphertext = new byte[plaintext.Length];
         byte[] tag = new byte[AuthTagSizeBytes];
 
-        using var chacha = new SystemChaCha20Poly1305(key);
-        chacha.Encrypt(
-            nonce: nonce,
-            plaintext: plaintext,
-            ciphertext: ciphertext,
-            tag: tag,
-            associatedData: aad
-        );
+        try
+        {
+            using var chacha = new SystemChaCha20Poly1305(key);
+            chacha.Encrypt(
+                nonce: nonce,
+                plaintext: plaintext,
+                ciphertext: ciphertext,
+                tag: tag,
+                associatedData: aad
+            );
 
-        byte[] result = new byte[nonce.Length + ciphertext.Length + tag.Length];
-        Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
-        Buffer.BlockCopy(ciphertext, 0, result, nonce.Length, ciphertext.Length);
-        Buffer.BlockCopy(tag, 0, result, nonce.Length + ciphertext.Length, tag.Length);
+            byte[] result = new byte[nonce.Length + ciphertext.Length + tag.Length];
+            Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
+            Buffer.BlockCopy(ciphertext, 0, result, nonce.Length, ciphertext.Length);
+            Buffer.BlockCopy(tag, 0, result, nonce.Length + ciphertext.Length, tag.Length);
 
-        return result;
+            return result;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(ciphertext);
+            CryptographicOperations.ZeroMemory(tag);
+        }
     }
 
     /// <inheritdoc />
@@ -84,17 +92,25 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
         Buffer.BlockCopy(encrypted, nonceLen + ciphertextLen, tag, 0, tagLen);
 
         byte[] plaintext = new byte[ciphertextLen];
+        try
+        {
+            using var chacha = new SystemChaCha20Poly1305(key);
+            chacha.Decrypt(
+                nonce: nonce,
+                ciphertext: ciphertext,
+                tag: tag,
+                plaintext: plaintext,
+                associatedData: aad
+            );
 
-        using var chacha = new SystemChaCha20Poly1305(key);
-        chacha.Decrypt(
-            nonce: nonce,
-            ciphertext: ciphertext,
-            tag: tag,
-            plaintext: plaintext,
-            associatedData: aad
-        );
-
-        return plaintext;
+            return plaintext;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(nonce);
+            CryptographicOperations.ZeroMemory(ciphertext);
+            CryptographicOperations.ZeroMemory(tag);
+        }
     }
 }
 #endif

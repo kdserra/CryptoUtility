@@ -42,15 +42,20 @@ public sealed class XorCipherImpl : ISymmetricCipher
             keyStreamKey[i] = (byte)(key[i] ^ nonce[i % nonce.Length]);
         }
 
-        byte[] ciphertext = Xor(plaintext, keyStreamKey);
+        try
+        {
+            byte[] ciphertext = Xor(plaintext, keyStreamKey);
 
-        byte[] result = new byte[nonce.Length + ciphertext.Length];
-        Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
-        Buffer.BlockCopy(ciphertext, 0, result, nonce.Length, ciphertext.Length);
+            byte[] result = new byte[nonce.Length + ciphertext.Length];
+            Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
+            Buffer.BlockCopy(ciphertext, 0, result, nonce.Length, ciphertext.Length);
 
-        CryptographicOperations.ZeroMemory(keyStreamKey);
-
-        return result;
+            return result;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(keyStreamKey);
+        }
     }
 
     /// <inheritdoc />
@@ -72,16 +77,21 @@ public sealed class XorCipherImpl : ISymmetricCipher
         Buffer.BlockCopy(encrypted, nonceLen, ciphertext, 0, ciphertextLen);
 
         byte[] keyStreamKey = new byte[key.Length];
-        for (int i = 0; i < key.Length; i++)
+        try
         {
-            keyStreamKey[i] = (byte)(key[i] ^ nonce[i % nonce.Length]);
+            for (int i = 0; i < key.Length; i++)
+            {
+                keyStreamKey[i] = (byte)(key[i] ^ nonce[i % nonce.Length]);
+            }
+
+            byte[] plaintext = Xor(ciphertext, keyStreamKey);
+
+            return plaintext;
         }
-
-        byte[] plaintext = Xor(ciphertext, keyStreamKey);
-
-        CryptographicOperations.ZeroMemory(keyStreamKey);
-
-        return plaintext;
+        finally
+        {
+            CryptographicOperations.ZeroMemory(keyStreamKey);
+        }
     }
 
     private static byte[] Xor(byte[] input, byte[] key)

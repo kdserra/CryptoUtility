@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Org.BouncyCastle.Crypto.Parameters;
 using BouncyChaCha20Poly1305 = Org.BouncyCastle.Crypto.Modes.ChaCha20Poly1305;
 
@@ -47,14 +48,21 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
         cipher.Init(true, parameters);
 
         byte[] outBuffer = new byte[cipher.GetOutputSize(plaintext.Length)];
-        int len = cipher.ProcessBytes(plaintext, 0, plaintext.Length, outBuffer, 0);
-        cipher.DoFinal(outBuffer, len);
+        try
+        {
+            int len = cipher.ProcessBytes(plaintext, 0, plaintext.Length, outBuffer, 0);
+            cipher.DoFinal(outBuffer, len);
 
-        byte[] result = new byte[nonce.Length + outBuffer.Length];
-        Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
-        Buffer.BlockCopy(outBuffer, 0, result, nonce.Length, outBuffer.Length);
+            byte[] result = new byte[nonce.Length + outBuffer.Length];
+            Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
+            Buffer.BlockCopy(outBuffer, 0, result, nonce.Length, outBuffer.Length);
 
-        return result;
+            return result;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(outBuffer);
+        }
     }
 
     /// <inheritdoc />
@@ -81,15 +89,23 @@ public sealed class ChaCha20Poly1305Impl : ISymmetricCipherAEAD
         byte[] input = new byte[inputLen];
         Buffer.BlockCopy(encrypted, nonceLen, input, 0, inputLen);
 
-        var cipher = new BouncyChaCha20Poly1305();
-        var parameters = new AeadParameters(new KeyParameter(key), tagLen * 8, nonce, aad);
+        try
+        {
+            var cipher = new BouncyChaCha20Poly1305();
+            var parameters = new AeadParameters(new KeyParameter(key), tagLen * 8, nonce, aad);
 
-        cipher.Init(false, parameters);
+            cipher.Init(false, parameters);
 
-        byte[] plaintext = new byte[cipher.GetOutputSize(input.Length)];
-        int len = cipher.ProcessBytes(input, 0, input.Length, plaintext, 0);
-        cipher.DoFinal(plaintext, len);
+            byte[] plaintext = new byte[cipher.GetOutputSize(input.Length)];
+            int len = cipher.ProcessBytes(input, 0, input.Length, plaintext, 0);
+            cipher.DoFinal(plaintext, len);
 
-        return plaintext;
+            return plaintext;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(nonce);
+            CryptographicOperations.ZeroMemory(input);
+        }
     }
 }

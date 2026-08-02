@@ -42,15 +42,22 @@ public static class PhcB64
         string stdBase64 = Convert.ToBase64String(data).TrimEnd('=');
         char[] chars = stdBase64.ToCharArray();
 
-        for (int i = 0; i < chars.Length; i++)
+        try
         {
-            char mapped = StdToArgMap[chars[i]];
-            if (mapped == '\0')
-                throw new InvalidOperationException($"Invalid standard Base64 character: {chars[i]}");
-            chars[i] = mapped;
-        }
+            for (int i = 0; i < chars.Length; i++)
+            {
+                char mapped = StdToArgMap[chars[i]];
+                if (mapped == '\0')
+                    throw new InvalidOperationException($"Invalid standard Base64 character: {chars[i]}");
+                chars[i] = mapped;
+            }
 
-        return new string(chars);
+            return new string(chars);
+        }
+        finally
+        {
+            Array.Clear(chars, 0, chars.Length);
+        }
     }
 
     /// <summary>
@@ -63,21 +70,28 @@ public static class PhcB64
             return Array.Empty<byte>();
 
         char[] chars = text.ToCharArray();
-        for (int i = 0; i < chars.Length; i++)
+        try
         {
-            char mapped = ArgToStdMap[chars[i]];
-            if (mapped == '\0')
-                throw new ArgumentException($"Invalid Argon2 B64 character: {chars[i]}");
-            chars[i] = mapped;
-        }
+            for (int i = 0; i < chars.Length; i++)
+            {
+                char mapped = ArgToStdMap[chars[i]];
+                if (mapped == '\0')
+                    throw new ArgumentException($"Invalid Argon2 B64 character: {chars[i]}");
+                chars[i] = mapped;
+            }
 
-        string stdBase64 = new string(chars);
-        int padding = (4 - (stdBase64.Length % 4)) % 4;
-        if (padding > 0)
+            string stdBase64 = new string(chars);
+            int padding = (4 - (stdBase64.Length % 4)) % 4;
+            if (padding > 0)
+            {
+                stdBase64 += new string('=', padding);
+            }
+
+            return Convert.FromBase64String(stdBase64);
+        }
+        finally
         {
-            stdBase64 += new string('=', padding);
+            Array.Clear(chars, 0, chars.Length);
         }
-
-        return Convert.FromBase64String(stdBase64);
     }
 }

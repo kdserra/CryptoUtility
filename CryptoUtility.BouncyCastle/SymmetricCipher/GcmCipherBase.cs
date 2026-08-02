@@ -38,19 +38,26 @@ public abstract class GcmCipherBase : ISymmetricCipherAEAD
         var cipher = CreateCipher(forEncryption: true, key, nonce, aad);
         byte[] output = new byte[cipher.GetOutputSize(plaintext.Length)];
 
-        int outputLength = cipher.ProcessBytes(plaintext, 0, plaintext.Length, output, 0);
-        outputLength += cipher.DoFinal(output, outputLength);
-
-        if (outputLength != plaintext.Length + AuthTagSizeBytes)
+        try
         {
-            throw new CryptographicException("Encryption failed: output length mismatch");
+            int outputLength = cipher.ProcessBytes(plaintext, 0, plaintext.Length, output, 0);
+            outputLength += cipher.DoFinal(output, outputLength);
+
+            if (outputLength != plaintext.Length + AuthTagSizeBytes)
+            {
+                throw new CryptographicException("Encryption failed: output length mismatch");
+            }
+
+            byte[] result = new byte[nonce.Length + outputLength];
+            Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
+            Buffer.BlockCopy(output, 0, result, nonce.Length, outputLength);
+
+            return result;
         }
-
-        byte[] result = new byte[nonce.Length + outputLength];
-        Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
-        Buffer.BlockCopy(output, 0, result, nonce.Length, outputLength);
-
-        return result;
+        finally
+        {
+            CryptographicOperations.ZeroMemory(output);
+        }
     }
 
     /// <inheritdoc />
@@ -77,20 +84,37 @@ public abstract class GcmCipherBase : ISymmetricCipherAEAD
         byte[] input = new byte[inputLen];
         Buffer.BlockCopy(encrypted, nonceLen, input, 0, inputLen);
 
-        var cipher = CreateCipher(forEncryption: false, key, nonce, aad);
-        byte[] plaintext = new byte[cipher.GetOutputSize(input.Length)];
-
-        int outputLength = cipher.ProcessBytes(input, 0, input.Length, plaintext, 0);
-        outputLength += cipher.DoFinal(plaintext, outputLength);
-
-        if (plaintext.Length != outputLength)
+        byte[]? plaintext = null;
+        try
         {
-            byte[] actualPlaintext = new byte[outputLength];
-            Buffer.BlockCopy(plaintext, 0, actualPlaintext, 0, outputLength);
-            return actualPlaintext;
-        }
+            var cipher = CreateCipher(forEncryption: false, key, nonce, aad);
+            plaintext = new byte[cipher.GetOutputSize(input.Length)];
 
-        return plaintext;
+            int outputLength = cipher.ProcessBytes(input, 0, input.Length, plaintext, 0);
+            outputLength += cipher.DoFinal(plaintext, outputLength);
+
+            if (plaintext.Length != outputLength)
+            {
+                byte[] actualPlaintext = new byte[outputLength];
+                Buffer.BlockCopy(plaintext, 0, actualPlaintext, 0, outputLength);
+                CryptographicOperations.ZeroMemory(plaintext);
+                plaintext = null;
+                return actualPlaintext;
+            }
+
+            byte[] result = plaintext!;
+            plaintext = null;
+            return result;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(nonce);
+            CryptographicOperations.ZeroMemory(input);
+            if (plaintext is not null)
+            {
+                CryptographicOperations.ZeroMemory(plaintext);
+            }
+        }
     }
 
     private GcmBlockCipher CreateCipher(bool forEncryption, byte[] key, byte[] nonce, byte[] aad)

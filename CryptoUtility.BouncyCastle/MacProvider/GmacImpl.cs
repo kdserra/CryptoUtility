@@ -96,20 +96,28 @@ public sealed class GmacImpl : IMacProvider
         Buffer.BlockCopy(mac, 0, nonce, 0, NonceSizeBytes);
         Buffer.BlockCopy(mac, NonceSizeBytes, expectedTag, 0, MacSizeInBytes);
 
-        var gmac = new GMac(new GcmBlockCipher(new AesEngine()));
-        gmac.Init(new ParametersWithIV(new KeyParameter(key), nonce));
-        gmac.BlockUpdate(message, 0, message.Length);
-
-        byte[] computedTag = new byte[MacSizeInBytes];
-        gmac.DoFinal(computedTag, 0);
-
         try
         {
-            return CryptographicOperations.FixedTimeEquals(computedTag, expectedTag);
+            var gmac = new GMac(new GcmBlockCipher(new AesEngine()));
+            gmac.Init(new ParametersWithIV(new KeyParameter(key), nonce));
+            gmac.BlockUpdate(message, 0, message.Length);
+
+            byte[] computedTag = new byte[MacSizeInBytes];
+            gmac.DoFinal(computedTag, 0);
+
+            try
+            {
+                return CryptographicOperations.FixedTimeEquals(computedTag, expectedTag);
+            }
+            finally
+            {
+                CryptographicOperations.ZeroMemory(computedTag);
+            }
         }
         finally
         {
-            CryptographicOperations.ZeroMemory(computedTag);
+            CryptographicOperations.ZeroMemory(nonce);
+            CryptographicOperations.ZeroMemory(expectedTag);
         }
     }
 }

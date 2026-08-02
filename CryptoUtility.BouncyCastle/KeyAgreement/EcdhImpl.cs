@@ -1,4 +1,5 @@
-﻿using Org.BouncyCastle.Asn1.Sec;
+﻿using System.Security.Cryptography;
+using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X9;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Digests;
@@ -42,7 +43,8 @@ public sealed class EcdhImpl : IKeyAgreement
         var secretBigInt = agreement.CalculateAgreement(publicKeyParam);
 
         byte[] rawSecret = secretBigInt.ToByteArrayUnsigned();
-        if (rawSecret.Length < 32)
+        bool hasPadding = rawSecret.Length < 32;
+        if (hasPadding)
         {
             byte[] paddedSecret = new byte[32];
             Array.Copy(rawSecret, 0, paddedSecret, 32 - rawSecret.Length, rawSecret.Length);
@@ -51,10 +53,17 @@ public sealed class EcdhImpl : IKeyAgreement
 
         var digest = new Sha256Digest();
         byte[] hashedSecret = new byte[digest.GetDigestSize()];
-        digest.BlockUpdate(rawSecret, 0, rawSecret.Length);
-        digest.DoFinal(hashedSecret, 0);
+        try
+        {
+            digest.BlockUpdate(rawSecret, 0, rawSecret.Length);
+            digest.DoFinal(hashedSecret, 0);
 
-        return hashedSecret;
+            return hashedSecret;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(rawSecret);
+        }
     }
 
     /// <inheritdoc cref="IKeyAgreement.GenerateKeyPair()"/>

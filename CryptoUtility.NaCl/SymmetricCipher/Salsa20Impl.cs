@@ -28,14 +28,21 @@ public sealed class Salsa20Impl : ISymmetricCipher
         LibraryHelper.ThrowIfNull(plaintext);
         LibraryHelper.ThrowIfNull(nonce);
         byte[] ciphertext = new byte[plaintext.Length];
-        using var salsa = new global::NaCl.Core.Salsa20(key, initialCounter: 0);
-        salsa.Encrypt(plaintext, nonce, ciphertext);
+        try
+        {
+            using var salsa = new global::NaCl.Core.Salsa20(key, initialCounter: 0);
+            salsa.Encrypt(plaintext, nonce, ciphertext);
 
-        byte[] result = new byte[nonce.Length + ciphertext.Length];
-        Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
-        Buffer.BlockCopy(ciphertext, 0, result, nonce.Length, ciphertext.Length);
+            byte[] result = new byte[nonce.Length + ciphertext.Length];
+            Buffer.BlockCopy(nonce, 0, result, 0, nonce.Length);
+            Buffer.BlockCopy(ciphertext, 0, result, nonce.Length, ciphertext.Length);
 
-        return result;
+            return result;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(ciphertext);
+        }
     }
 
     /// <inheritdoc />
@@ -57,9 +64,17 @@ public sealed class Salsa20Impl : ISymmetricCipher
         Buffer.BlockCopy(encrypted, nonceLen, ciphertext, 0, ciphertextLen);
 
         byte[] plaintext = new byte[ciphertextLen];
-        using var salsa = new global::NaCl.Core.Salsa20(key, initialCounter: 0);
-        salsa.Decrypt(ciphertext, nonce, plaintext);
+        try
+        {
+            using var salsa = new global::NaCl.Core.Salsa20(key, initialCounter: 0);
+            salsa.Decrypt(ciphertext, nonce, plaintext);
 
-        return plaintext;
+            return plaintext;
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(nonce);
+            CryptographicOperations.ZeroMemory(ciphertext);
+        }
     }
 }
