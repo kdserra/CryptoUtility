@@ -15,13 +15,23 @@ public static class KeyEncapsulationMechanismExtensions
         this IKeyEncapsulationMechanism kem
     )
     {
-        (byte[] publicKey, byte[] secretKey) = kem.GenerateKeyPair();
+        byte[] publicKeyBytes = Array.Empty<byte>();
+        byte[] secretKeyBytes = Array.Empty<byte>();
+        string publicKeyBase64 = string.Empty;
+        string secretKeyBase64 = string.Empty;
 
-        string publicKeyBase64 = Convert.ToBase64String(publicKey);
-        string secretKeyBase64 = Convert.ToBase64String(secretKey);
+        try
+        {
+            (publicKeyBytes, secretKeyBytes) = kem.GenerateKeyPair();
 
-        CryptographicOperations.ZeroMemory(publicKey);
-        CryptographicOperations.ZeroMemory(secretKey);
+            publicKeyBase64 = Convert.ToBase64String(publicKeyBytes);
+            secretKeyBase64 = Convert.ToBase64String(secretKeyBytes);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(publicKeyBytes);
+            CryptographicOperations.ZeroMemory(secretKeyBytes);
+        }
 
         return (publicKeyBase64, secretKeyBase64);
     }
@@ -37,15 +47,25 @@ public static class KeyEncapsulationMechanismExtensions
         string peerPublicKeyBase64
     )
     {
+        byte[] sharedSecret = Array.Empty<byte>();
+        byte[] ciphertext = Array.Empty<byte>();
         byte[] peerPublicKeyBytes = Convert.FromBase64String(peerPublicKeyBase64);
-        (byte[] sharedSecret, byte[] ciphertext) = kem.Encapsulate(peerPublicKeyBytes);
+        string sharedSecretBase64 = string.Empty;
+        string ciphertextBase64 = string.Empty;
 
-        string sharedSecretBase64 = Convert.ToBase64String(sharedSecret);
-        string ciphertextBase64 = Convert.ToBase64String(ciphertext);
+        try
+        {
+            (sharedSecret, ciphertext) = kem.Encapsulate(peerPublicKeyBytes);
 
-        CryptographicOperations.ZeroMemory(peerPublicKeyBytes);
-        CryptographicOperations.ZeroMemory(sharedSecret);
-        CryptographicOperations.ZeroMemory(ciphertext);
+            sharedSecretBase64 = Convert.ToBase64String(sharedSecret);
+            ciphertextBase64 = Convert.ToBase64String(ciphertext);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(peerPublicKeyBytes);
+            CryptographicOperations.ZeroMemory(sharedSecret);
+            CryptographicOperations.ZeroMemory(ciphertext);
+        }
 
         return (sharedSecretBase64, ciphertextBase64);
     }
@@ -63,16 +83,26 @@ public static class KeyEncapsulationMechanismExtensions
         string ciphertextBase64
     )
     {
-        byte[] secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
-        byte[] ciphertextBytes = Convert.FromBase64String(ciphertextBase64);
+        byte[] secretKeyBytes = Array.Empty<byte>();
+        byte[] ciphertextBytes = Array.Empty<byte>();
+        byte[] decapsulated = Array.Empty<byte>();
+        string decapsulatedBase64 = string.Empty;
 
-        byte[] decapsulated = kem.Decapsulate(secretKeyBytes, ciphertextBytes);
+        try
+        {
+            secretKeyBytes = Convert.FromBase64String(secretKeyBase64);
+            ciphertextBytes = Convert.FromBase64String(ciphertextBase64);
 
-        string decapsulatedBase64 = Convert.ToBase64String(decapsulated);
+            decapsulated = kem.Decapsulate(secretKeyBytes, ciphertextBytes);
 
-        CryptographicOperations.ZeroMemory(secretKeyBytes);
-        CryptographicOperations.ZeroMemory(ciphertextBytes);
-        CryptographicOperations.ZeroMemory(decapsulated);
+            decapsulatedBase64 = Convert.ToBase64String(decapsulated);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(secretKeyBytes);
+            CryptographicOperations.ZeroMemory(ciphertextBytes);
+            CryptographicOperations.ZeroMemory(decapsulated);
+        }
 
         return decapsulatedBase64;
     }
